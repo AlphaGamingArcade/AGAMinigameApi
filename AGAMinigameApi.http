@@ -1,0 +1,6 @@
+@AGAMinigameApi_HostAddress = http://localhost:5095
+
+GET {{AGAMinigameApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
