@@ -1,7 +1,6 @@
 using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services;
-using AGAMinigameApi.Services.AGAMinigameApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

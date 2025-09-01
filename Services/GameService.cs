@@ -10,39 +10,35 @@ namespace AGAMinigameApi.Services
         Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto);
     }
 
-    namespace AGAMinigameApi.Services
+    public class GameService : IGameService
     {
-        public class GameService : IGameService
+        private readonly IGameRepository _gameRepository;
+
+        public GameService(IGameRepository gameRepository)
         {
-            private readonly IGameRepository _gameRepository;
+            _gameRepository = gameRepository;
+        }
 
-            public GameService(IGameRepository gameRepository)
+        public async Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto)
+        {
+            var (games, total) = await _gameRepository.GetPaginatedGamesAsync(
+                requestDto.SortBy,
+                requestDto.Descending,
+                requestDto.PageNumber,
+                requestDto.PageSize
+            );
+
+            var gameDtos = games.Select(g => g.ToGameDto());
+
+            var pagedResult = new PagedResult<GameDto>
             {
-                _gameRepository = gameRepository;
-            }
+                Items = gameDtos,
+                TotalRecords = total,
+                PageNumber = requestDto.PageNumber,
+                PageSize = requestDto.PageSize
+            };
 
-            public async Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto)
-            {
-                var (games, total) = await _gameRepository.GetPaginatedGamesAsync(
-                    requestDto.SortBy,
-                    requestDto.Descending,
-                    requestDto.PageNumber,
-                    requestDto.PageSize
-                );
-
-                var gameDtos = games.Select(g => g.ToGameDto());
-
-                var pagedResult = new PagedResult<GameDto>
-                {
-                    Items = gameDtos,
-                    TotalRecords = total,
-                    PageNumber = requestDto.PageNumber,
-                    PageSize = requestDto.PageSize
-                };
-
-                return pagedResult;
-            }
+            return pagedResult;
         }
     }
-
 }

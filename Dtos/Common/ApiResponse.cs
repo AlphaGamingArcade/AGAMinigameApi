@@ -1,4 +1,4 @@
-namespace AGAMinigameApi.Dtos
+namespace AGAMinigameApi.Dtos.Common
 {
     public class ApiResponse<T>
     {

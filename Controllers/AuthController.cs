@@ -1,6 +1,7 @@
-using AGAMinigameApi.Dtos;
 using AGAMinigameApi.Dtos.Auth;
+using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Interfaces;
+using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AGAMinigameApi.Controllers;
@@ -10,12 +11,12 @@ namespace AGAMinigameApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
-    private readonly IBannerRepository _bannerRepository;
+    private readonly IAuthService _authService;
 
-    public AuthController(ILogger<AuthController> logger, IBannerRepository bannerRepository)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService)
     {
         _logger = logger;
-        _bannerRepository = bannerRepository;
+        _authService = authService;
     }
 
     // POST /auth/register
