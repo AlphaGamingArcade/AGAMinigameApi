@@ -12,12 +12,14 @@ public class AuthController : ControllerBase
     private readonly ILogger<AuthController> _logger;
     private readonly IAuthService _authService;
     private readonly IAgentService _agentService;
+    private readonly IRefreshTokenService _refreshTokenService;
 
-    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService)
     {
         _logger = logger;
         _authService = authService;
         _agentService = agentService;
+        _refreshTokenService = refreshTokenService;
     }
 
     // POST /auth/register
@@ -47,7 +49,7 @@ public class AuthController : ControllerBase
 
         const int created = StatusCodes.Status201Created;
         return Ok(new ApiResponse<object>(true, "User registration successful.", result, created));
-    } 
+    }
 
     // POST /auth/login
     [HttpPost("login")]
@@ -73,11 +75,20 @@ public class AuthController : ControllerBase
 
     // POST /auth/logout
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    { 
-        await Task.Delay(1000);
-        return Ok(new ApiResponse<object>(true, "Logout successful.", null, 200));
-     }
+    public async Task<IActionResult> Logout([FromBody] LogoutRequestDto request)
+    {
+        var token = await _refreshTokenService.GetRefreshTokenByTokenAsync(request.RefreshToken);
+        if (token is null)
+        {
+            const int status = StatusCodes.Status401Unauthorized;
+            return Unauthorized(new ApiResponse<object>(false, "Invalid refresh token.", null, status));
+        }
+
+        await _authService.LogoutAsync(token.MemberId);
+
+        return Ok(new ApiResponse<object>(true, "Logged out successfully.", null, 200));
+        
+    }
 
     // POST /auth/forgot-password
     [HttpPost("forgot-password")]
@@ -99,9 +110,17 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
     { 
-        await Task.Delay(1000);
-        return Ok(new ApiResponse<object>(true, "Token refreshed.", null, 200));
-     }
+        var token = await _refreshTokenService.GetRefreshTokenByTokenAsync(request.RefreshToken);
+        if (token is null)
+        {
+            const int status = StatusCodes.Status401Unauthorized;
+            return Unauthorized(new ApiResponse<object>(false, "Invalid refresh token.", null, status));
+        }
+
+        var result = await _authService.RefreshTokenAsync(token.MemberId);
+
+        return Ok(new ApiResponse<object>(true, "Token refreshed.", result, 200));
+    }
 
     // GET /auth/confirm-email
     [HttpGet("confirm-email")]

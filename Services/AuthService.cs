@@ -13,8 +13,9 @@ namespace AGAMinigameApi.Services
         Task<User?> GetUserByEmailAsync(string email);
         Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent);
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user);
+        Task LogoutAsync(int memberId);
         Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
-        Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshTokenDto request);
+        Task<RefreshTokenResponseDto> RefreshTokenAsync(int memberId);
         Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request);
     }
 
@@ -97,15 +98,28 @@ namespace AGAMinigameApi.Services
             };
         }
 
+        public async Task LogoutAsync(int memberId)
+        {
+            await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(memberId);
+        }
+        
+
         public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request)
         {
             await Task.Delay(1000);
             return new ForgotPasswordResponseDto();
         }
-        public async Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshTokenDto request)
+        
+        public async Task<RefreshTokenResponseDto> RefreshTokenAsync(int memberId)
         {
-            await Task.Delay(1000);
-            return new RefreshTokenResponseDto();
+            var dateTime = DateHelper.GetUtcNow();
+            var (accessToken, refreshToken)  = await GenerateTokensAsync(memberId, dateTime);
+
+            return new RefreshTokenResponseDto
+            {
+                AccessToken  = accessToken,
+                RefreshToken = refreshToken
+            };
         }
         public async Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request)
         {
