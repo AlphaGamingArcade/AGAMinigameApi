@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
-using System.Reflection;
 
 namespace AGAMinigameApi.Repositories
 {
@@ -72,5 +71,21 @@ namespace AGAMinigameApi.Repositories
             return await command.ExecuteNonQueryAsync(); // number of rows updated
         }
 
+        protected async Task<int> DeleteQueryAsync(string query, Dictionary<string, object>? parameters = null)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(query, connection);
+
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                }
+            }
+
+            await connection.OpenAsync();
+            return await command.ExecuteNonQueryAsync(); // number of rows deleted
+        }
     }
 }

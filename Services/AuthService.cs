@@ -2,6 +2,7 @@ using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
+using SlotsApi.Services;
 
 namespace AGAMinigameApi.Services
 {
@@ -19,9 +20,16 @@ namespace AGAMinigameApi.Services
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
-        
-        public AuthService(IAuthRepository authRepository) {
-            _authRepository = authRepository;   
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly string _jwtIssuer;
+
+        public AuthService(IConfiguration configuration, IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository)
+        {
+            _authRepository = authRepository;
+            _jwtTokenService = jwtTokenService;
+            _refreshTokenRepository = refreshTokenRepository;
+            _jwtIssuer = configuration["JwtSettings:Issuer"] ?? throw new InvalidOperationException("JWT issues missing in config.");
         }
 
         public async Task<bool> UserExistsByEmailAsync(string email) => await _authRepository.UserExistsByEmailAsync(email);
@@ -40,10 +48,31 @@ namespace AGAMinigameApi.Services
             var createdUser = await _authRepository.CreateUserAsync(user, dateTime);
 
             // GENERATE TOKENS
+            var accessToken = _jwtTokenService.GenerateAccessToken(createdUser.Id.ToString());
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+
+            // Clear all existing tokens
+            await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(createdUser.Id);
+            // Optionally save refreshToken to DB here
+            var createdAt = DateHelper.GetUtcNow();
+            var expiresAt = createdAt.AddDays(7);
+
+            var refreshTokenObj = new RefreshToken
+            {
+                MemberId = createdUser.Id,
+                Token = refreshToken,
+                Issuer = _jwtIssuer,
+                CreatedAt = createdAt,
+                ExpiresAt = expiresAt,
+                RevokedAt = null
+            };
+
+            await _refreshTokenRepository.CreateRefreshTokenAsync(refreshTokenObj);
 
             var result = new RegisterResponseDto
             {
-
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
             };
             return result;
         }

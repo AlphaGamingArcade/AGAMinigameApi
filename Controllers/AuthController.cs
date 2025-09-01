@@ -44,6 +44,7 @@ public class AuthController : ControllerBase
         }
 
         var result = await _authService.RegisterAsync(request, agent);
+
         const int created = StatusCodes.Status201Created;
         return Ok(new ApiResponse<object>(true, "User registration successful.", result, created));
     } 

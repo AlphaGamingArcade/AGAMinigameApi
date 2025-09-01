@@ -49,6 +49,7 @@ builder.Services.AddScoped<IBannerRepository, BannerRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IAgentService, AgentService>();
