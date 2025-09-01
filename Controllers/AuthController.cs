@@ -11,17 +11,25 @@ public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
     private readonly IAuthService _authService;
+    private readonly IAgentService _agentService;
 
-    public AuthController(ILogger<AuthController> logger, IAuthService authService)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService)
     {
         _logger = logger;
         _authService = authService;
+        _agentService = agentService;
     }
 
     // POST /auth/register
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
+        if (await _agentService.AgentExistsByCodeAsync("agaminigame"))
+        {
+            const int status = StatusCodes.Status404NotFound;
+            return Conflict(new ApiResponse<object>(true, "AGA Minigame agent not found.", null, status));
+        }
+
         if (await _authService.UserExistsByEmailAsync(request.Email))
         {
             const int status = StatusCodes.Status409Conflict;
