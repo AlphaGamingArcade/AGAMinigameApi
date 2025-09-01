@@ -1,21 +1,21 @@
 using AGAMinigameApi.Interfaces;
+using AGAMinigameApi.Models;
 
 namespace AGAMinigameApi.Services
 {
     public interface IAgentService
     {
-        Task<bool> AgentExistsByCodeAsync(string email);
+        Task<Agent?> GetAgentByCodeAsync(string code); 
     }
 
     public class AgentService : IAgentService
     {
-        private readonly IAuthRepository _authRepository;
+        private readonly IAgentRepository _agentRespository;
 
-        public AgentService(IAuthRepository authRepository)
+        public AgentService(IAgentRepository agentRespository)
         {
-            _authRepository = authRepository;
+            _agentRespository = agentRespository;
         }
-
-        public async Task<bool> AgentExistsByCodeAsync(string email) => await _authRepository.UserExistsByEmailAsync(email);
+        public async Task<Agent?> GetAgentByCodeAsync(string code) => await _agentRespository.GetAgentByCodeAsync(code);
     }
 }

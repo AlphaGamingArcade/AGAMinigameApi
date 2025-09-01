@@ -24,25 +24,26 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
-        if (await _agentService.AgentExistsByCodeAsync("agaminigame"))
+        var agent = await _agentService.GetAgentByCodeAsync("agaminigame");
+        if (agent is null)
         {
             const int status = StatusCodes.Status404NotFound;
-            return Conflict(new ApiResponse<object>(true, "AGA Minigame agent not found.", null, status));
+            return Conflict(new ApiResponse<object>(false, "AGA Minigame agent not found.", null, status));
         }
 
         if (await _authService.UserExistsByEmailAsync(request.Email))
         {
             const int status = StatusCodes.Status409Conflict;
-            return Conflict(new ApiResponse<object>(true, "User email already in use.", null, status));
+            return Conflict(new ApiResponse<object>(false, "User email already in use.", null, status));
         }
 
         if (await _authService.UserExistsByAccountAsync(request.Account))
         {
             const int status = StatusCodes.Status409Conflict;
-            return Conflict(new ApiResponse<object>(true, "User account already in use.", null, status));
+            return Conflict(new ApiResponse<object>(false, "User account already in use.", null, status));
         }
 
-        var result = await _authService.RegisterAsync(request);
+        var result = await _authService.RegisterAsync(request, agent);
         const int created = StatusCodes.Status201Created;
         return Ok(new ApiResponse<object>(true, "User registration successful.", result, created));
     } 

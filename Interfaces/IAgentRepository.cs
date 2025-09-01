@@ -1,9 +1,10 @@
+using AGAMinigameApi.Dtos.Agent;
 using AGAMinigameApi.Models;
 
 namespace AGAMinigameApi.Interfaces
 {
     public interface IAgentRepository
     {
-        Task<bool> AgentExistsByCodeAsync(string code);
+        Task<Agent?> GetAgentByCodeAsync(string code);
     }
 }

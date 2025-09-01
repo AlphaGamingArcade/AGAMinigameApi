@@ -9,7 +9,7 @@ namespace AGAMinigameApi.Services
     {
         Task<bool> UserExistsByEmailAsync(string email);
         Task<bool> UserExistsByAccountAsync(string email);
-        Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request);
+        Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent);
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
         Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
         Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshTokenDto request);
@@ -26,11 +26,12 @@ namespace AGAMinigameApi.Services
 
         public async Task<bool> UserExistsByEmailAsync(string email) => await _authRepository.UserExistsByEmailAsync(email);
         public async Task<bool> UserExistsByAccountAsync(string account) => await _authRepository.UserExistsByAccountAsync(account);
-        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request)
+        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent)
         {
             var dateTime = DateHelper.GetUtcNow();
             var user = new User
             {
+                AgentId = agent.Id,
                 Nickname = request.Nickname,
                 Account = request.Account,
                 Email = request.Email,
