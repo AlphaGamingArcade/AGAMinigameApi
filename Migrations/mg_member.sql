@@ -1,0 +1,23 @@
+CREATE TABLE dbo.mg_member (
+    member_id INT PRIMARY KEY,
+    member_agent_id SMALLINT,
+    member_account VARCHAR(64) NOT NULL UNIQUE,
+    member_email VARCHAR(255) NOT NULL UNIQUE,
+    member_password VARCHAR(255) NOT NULL, 
+    member_nickname VARCHAR(64),
+    member_gamemoney DECIMAL(19, 2),
+    member_charge_money DECIMAL(19, 2),
+    member_exchange_money DECIMAL(19, 2),
+    member_betting_money DECIMAL(19, 2),
+    member_betting_benefit DECIMAL(19, 2),
+    member_token VARCHAR(64),
+    member_online CHAR(1),
+    member_free_spin_status CHAR(1),
+    member_jackpot_status CHAR(1),
+    member_status CHAR(1) NULL,
+    member_datetime DATETIME NULL,
+    member_update DATETIME NULL,
+    member_deny_chat DATETIME NULL,
+    member_nickname_update DATETIME NULL,
+    member_level TINYINT NULL
+);

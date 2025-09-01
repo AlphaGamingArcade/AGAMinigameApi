@@ -34,5 +34,43 @@ namespace AGAMinigameApi.Repositories
 
             return dataTable;
         }
+
+        protected async Task<object?> InsertQueryAsync(string query, Dictionary<string, object>? parameters = null)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            // Append SELECT SCOPE_IDENTITY() so we get the inserted ID
+            query += "; SELECT SCOPE_IDENTITY();";
+
+            using var command = new SqlCommand(query, connection);
+
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                }
+            }
+
+            await connection.OpenAsync();
+            return await command.ExecuteScalarAsync(); // returns new ID
+        }
+
+        protected async Task<int> UpdateQueryAsync(string query, Dictionary<string, object>? parameters = null)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(query, connection);
+
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                }
+            }
+
+            await connection.OpenAsync();
+            return await command.ExecuteNonQueryAsync(); // number of rows updated
+        }
+
     }
 }

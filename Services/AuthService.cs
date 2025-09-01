@@ -1,14 +1,43 @@
 using AGAMinigameApi.Dtos.Auth;
-using AGAMinigameApi.Dtos.Common;
 
 namespace AGAMinigameApi.Services
 {
     public interface IAuthService
     {
-        Task<ApiResponse<RegisterResponseDto>> RegisterAsync(RegisterRequestDto request);
-        Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request);
-        Task<ApiResponse<ForgotPasswordResponseDto>> ForgotPasswordAsync(ForgotPasswordDto request);
-        Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(RefreshTokenDto request);
-        Task<ApiResponse<ResetPasswordResponseDto>> ResetPasswordAsync(ResetPasswordDto request);
+        Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request);
+        Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+        Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
+        Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshTokenDto request);
+        Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request);
+    }
+
+    public class AuthService : IAuthService
+    {
+
+        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+        {
+            await Task.Delay(1000);
+            return new LoginResponseDto();
+        }
+        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request)
+        {
+            await Task.Delay(1000);
+            return new RegisterResponseDto();
+        }
+        public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request)
+        {
+            await Task.Delay(1000);
+            return new ForgotPasswordResponseDto();
+        }
+        public async Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshTokenDto request)
+        {
+            await Task.Delay(1000);
+            return new RefreshTokenResponseDto();
+        }
+        public async Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request)
+        {
+            await Task.Delay(1000);
+            return new ResetPasswordResponseDto();
+        }
     }
 }
