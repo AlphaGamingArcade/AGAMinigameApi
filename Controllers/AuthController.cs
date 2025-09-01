@@ -1,6 +1,5 @@
 using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Dtos.Common;
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,9 +22,22 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
-        await Task.Delay(1000); 
-        return Ok(new ApiResponse<object>(true, "User registration successful.", null, 200));
-    }
+        if (await _authService.UserExistsByEmailAsync(request.Email))
+        {
+            const int status = StatusCodes.Status409Conflict;
+            return Conflict(new ApiResponse<object>(true, "User email already in use.", null, status));
+        }
+
+        if (await _authService.UserExistsByAccountAsync(request.Account))
+        {
+            const int status = StatusCodes.Status409Conflict;
+            return Conflict(new ApiResponse<object>(true, "User account already in use.", null, status));
+        }
+
+        var result = await _authService.RegisterAsync(request);
+        const int created = StatusCodes.Status201Created;
+        return Ok(new ApiResponse<object>(true, "User registration successful.", result, created));
+    } 
 
     // POST /auth/login
     [HttpPost("login")]

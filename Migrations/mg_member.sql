@@ -1,5 +1,5 @@
 CREATE TABLE dbo.mg_member (
-    member_id INT PRIMARY KEY,
+    member_id INT PRIMARY KEY IDENTITY(1, 1) NOT NULL,
     member_agent_id SMALLINT,
     member_account VARCHAR(64) NOT NULL UNIQUE,
     member_email VARCHAR(255) NOT NULL UNIQUE,
@@ -9,7 +9,7 @@ CREATE TABLE dbo.mg_member (
     member_charge_money DECIMAL(19, 2),
     member_exchange_money DECIMAL(19, 2),
     member_betting_money DECIMAL(19, 2),
-    member_betting_benefit DECIMAL(19, 2),
+    member_betting_benefit_money DECIMAL(19, 2),
     member_token VARCHAR(64),
     member_online CHAR(1),
     member_free_spin_status CHAR(1),

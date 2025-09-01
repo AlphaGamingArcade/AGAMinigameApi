@@ -8,9 +8,9 @@ namespace AGAMinigameApi.Repositories
     {
         public AuthRepository(IConfiguration configuration) : base(configuration) { }
 
-        public async Task<bool> UserExistsAsync(string email)
+        public async Task<bool> UserExistsByEmailAsync(string email)
         {
-            const string query = "SELECT email FROM mg_member WHERE member_email = @email;";
+            const string query = "SELECT member_email FROM mg_member WHERE member_email = @email;";
             var parameters = new Dictionary<string, object>
             {
                 { "@email", email }
@@ -19,6 +19,19 @@ namespace AGAMinigameApi.Repositories
             var dataTable = await SelectQueryAsync(query, parameters);
             return dataTable.Rows.Count > 0;
         }
+
+        public async Task<bool> UserExistsByAccountAsync(string account)
+        {
+            const string query = "SELECT member_account FROM mg_member WHERE member_account = @account;";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@account", account }
+            };
+
+            var dataTable = await SelectQueryAsync(query, parameters);
+            return dataTable.Rows.Count > 0;
+        }
+
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
@@ -37,18 +50,55 @@ namespace AGAMinigameApi.Repositories
             return null;
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<User> CreateUserAsync(User user, DateTime dateTime)
         {
             const string query = @"
-                INSERT INTO mg_member (member_account, member_nickname, member_email, member_password)
-                VALUES (@account, @nickname, @email, @password);";
+                INSERT INTO dbo.mg_member (
+                    member_agent_id,
+                    member_account,
+                    member_nickname,
+                    member_email,
+                    member_password,
+                    member_gamemoney,
+                    member_charge_money,
+                    member_exchange_money,
+                    member_betting_money,
+                    member_betting_benefit_money,
+                    member_token,
+                    member_online,
+                    member_free_spin_status,
+                    member_jackpot_status,
+                    member_status,
+                    member_datetime,
+                    member_update,
+                    member_level
+                )
+                OUTPUT inserted.member_id
+                VALUES (
+                    @agent_id,
+                    @account,
+                    @nickname,
+                    @email,
+                    @password,
+                    0, 0, 0, 0, 0,
+                    @token,
+                    'n', 'n', 'n', 'a',
+                    @createdAt,
+                    @updatedAt,
+                    @level
+                );";
 
             var parameters = new Dictionary<string, object>
             {
-                ["@nickname"] = user.Nickname,
+                ["@agent_id"] = user.AgentId,
                 ["@account"] = user.Account,
+                ["@nickname"] = user.Nickname,
                 ["@email"] = user.Email,
-                ["@password"] = user.Password
+                ["@password"] = user.Password,
+                ["@token"] = string.Empty,
+                ["@createdAt"] = dateTime,
+                ["@updatedAt"] = dateTime,
+                ["@level"] = 1
             };
 
             var newIdObj = await InsertQueryAsync(query, parameters);
