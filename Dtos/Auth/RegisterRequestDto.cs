@@ -5,12 +5,16 @@ namespace AGAMinigameApi.Dtos.Auth;
 public class RegisterRequestDto
 {
     [Required]
-    [EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    [StringLength(64, MinimumLength = 4, ErrorMessage = "Account must be between 4 and 64 characters.")]
+    public string Account { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(50, MinimumLength = 4, ErrorMessage = "Username must be between 4 and 50 characters.")]
-    public string Username { get; set; } = string.Empty;
+    [StringLength(64, MinimumLength = 4, ErrorMessage = "Nickname must be between 4 and 64 characters.")]
+    public string Nickname { get; set; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
 
     [Required]
     [DataType(DataType.Password)]

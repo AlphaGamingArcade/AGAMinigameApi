@@ -40,12 +40,13 @@ namespace AGAMinigameApi.Repositories
         public async Task<User> CreateUserAsync(User user)
         {
             const string query = @"
-                INSERT INTO mg_member (member_username, member_email, member_password)
-                VALUES (@username, @email, @password);";
+                INSERT INTO mg_member (member_account, member_nickname, member_email, member_password)
+                VALUES (@account, @nickname, @email, @password);";
 
             var parameters = new Dictionary<string, object>
             {
-                ["@username"] = user.Email,
+                ["@nickname"] = user.Nickname,
+                ["@account"] = user.Account,
                 ["@email"] = user.Email,
                 ["@password"] = user.Password
             };
