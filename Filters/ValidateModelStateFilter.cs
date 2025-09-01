@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using AGAMinigameApi.Dtos; // Make sure this namespace matches your ApiResponse DTO
+using AGAMinigameApi.Dtos;
+using AGAMinigameApi.Dtos.Common; // Make sure this namespace matches your ApiResponse DTO
 namespace AGAMinigameApi.Filters // You can adjust this namespace
 {
     public class ValidateModelStateFilter : IActionFilter
