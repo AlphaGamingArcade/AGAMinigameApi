@@ -1,5 +1,7 @@
 using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Repositories;
+using AGAMinigameApi.Services;
+using AGAMinigameApi.Services.AGAMinigameApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +21,10 @@ builder.Services.AddControllers(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-builder.Services.AddTransient<IBannerRepository, BannerRepository>();
-builder.Services.AddTransient<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IBannerRepository, BannerRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
+
+builder.Services.AddScoped<IGameService, GameService>();
 
 
 builder.Services.AddControllers();
