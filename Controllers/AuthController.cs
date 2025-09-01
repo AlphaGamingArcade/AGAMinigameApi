@@ -52,10 +52,24 @@ public class AuthController : ControllerBase
     // POST /auth/login
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
-    { 
-        await Task.Delay(1000);
-        return Ok(new ApiResponse<object>(true, "User login successful.", null, 200));
-     }
+    {
+        var user = await _authService.GetUserByEmailAsync(request.Email); 
+        if (user is null)
+        {
+            const int status = StatusCodes.Status404NotFound;
+            return Conflict(new ApiResponse<object>(false, "Email not registered.", null, status));
+        }
+
+        // TODO : Make this hashed
+        if (user.Password != request.Password)
+        {
+            const int status = StatusCodes.Status401Unauthorized;
+            return Conflict(new ApiResponse<object>(false, "Incorrect password.", null, status));
+        }
+
+        var result = await _authService.LoginAsync(request, user);
+        return Ok(new ApiResponse<object>(true, "User login successful.", result, 200));
+    }
 
     // POST /auth/logout
     [HttpPost("logout")]

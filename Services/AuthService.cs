@@ -10,8 +10,9 @@ namespace AGAMinigameApi.Services
     {
         Task<bool> UserExistsByEmailAsync(string email);
         Task<bool> UserExistsByAccountAsync(string email);
+        Task<User?> GetUserByEmailAsync(string email);
         Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent);
-        Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+        Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user);
         Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
         Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshTokenDto request);
         Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request);
@@ -32,55 +33,70 @@ namespace AGAMinigameApi.Services
             _jwtIssuer = configuration["JwtSettings:Issuer"] ?? throw new InvalidOperationException("JWT issues missing in config.");
         }
 
-        public async Task<bool> UserExistsByEmailAsync(string email) => await _authRepository.UserExistsByEmailAsync(email);
-        public async Task<bool> UserExistsByAccountAsync(string account) => await _authRepository.UserExistsByAccountAsync(account);
-        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent)
+        private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(int memberId, DateTime nowUtc)
         {
-            var dateTime = DateHelper.GetUtcNow();
-            var user = new User
-            {
-                AgentId = agent.Id,
-                Nickname = request.Nickname,
-                Account = request.Account,
-                Email = request.Email,
-                Password = request.Password
-            };
-            var createdUser = await _authRepository.CreateUserAsync(user, dateTime);
-
-            // GENERATE TOKENS
-            var accessToken = _jwtTokenService.GenerateAccessToken(createdUser.Id.ToString());
+            // 1) Generate tokens
+            var accessToken  = _jwtTokenService.GenerateAccessToken(memberId.ToString());
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
-            // Clear all existing tokens
-            await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(createdUser.Id);
-            // Optionally save refreshToken to DB here
-            var createdAt = DateHelper.GetUtcNow();
-            var expiresAt = createdAt.AddDays(7);
+            // 2) Clear existing refresh tokens for this issuer/member
+            await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(memberId);
 
-            var refreshTokenObj = new RefreshToken
+            // 3) Save new refresh token
+            var refresh = new RefreshToken
             {
-                MemberId = createdUser.Id,
-                Token = refreshToken,
-                Issuer = _jwtIssuer,
-                CreatedAt = createdAt,
-                ExpiresAt = expiresAt,
+                MemberId  = memberId,
+                Token     = refreshToken,
+                Issuer    = _jwtIssuer,
+                CreatedAt = nowUtc,
+                ExpiresAt = nowUtc.AddDays(7),
                 RevokedAt = null
             };
 
-            await _refreshTokenRepository.CreateRefreshTokenAsync(refreshTokenObj);
+            await _refreshTokenRepository.CreateRefreshTokenAsync(refresh);
 
-            var result = new RegisterResponseDto
+            return (accessToken, refreshToken);
+        }
+
+        public async Task<bool> UserExistsByEmailAsync(string email) => await _authRepository.UserExistsByEmailAsync(email);
+        public async Task<bool> UserExistsByAccountAsync(string account) => await _authRepository.UserExistsByAccountAsync(account);
+        public async Task<User?> GetUserByEmailAsync(string email) => await _authRepository.GetUserByEmailAsync(email);
+        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent)
+        {
+            var dateTime = DateHelper.GetUtcNow();
+
+            var user = new User
             {
-                AccessToken = accessToken,
+                AgentId  = agent.Id,
+                Nickname = request.Nickname,
+                Account  = request.Account,
+                Email    = request.Email,
+                Password = request.Password
+            };
+
+            var createdUser = await _authRepository.CreateUserAsync(user, dateTime);
+
+            var (accessToken, refreshToken) = await GenerateTokensAsync(createdUser.Id, dateTime);
+
+            return new RegisterResponseDto
+            {
+                AccessToken  = accessToken,
                 RefreshToken = refreshToken
             };
-            return result;
         }
-        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+        
+        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user)
         {
-            await Task.Delay(1000);
-            return new LoginResponseDto();
+            var dateTime = DateHelper.GetUtcNow();
+            var (accessToken, refreshToken)  = await GenerateTokensAsync(user.Id, dateTime);
+
+            return new LoginResponseDto
+            {
+                AccessToken  = accessToken,
+                RefreshToken = refreshToken
+            };
         }
+
         public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request)
         {
             await Task.Delay(1000);
