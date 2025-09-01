@@ -1,12 +1,11 @@
 using AGAMinigameApi.Dtos.Auth;
-using AGAMinigameApi.Models; // Assuming you have an ApplicationUser model
+using AGAMinigameApi.Dtos.Common;
 
 namespace AGAMinigameApi.Services
 {
     public interface IAuthService
     {
-        Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request);
-        Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+        Task<ApiResponse<RegisterResponseDto>> RegisterAsync(RegisterRequestDto request);
+        Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request);
     }
 }
-
