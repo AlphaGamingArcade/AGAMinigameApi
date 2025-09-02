@@ -1,10 +1,23 @@
 using System.Data;
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
 namespace AGAMinigameApi.Repositories
 {
+    public interface IGameRepository
+    {
+        Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
+            string? sortBy,
+            bool descending,
+            int pageNumber,
+            int pageSize
+        );
+        // Task<Banner> GetById(int id);
+        // Task<int> Add(Banner banner);
+        // Task<int> Update(Banner banner);
+        // Task<int> Delete(int id);
+    }
+
     public class GameRepository : BaseRepository, IGameRepository
     {
         public GameRepository(IConfiguration configuration) : base(configuration) { }
@@ -63,7 +76,7 @@ namespace AGAMinigameApi.Repositories
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-                    var pageParameters = new Dictionary<string, object>
+            var pageParameters = new Dictionary<string, object>
             {
                 { "@offset", offset },
                 { "@pageSize", pageSize }

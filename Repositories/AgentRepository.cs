@@ -1,9 +1,13 @@
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
 namespace AGAMinigameApi.Repositories
 {
+    public interface IAgentRepository
+    {
+        Task<Agent?> GetAgentByCodeAsync(string code);
+    }
+
     public class AgentRepository : BaseRepository, IAgentRepository
     {
         public AgentRepository(IConfiguration configuration) : base(configuration) { }
@@ -29,7 +33,7 @@ namespace AGAMinigameApi.Repositories
                 var row = dataTable.Rows[0];
                 return row.ToAgentFromDataRow();
             }
-            
+
             return null;
         }
     }

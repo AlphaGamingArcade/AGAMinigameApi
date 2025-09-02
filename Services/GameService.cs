@@ -1,6 +1,6 @@
 using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Common;
-using AGAMinigameApi.Interfaces;
+using AGAMinigameApi.Repositories;
 using api.Mappers;
 
 namespace AGAMinigameApi.Services

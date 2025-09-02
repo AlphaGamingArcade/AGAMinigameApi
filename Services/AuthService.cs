@@ -1,7 +1,7 @@
 using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Helpers;
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
+using AGAMinigameApi.Repositories;
 using SlotsApi.Services;
 
 namespace AGAMinigameApi.Services
@@ -98,10 +98,7 @@ namespace AGAMinigameApi.Services
             };
         }
 
-        public async Task LogoutAsync(int memberId)
-        {
-            await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(memberId);
-        }
+        public async Task LogoutAsync(int memberId) => await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(memberId);
         
 
         public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request)

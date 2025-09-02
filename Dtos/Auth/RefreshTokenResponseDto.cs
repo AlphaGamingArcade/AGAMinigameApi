@@ -1,8 +1,7 @@
 namespace AGAMinigameApi.Dtos.Auth
 {
-    public class RefreshTokenResponseDto
+    public class RefreshTokenResponseDto : LoginResponseDto
     {
-        public string AccessToken { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
+
     }
 }

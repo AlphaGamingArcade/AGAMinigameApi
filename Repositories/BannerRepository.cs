@@ -1,14 +1,21 @@
 using System.Data;
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
 using api.Mappers;
-using Microsoft.Data.SqlClient;
 
 namespace AGAMinigameApi.Repositories
 {
+    public interface IBannerRepository
+    {
+        Task<IEnumerable<Banner>> GetAll();
+        // Task<Banner> GetById(int id);
+        // Task<int> Add(Banner banner);
+        // Task<int> Update(Banner banner);
+        // Task<int> Delete(int id);
+    }
+
     public class BannerRepository : BaseRepository, IBannerRepository
     {
-        public BannerRepository(IConfiguration configuration) : base(configuration){}
+        public BannerRepository(IConfiguration configuration) : base(configuration) { }
 
         public async Task<IEnumerable<Banner>> GetAll()
         {

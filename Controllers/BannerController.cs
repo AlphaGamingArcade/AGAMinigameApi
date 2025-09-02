@@ -1,5 +1,5 @@
 using AGAMinigameApi.Dtos.Banner;
-using AGAMinigameApi.Interfaces;
+using AGAMinigameApi.Repositories;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 

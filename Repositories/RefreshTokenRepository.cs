@@ -1,10 +1,15 @@
-using System.Data;
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
 namespace AGAMinigameApi.Repositories
 {
+    public interface IRefreshTokenRepository
+    {
+        Task<RefreshToken?> GetRefreshTokenAsync(string refreshToken);
+        Task<RefreshToken> CreateRefreshTokenAsync(RefreshToken refreshToken);
+        Task<int> DeleteRefreshTokenByMemberIdAsync(int memberId);
+    }
+
     public class RefreshTokenRepository : BaseRepository, IRefreshTokenRepository
     {
         private readonly ILogger<RefreshTokenRepository> _logger;
@@ -85,7 +90,7 @@ namespace AGAMinigameApi.Repositories
                     { "@revokedAt", (object?)refreshToken.RevokedAt ?? DBNull.Value }
                 };
 
-                
+
                 var newIdObj = await InsertQueryAsync(sql, parameters);
                 refreshToken.Id = Convert.ToInt32(newIdObj);
 

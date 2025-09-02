@@ -1,5 +1,5 @@
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
+using AGAMinigameApi.Repositories;
 
 namespace AGAMinigameApi.Services
 {

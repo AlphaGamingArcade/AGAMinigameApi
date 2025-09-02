@@ -1,9 +1,17 @@
-using AGAMinigameApi.Interfaces;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
 namespace AGAMinigameApi.Repositories
 {
+    public interface IAuthRepository
+    {
+        Task<bool> UserExistsByEmailAsync(string email);
+        Task<bool> UserExistsByAccountAsync(string account);
+        Task<User?> GetUserByEmailAsync(string email);
+        Task<User> CreateUserAsync(User user, DateTime dateTime);
+        Task UpdatePasswordAsync(int userId, string newPassword);
+    }
+
     public class AuthRepository : BaseRepository, IAuthRepository
     {
         public AuthRepository(IConfiguration configuration) : base(configuration) { }
