@@ -36,7 +36,7 @@ namespace api.Mappers
                 Status = Convert.ToChar(reader["game_status"]),
                 Top = Convert.ToChar(reader["game_top"]),
                 Trending = Convert.ToChar(reader["game_trending"]),
-                Datetime =  Convert.ToDateTime(reader["game_created_at"]),
+                Datetime =  Convert.ToDateTime(reader["game_datetime"]),
             };
         }
     }

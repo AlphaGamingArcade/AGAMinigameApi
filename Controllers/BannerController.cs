@@ -1,8 +1,5 @@
-using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Common;
-using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services;
-using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AGAMinigameApi.Controllers;
@@ -14,7 +11,7 @@ public class BannerController : ControllerBase
     private readonly ILogger<BannerController> _logger;
     private readonly IBannerService _bannerService;
 
-    public BannerController(ILogger<BannerController> logger, BannerService bannerService)
+    public BannerController(ILogger<BannerController> logger, IBannerService bannerService)
     {
         _logger = logger;
         _bannerService = bannerService;

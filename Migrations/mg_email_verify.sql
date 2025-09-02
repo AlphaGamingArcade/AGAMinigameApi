@@ -5,7 +5,7 @@ CREATE TABLE dbo.mg_email_verify (
     email_verify_issuer       VARCHAR(64)    NULL,
     email_verify_token        VARBINARY(64)  NOT NULL UNIQUE,
     email_verify_purpose      VARCHAR(32)    NOT NULL DEFAULT 'email_verify',
-    email_verify_created_at   DATETIME2   NOT NULL,  -- set from app
+    email_verify_   DATETIME2   NOT NULL,  -- set from app
     email_verify_expires_at   DATETIME2   NOT NULL,  -- set from app
     email_verify_consumed_at  DATETIME2   NULL,
     email_verify_revoked_at   DATETIME2   NULL,

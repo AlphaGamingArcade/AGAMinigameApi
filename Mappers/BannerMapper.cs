@@ -47,7 +47,7 @@ namespace api.Mappers
                 Image = Convert.ToString(reader["banner_image"]),
                 Url = Convert.ToString(reader["banner_url"]),
                 Order = Convert.ToInt32(reader["banner_order"]),
-                Datetime = Convert.ToDateTime(reader["banner_created_at"]),
+                Datetime = Convert.ToDateTime(reader["banner_datetime"]),
             };
         }
     }

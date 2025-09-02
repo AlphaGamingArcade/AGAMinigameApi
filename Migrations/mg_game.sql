@@ -10,5 +10,5 @@ CREATE TABLE mg_game(
     game_top CHAR(1) NOT NULL,
     game_latest CHAR(1) NOT NULL,
     game_trending CHAR(1) NOT NULL,
-    game_created_at datetime2 NOT NULL,
+    game_datetime datetime2 NOT NULL,
 );

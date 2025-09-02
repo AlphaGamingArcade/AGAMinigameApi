@@ -53,7 +53,7 @@ namespace AGAMinigameApi.Repositories
             string orderColumn = sortBy?.ToLowerInvariant() switch
             {
                 "name" => "game_name",
-                "createdat" => "game_created_at",
+                "datetime" => "game_datetime",
                 "code" => "game_code",
                 "category" => "game_category",
                 _ => "game_id"
@@ -71,7 +71,7 @@ namespace AGAMinigameApi.Repositories
             string pageSql = $@"
                 SELECT 
                     game_id, game_code, game_name, game_description, game_image, game_url,
-                    game_status, game_top, game_trending, game_created_at
+                    game_status, game_top, game_trending, game_datetime
                 FROM mg_game
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";

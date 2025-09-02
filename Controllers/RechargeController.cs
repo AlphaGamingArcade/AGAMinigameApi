@@ -5,20 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace AGAMinigameApi.Controllers;
 
 [ApiController]
-[Route("games")]
-public class GameController : ControllerBase
+[Route("recharges")]
+public class RechargeController : ControllerBase
 {
-    private readonly ILogger<GameController> _logger;
+    private readonly ILogger<RechargeController> _logger;
     private readonly IGameService _gameService;
 
-    public GameController(ILogger<GameController> logger, IGameService gameService)
+    public RechargeController(ILogger<RechargeController> logger, IGameService gameService)
     {
         _logger = logger;
         _gameService = gameService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedGames([FromQuery] PagedRequestDto requestDto)
+    public async Task<IActionResult> GetPaginatedRecharges([FromQuery] PagedRequestDto requestDto)
     {
         var result = await _gameService.GetPaginatedGamesAsync(requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));

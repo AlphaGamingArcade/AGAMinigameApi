@@ -5,5 +5,5 @@ CREATE TABLE mg_banner(
     banner_image NVARCHAR(MAX) NOT NULL,
     banner_url NVARCHAR(MAX) NOT NULL,
     banner_order INT NOT NULL,
-    banner_created_at datetime2 NOT NULL
+    banner_datetime datetime2 NOT NULL
 );
