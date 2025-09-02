@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Services;
@@ -23,6 +24,7 @@ public class MemberController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetPaginatedMemberRecharges(int memberId, [FromQuery] PagedRequestDto requestDto)
     {
+        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); 
         var result = await _rechargeService.GetPaginatedMemberRechargesAsync(memberId, requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }

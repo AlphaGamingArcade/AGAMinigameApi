@@ -9,7 +9,7 @@ namespace SlotsApi.Services;
 
 public interface IJwtTokenService
 {
-    string GenerateAccessToken(string memberId);
+    string GenerateAccessToken(string memberId, IEnumerable<string>? roles = null);
     string GenerateRefreshToken();
 }
 public class JwtTokenService : IJwtTokenService
@@ -25,20 +25,29 @@ public class JwtTokenService : IJwtTokenService
         _expiryMinutes = int.Parse(config["JwtSettings:AccessTokenExpiryMinutes"] ?? "30");
     }
 
-    public string GenerateAccessToken(string memberId)
+    public string GenerateAccessToken(string memberId, IEnumerable<string>? roles = null)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_secret);
         var now = DateHelper.GetUtcNow();
         var expiresAt = DateHelper.GetUtcNow().AddMinutes(_expiryMinutes); // requires utc
 
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, memberId),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
+            new Claim(JwtRegisteredClaimNames.Iat,
+                    new DateTimeOffset(now).ToUnixTimeSeconds().ToString(),
+                    ClaimValueTypes.Integer64)
+        };
+
+        if (roles != null)
+            foreach (var r in roles)
+                claims.Add(new Claim("role", r));
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new List<Claim> {
-                new Claim(JwtRegisteredClaimNames.Sub, memberId),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")), // unique ID
-                new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64) // timestamp
-            }),
+            Subject =  new ClaimsIdentity(claims),
             Expires = expiresAt,
             Issuer = _issuer,
             SigningCredentials = new SigningCredentials(
