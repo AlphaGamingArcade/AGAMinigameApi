@@ -8,6 +8,7 @@ namespace AGAMinigameApi.Services
     public interface IRechargeService
     {
         Task<PagedResult<RechargeDto>> GetPaginatedRechargesAsync(PagedRequestDto requestDto);
+        Task<PagedResult<RechargeDto>> GetPaginatedMemberRechargesAsync(int memberId, PagedRequestDto requestDto);
     }
 
     public class RechargeService : IRechargeService
@@ -22,6 +23,29 @@ namespace AGAMinigameApi.Services
         public async Task<PagedResult<RechargeDto>> GetPaginatedRechargesAsync(PagedRequestDto requestDto)
         {
             var (recharges, total) = await _rechargeRepository.GetPaginatedRechargesAsync(
+                requestDto.SortBy,
+                requestDto.Descending,
+                requestDto.PageNumber,
+                requestDto.PageSize
+            );
+
+            var rechargeDtos = recharges.Select(g => g.ToRechargeDto());
+
+            var pagedResult = new PagedResult<RechargeDto>
+            {
+                Items = rechargeDtos,
+                TotalRecords = total,
+                PageNumber = requestDto.PageNumber,
+                PageSize = requestDto.PageSize
+            };
+
+            return pagedResult;
+        }
+
+        public async Task<PagedResult<RechargeDto>> GetPaginatedMemberRechargesAsync(int memberId, PagedRequestDto requestDto)
+        {
+            var (recharges, total) = await _rechargeRepository.GetPaginatedRechargesByMemberIdAsync(
+                memberId,
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,

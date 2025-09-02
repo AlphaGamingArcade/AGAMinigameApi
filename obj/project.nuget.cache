@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "bcVgfkvr/y4=",
+  "dgSpecHash": "4fy3b7ASW6U=",
   "success": true,
   "projectFilePath": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\AGAMinigameApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\pc\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.8\\microsoft.aspnetcore.authentication.jwtbearer.9.0.8.nupkg.sha512",
-    "C:\\Users\\pc\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.4\\microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
+    "C:\\Users\\pc\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.8\\microsoft.aspnetcore.openapi.9.0.8.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.bcl.cryptography\\9.0.4\\microsoft.bcl.cryptography.9.0.4.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.data.sqlclient\\6.1.1\\microsoft.data.sqlclient.6.1.1.nupkg.sha512",
@@ -40,6 +40,7 @@
     "C:\\Users\\pc\\.nuget\\packages\\nswag.core.yaml\\14.5.0\\nswag.core.yaml.14.5.0.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\nswag.generation\\14.5.0\\nswag.generation.14.5.0.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\nswag.generation.aspnetcore\\14.5.0\\nswag.generation.aspnetcore.14.5.0.nupkg.sha512",
+    "C:\\Users\\pc\\.nuget\\packages\\scalar.aspnetcore\\2.7.2\\scalar.aspnetcore.2.7.2.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\system.clientmodel\\1.5.1\\system.clientmodel.1.5.1.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.4\\system.configuration.configurationmanager.9.0.4.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.1\\system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",

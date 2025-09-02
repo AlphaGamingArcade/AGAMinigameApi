@@ -29,12 +29,15 @@ public class JwtTokenService : IJwtTokenService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_secret);
+        var now = DateHelper.GetUtcNow();
         var expiresAt = DateHelper.GetUtcNow().AddMinutes(_expiryMinutes); // requires utc
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] {
-                new Claim(ClaimTypes.NameIdentifier, memberId)
+            Subject = new ClaimsIdentity(new List<Claim> {
+                new Claim(JwtRegisteredClaimNames.Sub, memberId),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")), // unique ID
+                new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64) // timestamp
             }),
             Expires = expiresAt,
             Issuer = _issuer,

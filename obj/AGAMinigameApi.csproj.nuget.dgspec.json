@@ -50,7 +50,7 @@
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[9.0.4, )"
+              "version": "[9.0.8, )"
             },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
@@ -59,6 +59,10 @@
             "NSwag.AspNetCore": {
               "target": "Package",
               "version": "[14.5.0, )"
+            },
+            "Scalar.AspNetCore": {
+              "target": "Package",
+              "version": "[2.7.2, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
