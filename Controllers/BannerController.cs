@@ -1,5 +1,7 @@
 using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Repositories;
+using AGAMinigameApi.Services;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,18 +12,18 @@ namespace AGAMinigameApi.Controllers;
 public class BannerController : ControllerBase
 {
     private readonly ILogger<BannerController> _logger;
-    private readonly IBannerRepository _bannerRepository;
+    private readonly IBannerService _bannerService;
 
-    public BannerController(ILogger<BannerController> logger, IBannerRepository bannerRepository)
+    public BannerController(ILogger<BannerController> logger, BannerService bannerService)
     {
         _logger = logger;
-        _bannerRepository = bannerRepository;
+        _bannerService = bannerService;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<BannerDto>> Get()
+    public async Task<IActionResult> GetPaginatedBanners([FromQuery] PagedRequestDto requestDto)
     {
-        var banners = await _bannerRepository.GetAll();
-        return banners.Select(b => b.ToBannerDto());
+        var result = await _bannerService.GetPaginatedBannersAsync(requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 }
