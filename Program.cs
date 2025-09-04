@@ -2,7 +2,6 @@ using System.Text;
 using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;

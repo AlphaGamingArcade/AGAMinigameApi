@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AGAMinigameApi.Validations;
 
 namespace AGAMinigameApi.Dtos.Auth;
 
@@ -11,6 +12,12 @@ public class RegisterRequestDto
     [Required]
     [StringLength(64, MinimumLength = 4, ErrorMessage = "Nickname must be between 4 and 64 characters.")]
     public string Nickname { get; set; } = string.Empty;
+
+    [Required]
+    [DataType(DataType.Date)]
+    [MinimumAge(18, ErrorMessage = "You must be 18 years or older.")]
+    public DateTime Dob { get; set; }
+
 
     [Required]
     [EmailAddress]
