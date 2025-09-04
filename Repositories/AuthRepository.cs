@@ -66,6 +66,7 @@ namespace AGAMinigameApi.Repositories
                     member_account,
                     member_nickname,
                     member_email,
+                    member_email_status,
                     member_password,
                     member_gamemoney,
                     member_charge_money,
@@ -79,7 +80,8 @@ namespace AGAMinigameApi.Repositories
                     member_status,
                     member_datetime,
                     member_update,
-                    member_level
+                    member_level,
+                    member_dob
                 )
                 OUTPUT inserted.member_id
                 VALUES (
@@ -87,13 +89,15 @@ namespace AGAMinigameApi.Repositories
                     @account,
                     @nickname,
                     @email,
+                    @emailStatus,
                     @password,
                     0, 0, 0, 0, 0,
                     @token,
-                    'n', 'n', 'n', 'a',
+                    'n', 'n', 'n', 'y',
                     @createdAt,
                     @updatedAt,
-                    @level
+                    @level,
+                    @dob
                 );";
 
             var parameters = new Dictionary<string, object>
@@ -102,11 +106,13 @@ namespace AGAMinigameApi.Repositories
                 ["@account"] = user.Account,
                 ["@nickname"] = user.Nickname,
                 ["@email"] = user.Email,
+                ["@emailStatus"] = user.EmailStatus,
                 ["@password"] = user.Password,
                 ["@token"] = string.Empty,
                 ["@createdAt"] = dateTime,
                 ["@updatedAt"] = dateTime,
-                ["@level"] = 1
+                ["@level"] = 1,
+                ["@dob"] = user.Dob
             };
 
             var newIdObj = await InsertQueryAsync(query, parameters);

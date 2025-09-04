@@ -70,6 +70,7 @@ namespace AGAMinigameApi.Services
             {
                 AgentId  = agent.Id,
                 Nickname = request.Nickname,
+                Dob = request.Dob,
                 Account  = request.Account,
                 Email    = request.Email,
                 Password = request.Password
