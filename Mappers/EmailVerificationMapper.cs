@@ -14,7 +14,7 @@ namespace api.Mappers
                 MemberId      = Convert.ToInt32(reader["email_verify_member_id"]),
                 Email         = Convert.ToString(reader["email_verify_email"]) ?? "",
                 AppKey        = Convert.ToString(reader["email_verify_app_key"]),
-                Token         = Convert.ToString(reader["email_verify_token"]) ?? "", // <- fixed
+                TokenHash     = Convert.ToString(reader["email_verify_token_hash"]) ?? "", // <- fixed
                 Purpose       = Convert.ToString(reader["email_verify_purpose"]) ?? "email_verify",
                 CreatedAtUtc  = reader.IsNull("email_verify_created_at") ? DateTime.MinValue : Convert.ToDateTime(reader["email_verify_created_at"]),
                 ExpiresAtUtc  = reader.IsNull("email_verify_expires_at") ? DateTime.MinValue : Convert.ToDateTime(reader["email_verify_expires_at"]),

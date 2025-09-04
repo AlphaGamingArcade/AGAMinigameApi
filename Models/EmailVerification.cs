@@ -14,7 +14,7 @@ public class EmailVerification
     public int MemberId { get; set; }
     public string Email { get; set; } = "";
     public string? AppKey { get; set; }
-    public string Token { get; set; } = ""; 
+    public string TokenHash { get; set; } = ""; 
     public string Purpose { get; set; } = "";
     public DateTime CreatedAtUtc { get; set; }
     public DateTime ExpiresAtUtc { get; set; }

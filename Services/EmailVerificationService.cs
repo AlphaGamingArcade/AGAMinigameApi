@@ -37,6 +37,7 @@ namespace AGAMinigameApi.Services
             var tokenBytes = new byte[32];
             RandomNumberGenerator.Fill(tokenBytes);
             var token = Base64UrlEncode(tokenBytes);
+            var tokenHash = Sha256Hex(token);
 
             // Store only the SHA-256 hash (bytes) in DB
             var entity = new EmailVerification
@@ -44,8 +45,8 @@ namespace AGAMinigameApi.Services
                 MemberId = checked((int)userId),
                 Email = email,
                 AppKey = _appOptions.Key,
-                Token = token,
-                Purpose = "email_verification",
+                TokenHash = tokenHash,
+                Purpose = VerificationPurposes.EmailVerification,
                 CreatedAtUtc = utcNow,
                 ExpiresAtUtc = utcNow.AddMinutes(5),
                 ConsumedAtUtc = null
@@ -78,6 +79,12 @@ namespace AGAMinigameApi.Services
         {
             var s = Convert.ToBase64String(bytes);
             return s.Replace("+", "-").Replace("/", "_").TrimEnd('=');
+        }
+
+        private static string Sha256Hex(string input)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
+            return Convert.ToHexString(bytes); // 64-char uppercase hex
         }
     }
 }
