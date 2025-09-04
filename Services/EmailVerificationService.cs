@@ -11,6 +11,7 @@ namespace AGAMinigameApi.Services
     public interface IEmailVerificationService
     {
         Task<string> CreateEmailVerificationAsync(long userId, string email, DateTime utcNow);
+        Task InvalidateUnconsumedAsync(long userId, string email, DateTime utcNow);
         Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow);
         Task<bool> VerifyAsync(string token, DateTime utcNow);
     }
@@ -67,7 +68,9 @@ namespace AGAMinigameApi.Services
             return true;
         }
 
-        // Helper to compose and send email in one call (optional)
+        public async Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc)
+            => await _repo.InvalidateUnconsumedAsync(userId, email, nowUtc);
+
         public async Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow)
         {
             var token = await CreateEmailVerificationAsync(userId, email, utcNow);

@@ -6,6 +6,7 @@ namespace AGAMinigameApi.Repositories
 {
     public interface IEmailVerificationRepository
     {
+        Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc);
         Task<EmailVerification> CreateEmailVerificationAsync(EmailVerification emailVerification);
         Task<EmailVerification?> GetByTokenAsync(string tokenHash);
         Task MarkUserEmailConfirmedAsync(int memberId, string email, DateTime now);
@@ -43,17 +44,17 @@ namespace AGAMinigameApi.Repositories
 
             var parameters = new Dictionary<string, object>
             {
-                ["@memberId"]     = ev.MemberId,
-                ["@email"]        = ev.Email,
-                ["@appKey"]       = (object?)ev.AppKey ?? DBNull.Value,
-                ["@tokenHash"]    = ev.TokenHash,
-                ["@purpose"]      = string.IsNullOrWhiteSpace(ev.Purpose) ? "email_verify" : ev.Purpose,
+                ["@memberId"] = ev.MemberId,
+                ["@email"] = ev.Email,
+                ["@appKey"] = (object?)ev.AppKey ?? DBNull.Value,
+                ["@tokenHash"] = ev.TokenHash,
+                ["@purpose"] = string.IsNullOrWhiteSpace(ev.Purpose) ? "email_verify" : ev.Purpose,
                 ["@createdAtUtc"] = ev.CreatedAtUtc,
                 ["@expiresAtUtc"] = ev.ExpiresAtUtc,
-                ["@consumedAtUtc"]= (object?)ev.ConsumedAtUtc ?? DBNull.Value
+                ["@consumedAtUtc"] = (object?)ev.ConsumedAtUtc ?? DBNull.Value
             };
 
-            
+
             var newIdObj = await InsertQueryAsync(query, parameters);
             ev.Id = Convert.ToInt64(newIdObj);
 
@@ -95,6 +96,26 @@ namespace AGAMinigameApi.Repositories
             };
 
             await UpdateQueryAsync(consumeSql, parameters);
+        }
+
+        public async Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc)
+        {
+            const string sql = @"
+                UPDATE mg_email_verify
+                SET email_verify_consumed_at = @nowUtc
+                WHERE email_verify_member_id = @memberId
+                AND email_verify_email = @email
+                AND email_verify_consumed_at IS NULL
+                AND email_verify_purpose = @purpose;";
+
+            var p = new Dictionary<string, object>
+            {
+                ["@nowUtc"] = nowUtc,
+                ["@memberId"] = userId,
+                ["@email"] = email,
+                ["@purpose"] = "email_verification"
+            };
+            await SelectQueryAsync(sql, p); // using your existing helper
         }
     }
 }

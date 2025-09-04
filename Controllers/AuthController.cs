@@ -13,13 +13,15 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly IAgentService _agentService;
     private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IEmailVerificationService _emailVerificationService;
 
-    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IEmailVerificationService emailVerificationService)
     {
         _logger = logger;
         _authService = authService;
         _agentService = agentService;
         _refreshTokenService = refreshTokenService;
+        _emailVerificationService = emailVerificationService;
     }
 
     // POST /auth/register
@@ -142,7 +144,30 @@ public class AuthController : ControllerBase
     [HttpPost("resend-verify-email")]
     public async Task<IActionResult> Resend([FromBody] ResendVerifyEmailDto req)
     {
-        await Task.Delay(1000);
+        var now = DateTime.UtcNow;
+
+        var user = await _authService.GetUserByEmailAsync(req.Email);
+        if (user is null)
+        {
+            const int status = StatusCodes.Status200OK;
+            return Ok(new ApiResponse<object>(true, "If an account exists, a verification email will be sent.", null, status));
+        }
+
+        // 3) Invalidate older unconsumed tokens (one link active at a time)
+        await _emailVerificationService.InvalidateUnconsumedAsync(
+            user.Id,
+            user.Email,
+            now
+        );
+
+        // 4) Create a fresh token and send
+        await _emailVerificationService.SendLinkAsync(
+            user.Id,
+            user.Email,
+            user.Nickname,
+            now
+        );
+
         Console.WriteLine(req.Email);
         return Ok(new { message = "If an account exists, a verification email will be sent." });
     }
