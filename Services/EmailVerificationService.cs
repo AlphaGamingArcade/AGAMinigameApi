@@ -70,8 +70,8 @@ namespace AGAMinigameApi.Services
             return true;
         }
 
-        public async Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email) => await GetLastUnconsumedCreatedAtAsync(userId, email);
-        public async Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc) => await CountCreatedSinceAsync(userId, email, sinceUtc);
+        public async Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email) => await _repo.GetLastUnconsumedCreatedAtAsync(userId, email);
+        public async Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc) => await _repo.CountCreatedSinceAsync(userId, email, sinceUtc);
 
         public async Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc)
             => await _repo.InvalidateUnconsumedAsync(userId, email, nowUtc);

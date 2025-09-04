@@ -158,8 +158,8 @@ public class AuthController : ControllerBase
         if (lastCreated is not null && lastCreated.Value > now.AddMinutes(-2))
             return Ok(new ApiResponse<object>(true, message, null, status));
 
-        // Optional daily cap (e.g., max 5 in 24h)
-        var sentCount = await _emailVerificationService.CountCreatedSinceAsync(user.Id, user.Email, now.AddHours(-24));
+        // Optional daily cap (e.g., max 5 in 1 hour)
+        var sentCount = await _emailVerificationService.CountCreatedSinceAsync(user.Id, user.Email, now.AddHours(-1));
         if (sentCount >= 5)
             return Ok(new ApiResponse<object>(true, message, null, status));
         

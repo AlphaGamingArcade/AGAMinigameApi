@@ -123,7 +123,7 @@ namespace AGAMinigameApi.Repositories
         public async Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email)
         {
             const string sql = @"
-                SELECT MAX(email_verify_created_at) AS last_created
+                SELECT MAX(email_verify_created_at) AS last_created_at
                 FROM mg_email_verify
                 WHERE email_verify_member_id = @memberId
                 AND email_verify_email = @email
@@ -137,9 +137,9 @@ namespace AGAMinigameApi.Repositories
                     ["@purpose"] = "email_verification"
                 };
                 var dt = await SelectQueryAsync(sql, p);
-                if (dt.Rows.Count == 0 || dt.Rows[0].IsNull("last_created"))
+                if (dt.Rows.Count == 0 || dt.Rows[0].IsNull("last_created_at"))
                     return null;
-                return Convert.ToDateTime(dt.Rows[0]["last_created"]);
+                return Convert.ToDateTime(dt.Rows[0]["last_created_at"]);
         }
 
         public async Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc)
