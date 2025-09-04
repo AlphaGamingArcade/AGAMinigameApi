@@ -57,7 +57,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
-        var user = await _authService.GetUserByEmailAsync(request.Email); 
+        var user = await _authService.GetUserByEmailAsync(request.Email);
         if (user is null)
         {
             const int status = StatusCodes.Status404NotFound;
@@ -95,13 +95,13 @@ public class AuthController : ControllerBase
         await _authService.LogoutAsync(token.MemberId);
 
         return Ok(new ApiResponse<object>(true, "Logged out successfully.", null, 200));
-        
+
     }
 
     // POST /auth/forgot-password
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
-    { 
+    {
         await Task.Delay(1000);
         return Ok(new ApiResponse<object>(true, "Forgot password sent to email.", null, 200));
     }
@@ -109,15 +109,15 @@ public class AuthController : ControllerBase
     // POST /auth/reset-password
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
-    { 
+    {
         await Task.Delay(1000);
         return Ok(new ApiResponse<object>(true, "Reset password successfully.", null, 200));
-     }
+    }
 
     // POST /auth/refresh
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
-    { 
+    {
         var token = await _refreshTokenService.GetRefreshTokenByTokenAsync(request.RefreshToken);
         if (token is null)
         {
@@ -132,9 +132,18 @@ public class AuthController : ControllerBase
 
     // GET /auth/confirm-email
     [HttpGet("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
-    { 
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string token)
+    {
         await Task.Delay(1000);
+        Console.WriteLine(token);
         return Ok(new ApiResponse<object>(true, "Email confirmed.", null, 200));
+    }
+    
+    [HttpPost("resend-verify-email")]
+    public async Task<IActionResult> Resend([FromBody] ResendVerifyEmailDto req)
+    {
+        await Task.Delay(1000);
+        Console.WriteLine(req.Email);
+        return Ok(new { message = "If an account exists, a verification email will be sent." });
     }
 }

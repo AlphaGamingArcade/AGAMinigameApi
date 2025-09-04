@@ -71,7 +71,7 @@ namespace AGAMinigameApi.Services
         public async Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow)
         {
             var token = await CreateEmailVerificationAsync(userId, email, utcNow);
-            var link = $"{_appOptions.Url}/verify/email?token={token}";
+            var link = $"{_appOptions.Url}/auth/confirm-email?token={token}";
             await _emailSender.SendVerificationEmailAsync(email, displayName, link);
         }
 
