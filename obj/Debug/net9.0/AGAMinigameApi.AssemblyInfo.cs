@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AGAMinigameApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+263849694f9ef56b0e2ee62bb25e75ff781fa2e8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52bb53705f6f95ce681d2e88359353d74a06574a")]
 [assembly: System.Reflection.AssemblyProductAttribute("AGAMinigameApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AGAMinigameApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
