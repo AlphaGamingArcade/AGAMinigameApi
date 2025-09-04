@@ -2,7 +2,10 @@ using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
+using AGAMinigameApi.Services.EmailSender;
+using Microsoft.Extensions.Options;
 using SlotsApi.Services;
+using SmptOptions;
 
 namespace AGAMinigameApi.Services
 {
@@ -24,14 +27,18 @@ namespace AGAMinigameApi.Services
         private readonly IAuthRepository _authRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IJwtTokenService _jwtTokenService;
-        private readonly string _jwtIssuer;
+        private readonly IEmailVerificationService _emailVerificationService;
+        private readonly IEmailSender _emailSender;
+        private readonly AppOptions _appOptions;
 
-        public AuthService(IConfiguration configuration, IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository)
+        public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository, IEmailVerificationService emailVerificationService, IEmailSender emailSender, IOptions<AppOptions> appOptions)
         {
             _authRepository = authRepository;
             _jwtTokenService = jwtTokenService;
             _refreshTokenRepository = refreshTokenRepository;
-            _jwtIssuer = configuration["JwtSettings:Issuer"] ?? throw new InvalidOperationException("JWT issues missing in config.");
+            _emailVerificationService = emailVerificationService;
+            _emailSender = emailSender;
+            _appOptions = appOptions.Value;
         }
 
         private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(int memberId, DateTime nowUtc)
@@ -48,7 +55,7 @@ namespace AGAMinigameApi.Services
             {
                 MemberId  = memberId,
                 Token     = refreshToken,
-                Issuer    = _jwtIssuer,
+                Issuer    = _appOptions.Key,
                 CreatedAt = nowUtc,
                 ExpiresAt = nowUtc.AddDays(7),
                 RevokedAt = null
@@ -77,6 +84,10 @@ namespace AGAMinigameApi.Services
             };
 
             var createdUser = await _authRepository.CreateUserAsync(user, dateTime);
+
+            var token = await _emailVerificationService.CreateEmailVerificationAsync(createdUser.Id, createdUser.Email, dateTime);
+            var link = $"{_appOptions.Urls.PublicBaseUrl.TrimEnd('/')}/verify/email?token={Uri.EscapeDataString(token)}";
+            await _emailSender.SendVerificationEmailAsync(createdUser.Email, createdUser.Nickname, link);
 
             var (accessToken, refreshToken) = await GenerateTokensAsync(createdUser.Id, dateTime);
 

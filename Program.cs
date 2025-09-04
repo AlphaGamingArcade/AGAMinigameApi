@@ -1,6 +1,7 @@
 using System.Text;
 using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services;
+using AGAMinigameApi.Services.EmailSender;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -54,6 +55,9 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRechargeRepository, RechargeRepository>();
+builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
+
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IAgentService, AgentService>();
@@ -61,6 +65,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IRechargeService, RechargeService>();
+builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi(options =>

@@ -2,16 +2,12 @@ using System.Security.Cryptography;
 using System.Text;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
+using AGAMinigameApi.Services.EmailSender;
 using Microsoft.Extensions.Options;
 using SmptOptions;
 
 namespace AGAMinigameApi.Services
 {
-    public interface IEmailSender
-    {
-        Task SendVerificationEmailAsync(string toEmail, string displayName, string verificationLink);
-    }
-
     public interface IEmailVerificationService
     {
         Task<string> CreateEmailVerificationAsync(long userId, string email, DateTime utcNow);
