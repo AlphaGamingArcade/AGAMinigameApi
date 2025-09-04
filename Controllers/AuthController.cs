@@ -62,6 +62,12 @@ public class AuthController : ControllerBase
             return Conflict(new ApiResponse<object>(false, "Email not registered.", null, status));
         }
 
+        if (user.EmailStatus != 'y')
+        {
+            const int status = StatusCodes.Status403Forbidden;
+            return StatusCode(status, new ApiResponse<object>(false, "Email not verified.", null, status));
+        }
+
         // TODO : Make this hashed
         if (user.Password != request.Password)
         {

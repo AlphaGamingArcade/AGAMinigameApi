@@ -23,7 +23,7 @@ namespace AGAMinigameApi.Repositories
                     email_verify_member_id,
                     email_verify_email,
                     email_verify_app_key,
-                    email_verify_token_hash,
+                    email_verify_token,
                     email_verify_purpose,
                     email_verify_created_at,
                     email_verify_expires_at,
@@ -60,16 +60,16 @@ namespace AGAMinigameApi.Repositories
             return ev;
         }
 
-        public async Task<EmailVerification?> GetByTokenAsync(string tokenHash)
+        public async Task<EmailVerification?> GetByTokenAsync(string token)
         {
             const string sql = @"
                 SELECT TOP (1) *
                 FROM mg_email_verify
-                WHERE email_verify_token_hash = @tokenHash;";
+                WHERE email_verify_token = @token;";
 
             var parameters = new Dictionary<string, object>
             {
-                ["@tokenHash"] = tokenHash
+                ["@token"] = token
             };
 
             var table = await SelectQueryAsync(sql, parameters);

@@ -11,6 +11,7 @@ namespace api.Mappers
             {
                 Id = Convert.ToInt32(reader["member_id"]),
                 Email = Convert.ToString(reader["member_email"])!,
+                EmailStatus = Convert.ToChar(reader["member_email_status"])!,
                 Password = Convert.ToString(reader["member_password"])!,
             };
         }

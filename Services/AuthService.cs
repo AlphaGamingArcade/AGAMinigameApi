@@ -80,14 +80,18 @@ namespace AGAMinigameApi.Services
                 Dob = request.Dob,
                 Account  = request.Account,
                 Email    = request.Email,
+                EmailStatus = 'n',
                 Password = request.Password
             };
 
             var createdUser = await _authRepository.CreateUserAsync(user, dateTime);
 
-            var token = await _emailVerificationService.CreateEmailVerificationAsync(createdUser.Id, createdUser.Email, dateTime);
-            var link = $"{_appOptions.Urls.PublicBaseUrl.TrimEnd('/')}/verify/email?token={Uri.EscapeDataString(token)}";
-            await _emailSender.SendVerificationEmailAsync(createdUser.Email, createdUser.Nickname, link);
+            await _emailVerificationService.SendLinkAsync(
+                createdUser.Id,
+                createdUser.Email,
+                createdUser.Nickname,
+                dateTime
+            );
 
             var (accessToken, refreshToken) = await GenerateTokensAsync(createdUser.Id, dateTime);
 

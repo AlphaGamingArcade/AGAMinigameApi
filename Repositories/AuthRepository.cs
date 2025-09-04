@@ -43,7 +43,7 @@ namespace AGAMinigameApi.Repositories
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            const string query = "SELECT member_id, member_email, member_password FROM mg_member WHERE member_email = @email;";
+            const string query = "SELECT member_id, member_email, member_email_status, member_password FROM mg_member WHERE member_email = @email;";
             var parameters = new Dictionary<string, object>
             {
                 { "@email", email }

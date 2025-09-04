@@ -11,6 +11,7 @@ namespace AGAMinigameApi.Services
     public interface IEmailVerificationService
     {
         Task<string> CreateEmailVerificationAsync(long userId, string email, DateTime utcNow);
+        Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow);
         Task<bool> VerifyAsync(string token, DateTime utcNow);
     }
 
@@ -69,14 +70,8 @@ namespace AGAMinigameApi.Services
         public async Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow)
         {
             var token = await CreateEmailVerificationAsync(userId, email, utcNow);
-            var link = $"{_appOptions.Urls.PublicBaseUrl}/verify/email?token={token}";
+            var link = $"{_appOptions.Url}/verify/email?token={token}";
             await _emailSender.SendVerificationEmailAsync(email, displayName, link);
-        }
-
-        private static byte[] Sha256Bytes(string input)
-        {
-            using var sha = SHA256.Create();
-            return sha.ComputeHash(Encoding.UTF8.GetBytes(input));
         }
 
         private static string Base64UrlEncode(byte[] bytes)

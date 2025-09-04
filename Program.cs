@@ -7,8 +7,21 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using SlotsApi.Services;
+using SmptOptions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Smtp
+builder.Services.AddOptions<SmtpOptions>()
+    .BindConfiguration("Smtp")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+// Add App
+builder.Services.AddOptions<AppOptions>()
+    .BindConfiguration("App")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 // Add services to the container.
 builder.Services.AddRouting(options =>
