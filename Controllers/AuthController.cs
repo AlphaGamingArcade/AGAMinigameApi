@@ -33,22 +33,24 @@ public class AuthController : ControllerBase
             return Conflict(new ApiResponse<object>(false, "AGA Minigame agent not found.", null, status));
         }
 
-        if (await _authService.UserExistsByEmailAsync(request.Email))
+        var (emailTaken, accountTaken) = await _authService.CheckUserConflictsAsync(request.Email, request.Account);
+
+        if (emailTaken)
         {
             const int status = StatusCodes.Status409Conflict;
             return Conflict(new ApiResponse<object>(false, "User email already in use.", null, status));
         }
 
-        if (await _authService.UserExistsByAccountAsync(request.Account))
+        if (accountTaken)
         {
             const int status = StatusCodes.Status409Conflict;
             return Conflict(new ApiResponse<object>(false, "User account already in use.", null, status));
         }
 
-        var result = await _authService.RegisterAsync(request, agent);
+        await _authService.RegisterAsync(request, agent);
 
         const int created = StatusCodes.Status201Created;
-        return Ok(new ApiResponse<object>(true, "User registration successful.", result, created));
+        return Ok(new ApiResponse<object>(true, "Registration successful. Please check your email to verify your account.", null, created));
     }
 
     // POST /auth/login
@@ -62,17 +64,17 @@ public class AuthController : ControllerBase
             return Conflict(new ApiResponse<object>(false, "Email not registered.", null, status));
         }
 
-        if (user.EmailStatus != 'y')
-        {
-            const int status = StatusCodes.Status403Forbidden;
-            return StatusCode(status, new ApiResponse<object>(false, "Email not verified.", null, status));
-        }
-
         // TODO : Make this hashed
         if (user.Password != request.Password)
         {
             const int status = StatusCodes.Status401Unauthorized;
             return Conflict(new ApiResponse<object>(false, "Incorrect password.", null, status));
+        }
+
+        if (user.EmailStatus != 'y')
+        {
+            const int status = StatusCodes.Status403Forbidden;
+            return StatusCode(status, new ApiResponse<object>(false, "Email not verified.", null, status));
         }
 
         var result = await _authService.LoginAsync(request, user);

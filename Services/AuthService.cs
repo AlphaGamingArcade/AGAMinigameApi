@@ -11,10 +11,9 @@ namespace AGAMinigameApi.Services
 {
     public interface IAuthService
     {
-        Task<bool> UserExistsByEmailAsync(string email);
-        Task<bool> UserExistsByAccountAsync(string email);
+        Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account);
         Task<User?> GetUserByEmailAsync(string email);
-        Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent);
+        Task RegisterAsync(RegisterRequestDto request, Agent agent);
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user);
         Task LogoutAsync(int memberId);
         Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
@@ -66,10 +65,9 @@ namespace AGAMinigameApi.Services
             return (accessToken, refreshToken);
         }
 
-        public async Task<bool> UserExistsByEmailAsync(string email) => await _authRepository.UserExistsByEmailAsync(email);
-        public async Task<bool> UserExistsByAccountAsync(string account) => await _authRepository.UserExistsByAccountAsync(account);
+        public async Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account) => await _authRepository.CheckUserConflictsAsync(email, account);
         public async Task<User?> GetUserByEmailAsync(string email) => await _authRepository.GetUserByEmailAsync(email);
-        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request, Agent agent)
+        public async Task RegisterAsync(RegisterRequestDto request, Agent agent)
         {
             var dateTime = DateHelper.GetUtcNow();
 
@@ -92,14 +90,6 @@ namespace AGAMinigameApi.Services
                 createdUser.Nickname,
                 dateTime
             );
-
-            var (accessToken, refreshToken) = await GenerateTokensAsync(createdUser.Id, dateTime);
-
-            return new RegisterResponseDto
-            {
-                AccessToken  = accessToken,
-                RefreshToken = refreshToken
-            };
         }
         
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user)
@@ -109,7 +99,7 @@ namespace AGAMinigameApi.Services
 
             return new LoginResponseDto
             {
-                AccessToken  = accessToken,
+                AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
         }

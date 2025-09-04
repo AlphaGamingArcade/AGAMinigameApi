@@ -5,8 +5,7 @@ namespace AGAMinigameApi.Repositories
 {
     public interface IAuthRepository
     {
-        Task<bool> UserExistsByEmailAsync(string email);
-        Task<bool> UserExistsByAccountAsync(string account);
+        Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account);
         Task<User?> GetUserByEmailAsync(string email);
         Task<User> CreateUserAsync(User user, DateTime dateTime);
         Task UpdatePasswordAsync(int userId, string newPassword);
@@ -16,28 +15,27 @@ namespace AGAMinigameApi.Repositories
     {
         public AuthRepository(IConfiguration configuration) : base(configuration) { }
 
-        public async Task<bool> UserExistsByEmailAsync(string email)
+        public async Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account)
         {
-            const string query = "SELECT member_email FROM mg_member WHERE member_email = @email;";
-            var parameters = new Dictionary<string, object>
+            const string sql = @"
+                SELECT 
+                    EmailTaken   = CASE WHEN EXISTS (SELECT 1 FROM mg_member WHERE member_email   = @Email)   THEN 1 ELSE 0 END,
+                    AccountTaken = CASE WHEN EXISTS (SELECT 1 FROM mg_member WHERE member_account = @Account) THEN 1 ELSE 0 END;";
+
+            var p = new Dictionary<string, object>
             {
-                { "@email", email }
+                ["@Email"] = email,
+                ["@Account"] = account
             };
 
-            var dataTable = await SelectQueryAsync(query, parameters);
-            return dataTable.Rows.Count > 0;
-        }
+            var table = await SelectQueryAsync(sql, p);
+            if (table.Rows.Count == 0) return (false, false);
 
-        public async Task<bool> UserExistsByAccountAsync(string account)
-        {
-            const string query = "SELECT member_account FROM mg_member WHERE member_account = @account;";
-            var parameters = new Dictionary<string, object>
-            {
-                { "@account", account }
-            };
+            var row = table.Rows[0];
+            var emailTaken   = Convert.ToInt32(row["EmailTaken"])   == 1;
+            var accountTaken = Convert.ToInt32(row["AccountTaken"]) == 1;
 
-            var dataTable = await SelectQueryAsync(query, parameters);
-            return dataTable.Rows.Count > 0;
+            return (emailTaken, accountTaken);
         }
 
 
