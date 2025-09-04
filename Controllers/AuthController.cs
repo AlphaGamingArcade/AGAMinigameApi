@@ -145,14 +145,24 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Resend([FromBody] ResendVerifyEmailDto req)
     {
         var now = DateTime.UtcNow;
+        var message = "If an account exists, a verification email will be sent";
+        const int status = StatusCodes.Status200OK;
 
         var user = await _authService.GetUserByEmailAsync(req.Email);
-        if (user is null)
+        if (user is null || user.EmailStatus == 'y')
         {
-            const int status = StatusCodes.Status200OK;
-            return Ok(new ApiResponse<object>(true, "If an account exists, a verification email will be sent.", null, status));
+            return Ok(new ApiResponse<object>(true, message, null, status));
         }
 
+        var lastCreated = await _emailVerificationService.GetLastUnconsumedCreatedAtAsync(user.Id, user.Email);
+        if (lastCreated is not null && lastCreated.Value > now.AddMinutes(-2))
+            return Ok(new ApiResponse<object>(true, message, null, status));
+
+        // Optional daily cap (e.g., max 5 in 24h)
+        var sentCount = await _emailVerificationService.CountCreatedSinceAsync(user.Id, user.Email, now.AddHours(-24));
+        if (sentCount >= 5)
+            return Ok(new ApiResponse<object>(true, message, null, status));
+        
         // 3) Invalidate older unconsumed tokens (one link active at a time)
         await _emailVerificationService.InvalidateUnconsumedAsync(
             user.Id,
@@ -168,7 +178,6 @@ public class AuthController : ControllerBase
             now
         );
 
-        Console.WriteLine(req.Email);
-        return Ok(new { message = "If an account exists, a verification email will be sent." });
+        return Ok(new ApiResponse<object>(true, message, null, status));
     }
 }

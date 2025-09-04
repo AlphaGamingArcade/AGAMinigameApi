@@ -11,6 +11,8 @@ namespace AGAMinigameApi.Services
     public interface IEmailVerificationService
     {
         Task<string> CreateEmailVerificationAsync(long userId, string email, DateTime utcNow);
+        Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email);
+        Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc);
         Task InvalidateUnconsumedAsync(long userId, string email, DateTime utcNow);
         Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow);
         Task<bool> VerifyAsync(string token, DateTime utcNow);
@@ -67,6 +69,9 @@ namespace AGAMinigameApi.Services
             await _repo.MarkUserEmailConfirmedAsync(ev.MemberId, ev.Email, utcNow);
             return true;
         }
+
+        public async Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email) => await GetLastUnconsumedCreatedAtAsync(userId, email);
+        public async Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc) => await CountCreatedSinceAsync(userId, email, sinceUtc);
 
         public async Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc)
             => await _repo.InvalidateUnconsumedAsync(userId, email, nowUtc);

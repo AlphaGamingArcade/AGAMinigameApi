@@ -6,10 +6,12 @@ namespace AGAMinigameApi.Repositories
 {
     public interface IEmailVerificationRepository
     {
-        Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc);
         Task<EmailVerification> CreateEmailVerificationAsync(EmailVerification emailVerification);
         Task<EmailVerification?> GetByTokenAsync(string tokenHash);
         Task MarkUserEmailConfirmedAsync(int memberId, string email, DateTime now);
+        Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email);
+        Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc);
+        Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc);
     }
 
     public class EmailVerificationRepository : BaseRepository, IEmailVerificationRepository
@@ -117,5 +119,49 @@ namespace AGAMinigameApi.Repositories
             };
             await SelectQueryAsync(sql, p); // using your existing helper
         }
+
+        public async Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email)
+        {
+            const string sql = @"
+                SELECT MAX(email_verify_created_at) AS last_created
+                FROM mg_email_verify
+                WHERE email_verify_member_id = @memberId
+                AND email_verify_email = @email
+                AND email_verify_consumed_at IS NULL
+                AND email_verify_purpose = @purpose;";
+
+                var p = new Dictionary<string, object>
+                {
+                    ["@memberId"] = userId,
+                    ["@email"] = email,
+                    ["@purpose"] = "email_verification"
+                };
+                var dt = await SelectQueryAsync(sql, p);
+                if (dt.Rows.Count == 0 || dt.Rows[0].IsNull("last_created"))
+                    return null;
+                return Convert.ToDateTime(dt.Rows[0]["last_created"]);
+        }
+
+        public async Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc)
+        {
+            const string sql = @"
+                SELECT COUNT(1) AS cnt
+                FROM mg_email_verify
+                WHERE email_verify_member_id = @memberId
+                AND email_verify_email = @email
+                AND email_verify_created_at >= @sinceUtc
+                AND email_verify_purpose = @purpose;";
+
+            var p = new Dictionary<string, object>
+            {
+                ["@memberId"] = userId,
+                ["@email"] = email,
+                ["@sinceUtc"] = sinceUtc,
+                ["@purpose"] = "email_verification"
+            };
+            var dt = await SelectQueryAsync(sql, p);
+            return dt.Rows.Count > 0 ? Convert.ToInt32(dt.Rows[0]["cnt"]) : 0;
+        }
+
     }
 }
