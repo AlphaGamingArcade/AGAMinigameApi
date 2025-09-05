@@ -133,7 +133,6 @@ public class AuthController : ControllerBase
         }
 
         var result = await _authService.RefreshTokenAsync(token.MemberId);
-
         return Ok(new ApiResponse<object>(true, "Token refreshed.", result, 200));
     }
 
@@ -159,7 +158,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> EmailStatus([FromQuery] string email)
     {
         var result = await _authService.GetEmailStatusAsync(email);
-        return Ok(new ApiResponse<object>(true, "Reset password successfully.", result, 200));
+        return Ok(new ApiResponse<object>(true, "Email verification status retrieved successfully.", result, 200));
     }
 
     // GET /auth/resend-verify-email

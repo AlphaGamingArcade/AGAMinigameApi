@@ -1,5 +1,7 @@
 using AGAMinigameApi.Models;
 using api.Mappers;
+using Microsoft.Extensions.Options;
+using SmptOptions;
 
 namespace AGAMinigameApi.Repositories
 {
@@ -13,12 +15,12 @@ namespace AGAMinigameApi.Repositories
     public class RefreshTokenRepository : BaseRepository, IRefreshTokenRepository
     {
         private readonly ILogger<RefreshTokenRepository> _logger;
-        private readonly string _jwtIssuer;
+        private readonly IOptions<AppOptions> _appOptions;
 
-        public RefreshTokenRepository(IConfiguration configuration, ILogger<RefreshTokenRepository> logger)
+        public RefreshTokenRepository(IConfiguration configuration, IOptions<AppOptions> appOptions, ILogger<RefreshTokenRepository> logger)
             : base(configuration)
         {
-            _jwtIssuer = configuration["JwtSettings:Issuer"] ?? throw new Exception("JWT issues missing in config.");
+            _appOptions = appOptions;
             _logger = logger;
         }
 
@@ -30,19 +32,19 @@ namespace AGAMinigameApi.Repositories
                     SELECT 
                         t.refresh_token_id,
                         t.refresh_token_token,
-                        t.refresh_token_issuer,
+                        t.refresh_token_app_key,
                         t.refresh_token_member_id,
                         t.refresh_token_created_at,
                         t.refresh_token_expires_at,
                         m.member_id
                     FROM mg_refresh_token t
                     INNER JOIN mg_member m ON t.refresh_token_member_id = m.member_id
-                    WHERE t.refresh_token_token = @refreshToken AND t.refresh_token_revoked_at IS NULL AND t.refresh_token_issuer = @issuer";
+                    WHERE t.refresh_token_token = @refreshToken AND t.refresh_token_revoked_at IS NULL AND t.refresh_token_app_key = @appKey";
 
                 var parameters = new Dictionary<string, object>
                 {
                     { "@refreshToken", refreshToken },
-                    { "@issuer", _jwtIssuer }
+                    { "@appKey", _appOptions.Value.Key }
                 };
 
                 var result = await SelectQueryAsync(sql, parameters);
@@ -66,7 +68,7 @@ namespace AGAMinigameApi.Repositories
                     INSERT INTO mg_refresh_token (
                         refresh_token_member_id,
                         refresh_token_token,
-                        refresh_token_issuer,
+                        refresh_token_app_key,
                         refresh_token_expires_at,
                         refresh_token_created_at,
                         refresh_token_revoked_at
@@ -74,7 +76,7 @@ namespace AGAMinigameApi.Repositories
                     VALUES (
                         @memberId,
                         @token,
-                        @issuer,
+                        @appKey,
                         @expiresAt,
                         @createdAt,
                         @revokedAt
@@ -84,7 +86,7 @@ namespace AGAMinigameApi.Repositories
                 {
                     { "@memberId", refreshToken.MemberId },
                     { "@token", refreshToken.Token },
-                    { "@issuer", refreshToken.Issuer },
+                    { "@appKey", refreshToken.AppKey },
                     { "@expiresAt", refreshToken.ExpiresAt },
                     { "@createdAt", refreshToken.CreatedAt },
                     { "@revokedAt", (object?)refreshToken.RevokedAt ?? DBNull.Value }
@@ -107,12 +109,12 @@ namespace AGAMinigameApi.Repositories
         {
             try
             {
-                string sql = "DELETE FROM mg_refresh_token WHERE refresh_token_member_id = @memberId AND refresh_token_issuer = @issuer";
+                string sql = "DELETE FROM mg_refresh_token WHERE refresh_token_member_id = @memberId AND refresh_token_app_key = @appKey";
 
                 var parameters = new Dictionary<string, object>
                 {
                     { "@memberId", memberId },
-                    { "@issuer", _jwtIssuer }
+                    { "@appKey", _appOptions.Value.Key }
                 };
 
                 return await DeleteQueryAsync(sql, parameters);

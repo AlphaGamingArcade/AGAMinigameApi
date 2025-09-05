@@ -11,6 +11,7 @@ namespace api.Mappers
             {
                 Id = Convert.ToInt32(row["refresh_token_id"]),
                 Token = Convert.ToString(row["refresh_token_token"]) ?? string.Empty,
+                AppKey = Convert.ToString(row["refresh_token_app_key"]) ?? string.Empty,
                 MemberId = Convert.ToInt32(row["refresh_token_member_id"]),
                 CreatedAt = Convert.ToDateTime(row["refresh_token_created_at"]),
                 ExpiresAt = Convert.ToDateTime(row["refresh_token_expires_at"]),

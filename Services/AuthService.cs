@@ -56,7 +56,7 @@ namespace AGAMinigameApi.Services
             {
                 MemberId = memberId,
                 Token = refreshToken,
-                Issuer = _appOptions.Key,
+                AppKey = _appOptions.Key,
                 CreatedAt = nowUtc,
                 ExpiresAt = nowUtc.AddDays(7),
                 RevokedAt = null
@@ -101,6 +101,7 @@ namespace AGAMinigameApi.Services
 
             return new LoginResponseDto
             {
+                Sub = user.Id,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
@@ -122,6 +123,7 @@ namespace AGAMinigameApi.Services
 
             return new RefreshTokenResponseDto
             {
+                Sub = memberId,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
