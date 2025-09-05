@@ -5,6 +5,7 @@ namespace AGAMinigameApi.Repositories
 {
     public interface IAuthRepository
     {
+        Task SetEmailVerifiedAsync(string email, DateTime datetime);
         Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account);
         Task<User?> GetUserByEmailAsync(string email);
         Task<User> CreateUserAsync(User user, DateTime dateTime);
@@ -32,7 +33,7 @@ namespace AGAMinigameApi.Repositories
             if (table.Rows.Count == 0) return (false, false);
 
             var row = table.Rows[0];
-            var emailTaken   = Convert.ToInt32(row["EmailTaken"])   == 1;
+            var emailTaken = Convert.ToInt32(row["EmailTaken"]) == 1;
             var accountTaken = Convert.ToInt32(row["AccountTaken"]) == 1;
 
             return (emailTaken, accountTaken);
@@ -130,6 +131,32 @@ namespace AGAMinigameApi.Repositories
             {
                 ["@newPassword"] = newPassword,
                 ["@userId"] = userId
+            };
+
+            await UpdateQueryAsync(query, parameters);
+        }
+
+        public async Task SetEmailVerifiedAsync(string tokenHash, DateTime dateTime)
+        {
+            const string query = @"
+                UPDATE m
+                SET m.member_email_status = 'y'
+                FROM mg_member m
+                JOIN mg_email_verify ev 
+                    ON m.member_email = ev.email_verify_email
+                WHERE ev.email_verify_token_hash = @tokenHash
+                AND ev.email_verify_consumed_at IS NULL;
+
+                UPDATE mg_email_verify
+                SET email_verify_consumed_at = @dateTime
+                WHERE email_verify_token_hash = @tokenHash
+                AND email_verify_consumed_at IS NULL;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["@tokenHash"] = tokenHash,
+                ["@dateTime"] = dateTime
             };
 
             await UpdateQueryAsync(query, parameters);

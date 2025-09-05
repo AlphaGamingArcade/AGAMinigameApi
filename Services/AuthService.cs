@@ -19,6 +19,7 @@ namespace AGAMinigameApi.Services
         Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
         Task<RefreshTokenResponseDto> RefreshTokenAsync(int memberId);
         Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request);
+        Task SetEmailVerifiedAsync(string email, DateTime dateTime);
     }
 
     public class AuthService : IAuthService
@@ -43,7 +44,7 @@ namespace AGAMinigameApi.Services
         private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(int memberId, DateTime nowUtc)
         {
             // 1) Generate tokens
-            var accessToken  = _jwtTokenService.GenerateAccessToken(memberId.ToString());
+            var accessToken = _jwtTokenService.GenerateAccessToken(memberId.ToString());
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
             // 2) Clear existing refresh tokens for this issuer/member
@@ -52,9 +53,9 @@ namespace AGAMinigameApi.Services
             // 3) Save new refresh token
             var refresh = new RefreshToken
             {
-                MemberId  = memberId,
-                Token     = refreshToken,
-                Issuer    = _appOptions.Key,
+                MemberId = memberId,
+                Token = refreshToken,
+                Issuer = _appOptions.Key,
                 CreatedAt = nowUtc,
                 ExpiresAt = nowUtc.AddDays(7),
                 RevokedAt = null
@@ -73,11 +74,11 @@ namespace AGAMinigameApi.Services
 
             var user = new User
             {
-                AgentId  = agent.Id,
+                AgentId = agent.Id,
                 Nickname = request.Nickname,
                 Dob = request.Dob,
-                Account  = request.Account,
-                Email    = request.Email,
+                Account = request.Account,
+                Email = request.Email,
                 EmailStatus = 'n',
                 Password = request.Password
             };
@@ -91,11 +92,11 @@ namespace AGAMinigameApi.Services
                 dateTime
             );
         }
-        
+
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user)
         {
             var dateTime = DateHelper.GetUtcNow();
-            var (accessToken, refreshToken)  = await GenerateTokensAsync(user.Id, dateTime);
+            var (accessToken, refreshToken) = await GenerateTokensAsync(user.Id, dateTime);
 
             return new LoginResponseDto
             {
@@ -105,22 +106,22 @@ namespace AGAMinigameApi.Services
         }
 
         public async Task LogoutAsync(int memberId) => await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(memberId);
-        
+
 
         public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request)
         {
             await Task.Delay(1000);
             return new ForgotPasswordResponseDto();
         }
-        
+
         public async Task<RefreshTokenResponseDto> RefreshTokenAsync(int memberId)
         {
             var dateTime = DateHelper.GetUtcNow();
-            var (accessToken, refreshToken)  = await GenerateTokensAsync(memberId, dateTime);
+            var (accessToken, refreshToken) = await GenerateTokensAsync(memberId, dateTime);
 
             return new RefreshTokenResponseDto
             {
-                AccessToken  = accessToken,
+                AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
         }
@@ -129,5 +130,7 @@ namespace AGAMinigameApi.Services
             await Task.Delay(1000);
             return new ResetPasswordResponseDto();
         }
+
+        public async Task SetEmailVerifiedAsync(string email, DateTime dateTime) => await _authRepository.SetEmailVerifiedAsync(email, dateTime);
     }
 }

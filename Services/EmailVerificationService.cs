@@ -66,8 +66,6 @@ namespace AGAMinigameApi.Services
             if (ev is null) return false;
             if (ev.ConsumedAtUtc is not null) return false;
             if (ev.ExpiresAtUtc <= utcNow) return false;
-
-            await _repo.MarkUserEmailConfirmedAsync(ev.MemberId, ev.Email, utcNow);
             return true;
         }
 

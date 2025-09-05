@@ -144,6 +144,11 @@ public class AuthController : ControllerBase
         var now = DateHelper.GetUtcNow();
         string tokenHash = HashHelper.ComputeSHA256(token);
         var ok = await _emailVerificationService.VerifyAsync(tokenHash, now);
+        if (ok)
+        {
+            await _authService.SetEmailVerifiedAsync(tokenHash, now);
+        }
+
         var successUrl = $"{_appOptions.Value.Url.TrimEnd('/')}/verify/success.html";
         var failureUrl = $"{_appOptions.Value.Url.TrimEnd('/')}/verify/failure.html";
         return Redirect(ok ? successUrl : failureUrl);
