@@ -95,3 +95,6 @@ C:\Users\pc\Documents\github\AGAMinigameApi\bin\Debug\net9.0\runtimes\win\lib\ne
 C:\Users\pc\Documents\github\AGAMinigameApi\obj\Debug\net9.0\AGAMinigameApi.sourcelink.json
 C:\Users\pc\Documents\github\AGAMinigameApi\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\pc\Documents\github\AGAMinigameApi\bin\Debug\net9.0\Scalar.AspNetCore.dll
+C:\Users\pc\Documents\github\AGAMinigameApi\bin\Debug\net9.0\AGAMinigameApi.staticwebassets.runtime.json
+C:\Users\pc\Documents\github\AGAMinigameApi\obj\Debug\net9.0\compressed\y91x6xergy-a3lydi6fs2.gz
+C:\Users\pc\Documents\github\AGAMinigameApi\obj\Debug\net9.0\compressed\yxucifxfs6-u37tvzilcj.gz

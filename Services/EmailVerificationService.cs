@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services.EmailSender;
@@ -39,8 +40,8 @@ namespace AGAMinigameApi.Services
             // 32 bytes random → Base64Url token sent to user
             var tokenBytes = new byte[32];
             RandomNumberGenerator.Fill(tokenBytes);
-            var token = Base64UrlEncode(tokenBytes);
-            var tokenHash = Sha256Hex(token);
+            var token = HashHelper.Base64UrlEncode(tokenBytes);
+            var tokenHash = HashHelper.ComputeSHA256(token);
 
             // Store only the SHA-256 hash (bytes) in DB
             var entity = new EmailVerification
@@ -81,18 +82,6 @@ namespace AGAMinigameApi.Services
             var token = await CreateEmailVerificationAsync(userId, email, utcNow);
             var link = $"{_appOptions.Url}/auth/confirm-email?token={token}";
             await _emailSender.SendVerificationEmailAsync(email, displayName, link);
-        }
-
-        private static string Base64UrlEncode(byte[] bytes)
-        {
-            var s = Convert.ToBase64String(bytes);
-            return s.Replace("+", "-").Replace("/", "_").TrimEnd('=');
-        }
-
-        private static string Sha256Hex(string input)
-        {
-            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-            return Convert.ToHexString(bytes); // 64-char uppercase hex
         }
     }
 }

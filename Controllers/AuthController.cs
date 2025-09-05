@@ -1,7 +1,10 @@
 using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Dtos.Common;
+using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using SmptOptions;
 
 namespace AGAMinigameApi.Controllers;
 
@@ -14,14 +17,16 @@ public class AuthController : ControllerBase
     private readonly IAgentService _agentService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IEmailVerificationService _emailVerificationService;
+    private readonly IOptions<AppOptions> _appOptions;
 
-    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IEmailVerificationService emailVerificationService)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IEmailVerificationService emailVerificationService, IOptions<AppOptions> appOptions)
     {
         _logger = logger;
         _authService = authService;
         _agentService = agentService;
         _refreshTokenService = refreshTokenService;
         _emailVerificationService = emailVerificationService;
+        _appOptions = appOptions;
     }
 
     // POST /auth/register
@@ -136,15 +141,18 @@ public class AuthController : ControllerBase
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmail([FromQuery] string token)
     {
-        await Task.Delay(1000);
-        Console.WriteLine(token);
-        return Ok(new ApiResponse<object>(true, "Email confirmed.", null, 200));
+        var now = DateHelper.GetUtcNow();
+        string tokenHash = HashHelper.ComputeSHA256(token);
+        var ok = await _emailVerificationService.VerifyAsync(tokenHash, now);
+        var successUrl = $"{_appOptions.Value.Url.TrimEnd('/')}/verify/success.html";
+        var failureUrl = $"{_appOptions.Value.Url.TrimEnd('/')}/verify/failure.html";
+        return Redirect(ok ? successUrl : failureUrl);
     }
     
     [HttpPost("resend-verify-email")]
     public async Task<IActionResult> Resend([FromBody] ResendVerifyEmailDto req)
     {
-        var now = DateTime.UtcNow;
+        var now = DateHelper.GetUtcNow();
         var message = "If an account exists, a verification email will be sent";
         const int status = StatusCodes.Status200OK;
 
