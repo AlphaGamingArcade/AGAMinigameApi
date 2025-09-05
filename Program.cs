@@ -118,11 +118,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseStaticFiles();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
+app.MapOpenApi();
 app.MapScalarApiReference(options =>
 {
     options.Title = "AGAMinigame API";

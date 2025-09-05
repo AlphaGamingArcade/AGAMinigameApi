@@ -1,0 +1,31 @@
+Publish App:
+
+dotnet publish -c Release -p:UseAppHost=false
+dotnet publish -c Debug -r win-x86 --self-contained
+
+
+Setup SQL SERVER
+
+USE master;
+GO
+CREATE LOGIN tokenhive WITH PASSWORD = '3Jc3RydpDHRkdsI';
+GO
+USE slotcmt;
+GO
+CREATE USER tokenhive FOR LOGIN tokenhive;
+ALTER ROLE db_datareader ADD MEMBER tokenhive;
+ALTER ROLE db_datawriter ADD MEMBER tokenhive;
+
+USE slotcmt;
+
+-- Ensure user has read and write access
+ALTER ROLE db_datareader ADD MEMBER tokenhive;
+ALTER ROLE db_datawriter ADD MEMBER tokenhive;
+
+
+MAKE SURE TO ADD THIS
+SQL Server Network Configuration > Protocols for SQLEXPRESS01
+Encrypt=false
+
+
+New-NetFirewallRule -DisplayName "Allow IIS on port 82" -Direction Inbound -LocalPort 82 -Protocol TCP -Action Allow

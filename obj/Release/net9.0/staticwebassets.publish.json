@@ -1,0 +1,1176 @@
+{
+  "Version": 1,
+  "Hash": "c85gU1IbPMMxclcueZ6YQcjBERNeOcwuG09YrSLjNJs=",
+  "Source": "AGAMinigameApi",
+  "BasePath": "_content/AGAMinigameApi",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "AGAMinigameApi\\wwwroot",
+      "Source": "AGAMinigameApi",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\4cee6rrzv8-a3lydi6fs2.gz",
+      "SourceId": "AGAMinigameApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "RelativePath": "verify/failure#[.{fingerprint=a3lydi6fs2}]?.html.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "0h0iil1xe7",
+      "Integrity": "5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\4cee6rrzv8-a3lydi6fs2.br",
+      "SourceId": "AGAMinigameApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "RelativePath": "verify/failure#[.{fingerprint=a3lydi6fs2}]?.html.br",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "br",
+      "Fingerprint": "urp822aoae",
+      "Integrity": "hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\yxucifxfs6-u37tvzilcj.br",
+      "SourceId": "AGAMinigameApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "RelativePath": "verify/success#[.{fingerprint=u37tvzilcj}]?.html.br",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "br",
+      "Fingerprint": "3avuxtwgi3",
+      "Integrity": "204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\yxucifxfs6-u37tvzilcj.gz",
+      "SourceId": "AGAMinigameApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "RelativePath": "verify/success#[.{fingerprint=u37tvzilcj}]?.html.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "j2a1ijwtwo",
+      "Integrity": "O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html",
+      "SourceId": "AGAMinigameApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "RelativePath": "verify/failure#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "a3lydi6fs2",
+      "Integrity": "RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\verify\\failure.html"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html",
+      "SourceId": "AGAMinigameApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\",
+      "BasePath": "_content/AGAMinigameApi",
+      "RelativePath": "verify/success#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "u37tvzilcj",
+      "Integrity": "OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\verify\\success.html"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "verify/failure.a3lydi6fs2.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\4cee6rrzv8-a3lydi6fs2.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000707714084"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1412"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "a3lydi6fs2"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/failure.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.a3lydi6fs2.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\4cee6rrzv8-a3lydi6fs2.br",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "br",
+          "Quality": "0.000895255148"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1116"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "a3lydi6fs2"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/failure.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.a3lydi6fs2.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3705"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "a3lydi6fs2"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/failure.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.a3lydi6fs2.html.br",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\4cee6rrzv8-a3lydi6fs2.br",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1116"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "a3lydi6fs2"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/failure.html.br"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.a3lydi6fs2.html.gz",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\4cee6rrzv8-a3lydi6fs2.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1412"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "a3lydi6fs2"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/failure.html.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\4cee6rrzv8-a3lydi6fs2.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000707714084"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1412"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\4cee6rrzv8-a3lydi6fs2.br",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "br",
+          "Quality": "0.000895255148"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1116"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\failure.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3705"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-RnS5Qh/X4ehqtC+bGvppb5jH+/etNhtk5R6z3TAdbSM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.html.br",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\4cee6rrzv8-a3lydi6fs2.br",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1116"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-hqGCQO37/SvbJHniiicoQXmDEMTm1czJ4bGulm/Yj+4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/failure.html.gz",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\4cee6rrzv8-a3lydi6fs2.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1412"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-5OjI5+3mli8L+gyvxIHEtuKF4y8KJ8vIG/RUfclFMmM="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\yxucifxfs6-u37tvzilcj.br",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "br",
+          "Quality": "0.001157407407"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "863"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\yxucifxfs6-u37tvzilcj.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000900090009"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1110"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2808"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.html.br",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\yxucifxfs6-u37tvzilcj.br",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "863"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.html.gz",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\yxucifxfs6-u37tvzilcj.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1110"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.u37tvzilcj.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\yxucifxfs6-u37tvzilcj.br",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "br",
+          "Quality": "0.001157407407"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "863"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "u37tvzilcj"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/success.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.u37tvzilcj.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\yxucifxfs6-u37tvzilcj.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000900090009"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1110"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "u37tvzilcj"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/success.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.u37tvzilcj.html",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\wwwroot\\verify\\success.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2808"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "u37tvzilcj"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/success.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.u37tvzilcj.html.br",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\publish\\yxucifxfs6-u37tvzilcj.br",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "863"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "br"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "u37tvzilcj"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/success.html.br"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-204cmjjZHUoqdpCaXKsI4hauoTp8SeZGzNvimFXy4+A="
+        }
+      ]
+    },
+    {
+      "Route": "verify/success.u37tvzilcj.html.gz",
+      "AssetFile": "C:\\Users\\pc\\Documents\\github\\AGAMinigameApi\\obj\\Release\\net9.0\\compressed\\yxucifxfs6-u37tvzilcj.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1110"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 05 Sep 2025 01:36:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "u37tvzilcj"
+        },
+        {
+          "Name": "label",
+          "Value": "verify/success.html.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-O6fXTd4t+FIymz+UiNAmItQzT4QxkUZTgKxp9nZSQuU="
+        }
+      ]
+    }
+  ]
+}

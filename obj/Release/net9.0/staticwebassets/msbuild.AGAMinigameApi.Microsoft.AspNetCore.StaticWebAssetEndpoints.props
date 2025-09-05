@@ -1,0 +1,28 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/AGAMinigameApi/verify/failure.a3lydi6fs2.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\verify\failure.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"a3lydi6fs2"},{"Name":"integrity","Value":"sha256-RnS5Qh/X4ehqtC\u002BbGvppb5jH\u002B/etNhtk5R6z3TAdbSM="},{"Name":"label","Value":"_content/AGAMinigameApi/verify/failure.html"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3705"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022RnS5Qh/X4ehqtC\u002BbGvppb5jH\u002B/etNhtk5R6z3TAdbSM=\u0022"},{"Name":"Last-Modified","Value":"Fri, 05 Sep 2025 01:35:40 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/AGAMinigameApi/verify/failure.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\verify\failure.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-RnS5Qh/X4ehqtC\u002BbGvppb5jH\u002B/etNhtk5R6z3TAdbSM="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3705"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022RnS5Qh/X4ehqtC\u002BbGvppb5jH\u002B/etNhtk5R6z3TAdbSM=\u0022"},{"Name":"Last-Modified","Value":"Fri, 05 Sep 2025 01:35:40 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/AGAMinigameApi/verify/success.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\verify\success.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"2808"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\u0022"},{"Name":"Last-Modified","Value":"Fri, 05 Sep 2025 01:36:41 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/AGAMinigameApi/verify/success.u37tvzilcj.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\verify\success.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"u37tvzilcj"},{"Name":"integrity","Value":"sha256-OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4="},{"Name":"label","Value":"_content/AGAMinigameApi/verify/success.html"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"2808"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022OhSWDnEjBBMrBIpP4lBfSqPauvjeeiEXDDCd3ZtTep4=\u0022"},{"Name":"Last-Modified","Value":"Fri, 05 Sep 2025 01:36:41 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>
