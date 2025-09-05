@@ -153,7 +153,16 @@ public class AuthController : ControllerBase
         var failureUrl = $"{_appOptions.Value.Url.TrimEnd('/')}/verify/failure.html";
         return Redirect(ok ? successUrl : failureUrl);
     }
-    
+
+    // GET /auth/email-status
+    [HttpGet("email-status")]
+    public async Task<IActionResult> EmailStatus([FromQuery] string email)
+    {
+        var result = await _authService.GetEmailStatusAsync(email);
+        return Ok(new ApiResponse<object>(true, "Reset password successfully.", result, 200));
+    }
+
+    // GET /auth/resend-verify-email
     [HttpPost("resend-verify-email")]
     public async Task<IActionResult> Resend([FromBody] ResendVerifyEmailDto req)
     {

@@ -13,6 +13,7 @@ namespace AGAMinigameApi.Services
     {
         Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account);
         Task<User?> GetUserByEmailAsync(string email);
+        Task<EmailStatusResponseDto> GetEmailStatusAsync(string email);
         Task RegisterAsync(RegisterRequestDto request, Agent agent);
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user);
         Task LogoutAsync(int memberId);
@@ -132,5 +133,15 @@ namespace AGAMinigameApi.Services
         }
 
         public async Task SetEmailVerifiedAsync(string email, DateTime dateTime) => await _authRepository.SetEmailVerifiedAsync(email, dateTime);
+
+        public async Task<EmailStatusResponseDto> GetEmailStatusAsync(string email)
+        {
+            var (isVerified, datetime) = await _authRepository.GetEmailStatusAsync(email);
+            return new EmailStatusResponseDto
+            {
+                IsVerified = isVerified,
+                Datetime = datetime
+            };
+        }
     }
 }

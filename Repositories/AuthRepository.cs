@@ -3,6 +3,7 @@ using api.Mappers;
 
 namespace AGAMinigameApi.Repositories
 {
+    public record EmailStatusDto(bool IsVerified, DateTime? VerifiedAt);
     public interface IAuthRepository
     {
         Task SetEmailVerifiedAsync(string email, DateTime datetime);
@@ -10,6 +11,7 @@ namespace AGAMinigameApi.Repositories
         Task<User?> GetUserByEmailAsync(string email);
         Task<User> CreateUserAsync(User user, DateTime dateTime);
         Task UpdatePasswordAsync(int userId, string newPassword);
+        Task<(bool isVerified, DateTime? datetime)> GetEmailStatusAsync(string email);
     }
 
     public class AuthRepository : BaseRepository, IAuthRepository
@@ -158,6 +160,37 @@ namespace AGAMinigameApi.Repositories
             };
 
             await UpdateQueryAsync(query, parameters);
+        }
+
+        public async Task<(bool isVerified, DateTime? datetime)> GetEmailStatusAsync(string email)
+        {
+            // check both verify_email and member_email_status
+            const string query = @"
+                SELECT TOP 1 ev.email_verify_consumed_at
+                FROM mg_member m
+                INNER JOIN mg_email_verify ev ON ev.email_verify_email = m.member_email
+                WHERE m.member_email_status = 'y'
+                AND m.member_email = @email
+                AND ev.email_verify_purpose = @purpose
+                AND ev.email_verify_consumed_at IS NOT NULL
+                ORDER BY ev.email_verify_consumed_at DESC;
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["@email"] = email,
+                ["@purpose"] = "email_verification"
+            };
+
+            var dt = await SelectQueryAsync(query, parameters);
+
+            if (dt.Rows.Count > 0)
+            {
+                var consumedAt = dt.Rows[0]["email_verify_consumed_at"] as DateTime?;
+                return (true, consumedAt);
+            }
+
+            return (false, null);
         }
     }
 }
