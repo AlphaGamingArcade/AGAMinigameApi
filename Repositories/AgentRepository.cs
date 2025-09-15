@@ -14,11 +14,19 @@ namespace AGAMinigameApi.Repositories
 
         public async Task<Agent?> GetAgentByCodeAsync(string code)
         {
-            const string query = @"SELECT
-                    agent_id, agent_code, agent_password, agent_name, agent_uplevel_id,
-                    agent_language, agent_currency, agent_money, agent_datetime, agent_update,
-                    agent_ip, agent_affiliate, agent_deferred, agent_percent_type, agent_status,
-                    agent_multilogin, agent_session, agent_wallet, agent_seamless_url, agent_return_url
+            const string query = @"
+                SELECT
+                    agent_id, 
+                    agent_code, 
+                    agent_name, 
+                    agent_language, 
+                    agent_currency, 
+                    agent_money, 
+                    agent_deferred, 
+                    agent_percent_type, 
+                    agent_status, 
+                    agent_wallet, 
+                    agent_seamless_url
                 FROM mg_agent
                 WHERE agent_code = @code;";
 

@@ -22,13 +22,13 @@ namespace AGAMinigameApi.Repositories
         {
             const string sql = @"
                 SELECT 
-                    EmailTaken   = CASE WHEN EXISTS (SELECT 1 FROM mg_member WHERE member_email   = @Email)   THEN 1 ELSE 0 END,
-                    AccountTaken = CASE WHEN EXISTS (SELECT 1 FROM mg_member WHERE member_account = @Account) THEN 1 ELSE 0 END;";
+                    EmailTaken   = CASE WHEN EXISTS (SELECT 1 FROM mg_app_user where app_user_email = @email) THEN 1 ELSE 0 END,
+                    AccountTaken = CASE WHEN EXISTS (SELECT 1 FROM mg_member WHERE member_account = @account) THEN 1 ELSE 0 END;";
 
             var p = new Dictionary<string, object>
             {
-                ["@Email"] = email,
-                ["@Account"] = account
+                ["@email"] = email,
+                ["@account"] = account
             };
 
             var table = await SelectQueryAsync(sql, p);
@@ -41,10 +41,16 @@ namespace AGAMinigameApi.Repositories
             return (emailTaken, accountTaken);
         }
 
-
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            const string query = "SELECT member_id, member_email, member_email_status, member_password FROM mg_member WHERE member_email = @email;";
+            const string query = @"SELECT 
+                    au.app_user_member_id,
+                    au.app_user_email,
+                    au.app_user_email_status,
+                    au.app_user_password
+                FROM mg_app_user au
+                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
+                WHERE au.app_user_email = @email;";
             var parameters = new Dictionary<string, object>
             {
                 { "@email", email }
@@ -61,14 +67,17 @@ namespace AGAMinigameApi.Repositories
 
         public async Task<User> CreateUserAsync(User user, DateTime dateTime)
         {
-            const string query = @"
+            const string sql = @"
+                SET XACT_ABORT ON;
+                BEGIN TRAN;
+
+                DECLARE @now DATETIME2(3) = @datetime;
+                DECLARE @new_member TABLE (member_id INT);
+
                 INSERT INTO dbo.mg_member (
                     member_agent_id,
                     member_account,
                     member_nickname,
-                    member_email,
-                    member_email_status,
-                    member_password,
                     member_gamemoney,
                     member_charge_money,
                     member_exchange_money,
@@ -79,53 +88,71 @@ namespace AGAMinigameApi.Repositories
                     member_status,
                     member_datetime,
                     member_update,
-                    member_level,
-                    member_dob
+                    member_level
                 )
-                OUTPUT inserted.member_id
+                OUTPUT inserted.member_id INTO @new_member(member_id)
                 VALUES (
                     @agent_id,
                     @account,
                     @nickname,
-                    @email,
-                    @emailStatus,
-                    @password,
                     0, 0, 0, 0, 0,
                     @token,
                     'n', 'y',
-                    @createdAt,
-                    @updatedAt,
-                    @level,
-                    @dob
-                );";
+                    @now,
+                    @now,
+                    @level
+                );
+
+                INSERT INTO dbo.mg_app_user (
+                    app_user_member_id,
+                    app_user_email,
+                    app_user_password,
+                    app_user_email_status,
+                    app_user_dob,
+                    app_user_created_at,
+                    app_user_updated_at
+                )
+                SELECT
+                    m.member_id,
+                    @email,
+                    @password,     
+                    @emailStatus,
+                    @dob,
+                    @now,
+                    @now
+                FROM @new_member m;
+
+                SELECT member_id FROM @new_member;
+
+                COMMIT TRAN;
+            ";
 
             var parameters = new Dictionary<string, object>
             {
                 ["@agent_id"] = user.AgentId,
                 ["@account"] = user.Account,
                 ["@nickname"] = user.Nickname,
-                ["@email"] = user.Email,
-                ["@emailStatus"] = user.EmailStatus,
-                ["@password"] = user.Password,
                 ["@token"] = string.Empty,
-                ["@createdAt"] = dateTime,
-                ["@updatedAt"] = dateTime,
                 ["@level"] = 1,
-                ["@dob"] = user.Dob
+                ["@datetime"] = dateTime,
+
+                ["@email"] = user.Email,
+                ["@password"] = user.Password,        // HASHED
+                ["@emailStatus"] = user.EmailStatus,     // e.g. 'n','p','v','b'
+                ["@dob"] = (object?)user.Dob ?? DBNull.Value,
             };
 
-            var newIdObj = await InsertQueryAsync(query, parameters);
+            var newIdObj = await InsertQueryAsync(sql, parameters);
             user.Id = Convert.ToInt32(newIdObj);
-
             return user;
         }
 
         public async Task UpdatePasswordAsync(int userId, string newPassword)
         {
             const string query = @"
-                UPDATE mg_member
-                SET member_password = @newPassword
-                WHERE member_id = @userId;";
+                UPDATE mg_app_user
+                SET app_user_password = @newPassword
+                WHERE app_user_member_id = @userId;";
 
             var parameters = new Dictionary<string, object>
             {
@@ -139,24 +166,26 @@ namespace AGAMinigameApi.Repositories
         public async Task SetEmailVerifiedAsync(string tokenHash, DateTime dateTime)
         {
             const string query = @"
-                UPDATE m
-                SET m.member_email_status = 'y'
-                FROM mg_member m
-                JOIN mg_email_verify ev 
-                    ON m.member_email = ev.email_verify_email
+                -- 1) Mark app_user as verified
+                UPDATE au
+                SET au.app_user_email_status = 'y',
+                    au.app_user_updated_at   = @datetime
+                FROM dbo.mg_app_user au
+                INNER JOIN dbo.mg_email_verify ev 
+                    ON au.app_user_email = ev.email_verify_email
                 WHERE ev.email_verify_token_hash = @tokenHash
                 AND ev.email_verify_consumed_at IS NULL;
 
-                UPDATE mg_email_verify
-                SET email_verify_consumed_at = @dateTime
+                -- 2) Mark the token as consumed
+                UPDATE dbo.mg_email_verify
+                SET email_verify_consumed_at = @datetime
                 WHERE email_verify_token_hash = @tokenHash
                 AND email_verify_consumed_at IS NULL;
             ";
-
             var parameters = new Dictionary<string, object>
             {
                 ["@tokenHash"] = tokenHash,
-                ["@dateTime"] = dateTime
+                ["@datetime"] = dateTime
             };
 
             await UpdateQueryAsync(query, parameters);
@@ -164,18 +193,18 @@ namespace AGAMinigameApi.Repositories
 
         public async Task<(bool isVerified, DateTime? datetime)> GetEmailStatusAsync(string email)
         {
-            // check both verify_email and member_email_status
             const string query = @"
                 SELECT TOP 1 ev.email_verify_consumed_at
-                FROM mg_member m
-                INNER JOIN mg_email_verify ev ON ev.email_verify_email = m.member_email
-                WHERE m.member_email_status = 'y'
-                AND m.member_email = @email
+                FROM dbo.mg_app_user au
+                INNER JOIN dbo.mg_email_verify ev 
+                    ON ev.email_verify_email = au.app_user_email
+                WHERE au.app_user_email_status = 'y'
+                AND au.app_user_email = @email
                 AND ev.email_verify_purpose = @purpose
                 AND ev.email_verify_consumed_at IS NOT NULL
                 ORDER BY ev.email_verify_consumed_at DESC;
             ";
-
+            
             var parameters = new Dictionary<string, object>
             {
                 ["@email"] = email,
