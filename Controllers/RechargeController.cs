@@ -18,11 +18,4 @@ public class RechargeController : ControllerBase
         _logger = logger;
         _rechargeService = rechargeService;
     }
-
-    [HttpGet]
-    public async Task<IActionResult> GetPaginatedRecharges([FromQuery] PagedRequestDto requestDto)
-    {
-        var result = await _rechargeService.GetPaginatedRechargesAsync(requestDto);
-        return Ok(new ApiResponse<object>(true, "Success", result, 200));
-    }
 }
