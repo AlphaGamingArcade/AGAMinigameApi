@@ -25,7 +25,7 @@ namespace AGAMinigameApi.Repositories
         public async Task<IEnumerable<Game>> GetAll()
         {
             var games = new List<Game>();
-            var table = await SelectQueryAsync("SELECT * FROM mg_game");
+            var table = await SelectQueryAsync("SELECT * FROM mg_app_game");
             try
             {
                 foreach (DataRow row in table.Rows)
@@ -63,7 +63,7 @@ namespace AGAMinigameApi.Repositories
             int offset = Math.Max(0, (pageNumber - 1) * pageSize);
 
             // Get total count separately using SelectQueryAsync
-            const string countSql = @"SELECT COUNT(1) AS TotalCount FROM mg_game;";
+            const string countSql = @"SELECT COUNT(1) AS TotalCount FROM mg_app_game;";
             DataTable countTable = await SelectQueryAsync(countSql);
             int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
@@ -72,7 +72,7 @@ namespace AGAMinigameApi.Repositories
                 SELECT 
                     game_id, game_code, game_name, game_description, game_image, game_url,
                     game_status, game_top, game_trending, game_datetime
-                FROM mg_game
+                FROM mg_app_game
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
 

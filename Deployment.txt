@@ -8,19 +8,19 @@ Setup SQL SERVER
 
 USE master;
 GO
-CREATE LOGIN tokenhive WITH PASSWORD = '3Jc3RydpDHRkdsI';
+CREATE LOGIN slot WITH PASSWORD = 'StrongP@ssw0rd!';
 GO
-USE slotcmt;
+USE slot;
 GO
-CREATE USER tokenhive FOR LOGIN tokenhive;
-ALTER ROLE db_datareader ADD MEMBER tokenhive;
-ALTER ROLE db_datawriter ADD MEMBER tokenhive;
+CREATE USER slot FOR LOGIN slot;
+ALTER ROLE db_datareader ADD MEMBER slot;
+ALTER ROLE db_datawriter ADD MEMBER slot;
 
-USE slotcmt;
+USE slot;
 
 -- Ensure user has read and write access
-ALTER ROLE db_datareader ADD MEMBER tokenhive;
-ALTER ROLE db_datawriter ADD MEMBER tokenhive;
+ALTER ROLE db_datareader ADD MEMBER slot;
+ALTER ROLE db_datawriter ADD MEMBER slot;
 
 
 MAKE SURE TO ADD THIS

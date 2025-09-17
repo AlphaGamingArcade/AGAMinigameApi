@@ -20,11 +20,19 @@ public class MemberController : ControllerBase
         _rechargeService = rechargeService;
     }
 
+
+    [HttpGet("/{memberId:int}")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> GetMember(int memberId, [FromQuery] PagedRequestDto requestDto)
+    {
+        await Task.Delay(1000);
+        return Ok(new ApiResponse<object>(true, "Success", memberId, 200));
+    }
+
     [HttpGet("/{memberId:int}/recharges")]
-    [Authorize]
+    [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> GetPaginatedMemberRecharges(int memberId, [FromQuery] PagedRequestDto requestDto)
     {
-        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); 
         var result = await _rechargeService.GetPaginatedMemberRechargesAsync(memberId, requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }

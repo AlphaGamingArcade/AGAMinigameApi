@@ -1,4 +1,4 @@
-CREATE TABLE mg_game(
+CREATE TABLE mg_app_game(
     game_id INT IDENTITY(1, 1) NOT NULL,
     game_code VARCHAR(100) NOT NULL,
     game_name VARCHAR(100) NOT NULL,

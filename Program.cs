@@ -1,8 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Text.Json;
+using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services;
 using AGAMinigameApi.Services.EmailSender;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
@@ -57,10 +61,71 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
 
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero            
+            ClockSkew = TimeSpan.Zero
+        };
+         options.Events = new JwtBearerEvents
+        {
+            // Don't write a response here — let OnChallenge produce the JSON 401.
+            OnAuthenticationFailed = context =>
+            {
+                context.NoResult(); // suppress default
+                return Task.CompletedTask;
+            },
+
+            OnChallenge = async context =>
+            {
+                // Prevent the default WWW-Authenticate writer
+                context.HandleResponse();
+
+                if (context.Response.HasStarted)
+                    return;
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json; charset=utf-8";
+
+                var response = new ApiResponse<object>(
+                    true,
+                    "Unauthorized",
+                    string.IsNullOrWhiteSpace(context.ErrorDescription)
+                        ? "Invalid or expired access token."
+                        : context.ErrorDescription,
+                   StatusCodes.Status401Unauthorized
+                );
+                                
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            },
+
+            OnForbidden = async context =>
+            {
+                if (context.Response.HasStarted)
+                    return;
+
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                context.Response.ContentType = "application/json; charset=utf-8";
+
+                var response = new ApiResponse<object>(
+                    true,
+                    "Forbidden",
+                    "Forbidden. You do not have permission to access this resource.",
+                    StatusCodes.Status403Forbidden
+                );
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            }
         };
     });
-builder.Services.AddAuthorization();
+
+builder.Services.AddHttpContextAccessor(); // for handler
+builder.Services.AddSingleton<IAuthorizationHandler, OwnerOrAdminHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("OwnerOrAdmin", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.AddRequirements(new OwnerOrAdminRequirement());
+    });
+});
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthResultHandler>();
 
 builder.Services.AddScoped<IBannerRepository, BannerRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
