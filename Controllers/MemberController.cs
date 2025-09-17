@@ -1,7 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using AGAMinigameApi.Dtos.Common;
-using AGAMinigameApi.Repositories;
+using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,21 +11,21 @@ namespace AGAMinigameApi.Controllers;
 public class MemberController : ControllerBase
 {
     private readonly ILogger<MemberController> _logger;
-    private readonly IRechargeService _rechargeService;
+    private readonly IChargeService _chargeService;
     private readonly IMemberService _memberService;
 
-    public MemberController(ILogger<MemberController> logger, IRechargeService rechargeService, IMemberService memberService)
+    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService)
     {
         _logger = logger;
-        _rechargeService = rechargeService;
+        _chargeService = chargeService;
         _memberService = memberService;
     }
 
-    [HttpGet("/{memberId:int}")]
+    [HttpGet("{id:int}")]
     [Authorize(Policy = "OwnerOrAdmin")]
-    public async Task<IActionResult> GetMember(int memberId)
+    public async Task<IActionResult> GetMember(int id)
     {
-        var result = await _memberService.GetMemberByIdAsync(memberId);
+        var result = await _memberService.GetMemberByIdAsync(id);
         if (result == null)
         {
             return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
@@ -35,19 +33,39 @@ public class MemberController : ControllerBase
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
-    [HttpGet("/{memberId:int}/recharges")]
+    [HttpGet("{id:int}/charges")]
     [Authorize(Policy = "OwnerOrAdmin")]
-    public async Task<IActionResult> GetPaginatedMemberRecharges(int memberId, [FromQuery] PagedRequestDto requestDto)
+    public async Task<IActionResult> GetPaginatedMemberCharges(int id, [FromQuery] PagedRequestDto requestDto)
     {
-        var result = await _rechargeService.GetPaginatedMemberRechargesAsync(memberId, requestDto);
+        var result = await _chargeService.GetPaginatedMemberChargesAsync(id, requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
-    [HttpPost("/{memberId:int}/recharges")]
+    [HttpPost("{id:int}/charges")]
     [Authorize(Policy = "OwnerOrAdmin")]
-    public async Task<IActionResult> PostMemberRecharge(int memberId)
+    public async Task<IActionResult> PostMemberCharge(int id)
     {
-        await Task.Delay(1000);
-        return Ok(new ApiResponse<object>(true, "Success", memberId, 200));
+        var now = DateHelper.GetUtcNow();
+        var amount = 100000;
+
+        var member = await _memberService.GetMemberByIdAsync(id);
+        if (member == null)
+        {
+            return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
+        }
+
+        if (await _chargeService.IsChargeExistsAsync(id, now))
+        {
+            return Conflict(new ApiResponse<object>(
+                false,
+                "Failed",
+                "Charge already exists for today.",
+                409
+            ));
+        }
+
+        var charge = await _chargeService.ChargeMemberAsync(member, now, amount);
+
+        return Ok(new ApiResponse<object>(true, "Success", charge, 200));
     }
 }

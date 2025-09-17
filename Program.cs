@@ -132,7 +132,7 @@ builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-builder.Services.AddScoped<IRechargeRepository, RechargeRepository>();
+builder.Services.AddScoped<IChargeRepository, ChargeRepository>();
 builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
@@ -143,7 +143,7 @@ builder.Services.AddScoped<IAgentService, AgentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IBannerService, BannerService>();
-builder.Services.AddScoped<IRechargeService, RechargeService>();
+builder.Services.AddScoped<IChargeService, ChargeService>();
 builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 

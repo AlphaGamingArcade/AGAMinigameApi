@@ -1,5 +1,4 @@
-using AGAMinigameApi.Dtos.Banner;
-using AGAMinigameApi.Dtos.Common;
+using AGAMinigameApi.Dtos.Member;
 using AGAMinigameApi.Repositories;
 using api.Mappers;
 
