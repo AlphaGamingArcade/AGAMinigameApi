@@ -3,6 +3,7 @@ using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations.Rules;
 
 namespace AGAMinigameApi.Controllers;
 
@@ -13,12 +14,14 @@ public class MemberController : ControllerBase
     private readonly ILogger<MemberController> _logger;
     private readonly IChargeService _chargeService;
     private readonly IMemberService _memberService;
+    private readonly IBettingService _bettingService;
 
-    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService)
+    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService)
     {
         _logger = logger;
         _chargeService = chargeService;
         _memberService = memberService;
+        _bettingService = bettingService;
     }
 
     [HttpGet("{id:int}")]
@@ -67,5 +70,14 @@ public class MemberController : ControllerBase
         var charge = await _chargeService.ChargeMemberAsync(member, now, amount);
 
         return Ok(new ApiResponse<object>(true, "Success", charge, 200));
+    }
+
+    
+    [HttpGet("{id:int}/bettings")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> GetPaginatedMemberBettings(int id, [FromQuery] PagedRequestDto requestDto)
+    {
+        var result = await _bettingService.GetPaginatedMemberBettingsAsync(id, requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 }

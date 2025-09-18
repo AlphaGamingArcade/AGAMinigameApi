@@ -135,6 +135,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IChargeRepository, ChargeRepository>();
 builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IBettingRepository, BettingRepository>();
 
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
@@ -146,6 +147,7 @@ builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IChargeService, ChargeService>();
 builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IBettingService, BettingService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi(options =>

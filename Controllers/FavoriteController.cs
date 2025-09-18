@@ -1,5 +1,6 @@
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AGAMinigameApi.Controllers;
@@ -18,6 +19,7 @@ public class FavoriteController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> GetPaginatedBettings([FromQuery] PagedRequestDto requestDto)
     {
         var result = await _bannerService.GetPaginatedBannersAsync(requestDto);
