@@ -1,4 +1,5 @@
 using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Betting;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Repositories;
 using api.Mappers;
@@ -26,7 +27,8 @@ namespace AGAMinigameApi.Services
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,
-                requestDto.PageSize
+                requestDto.PageSize,
+                's' // slots only
             );
 
             var bettingDtos = bettings.Select(g => g.ToBettingDto());

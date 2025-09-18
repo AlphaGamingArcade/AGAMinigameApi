@@ -4,41 +4,38 @@ using api.Mappers;
 
 namespace AGAMinigameApi.Repositories
 {
-    public interface IBettingRepository
+    public interface IFavoriteRepository
     {
-        Task<(List<Betting> items, int total)> GetPaginatedBettingsByMemberIdAsync(
+        Task<(List<Favorite> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
             int memberId,
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize,
-            char? gameType);
+            int pageSize);
         // Task<Banner> GetById(int id);
         // Task<int> Add(Banner banner);
         // Task<int> Update(Banner banner);
         // Task<int> Delete(int id);
     }
 
-    public class BettingRepository : BaseRepository, IBettingRepository
+    public class FavoriteRepository : BaseRepository, IFavoriteRepository
     {
-        public BettingRepository(IConfiguration configuration) : base(configuration) { }
+        public FavoriteRepository(IConfiguration configuration) : base(configuration) { }
 
-        public async Task<(List<Betting> items, int total)> GetPaginatedBettingsByMemberIdAsync(
+        public async Task<(List<Favorite> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
             int memberId,
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize,
-            char? gameType
-        )
+            int pageSize)
         {
-            // Normalize paging
             pageNumber = Math.Max(1, pageNumber);
-            pageSize = Math.Clamp(pageSize, 1, 200);
+            pageSize = Math.Max(1, pageSize);
+            var items = new List<Favorite>();
             int offset = (pageNumber - 1) * pageSize;
 
             // Whitelist sortable columns
-            string orderColumn = (sortBy ?? "").ToLowerInvariant() switch
+            string orderColumn = sortBy?.ToLowerInvariant() switch
             {
                 "id" => "b.betting_id",
                 "memberid" => "b.betting_member_id",
@@ -56,31 +53,13 @@ namespace AGAMinigameApi.Repositories
             };
             string orderDir = descending ? "DESC" : "ASC";
 
-            // WHERE parts (always filter by member; optionally by gameType)
-            var whereParts = new List<string> { "b.betting_member_id = @memberId" };
-            var parameters = new Dictionary<string, object> { ["@memberId"] = memberId };
+            // total count (filtered)
+            const string countSql = @"SELECT COUNT(1) AS TotalCount FROM mg_betting WHERE betting_member_id = @memberId;";
+            var countParams = new Dictionary<string, object> { { "@memberId", memberId } };
+            DataTable countTable = await SelectQueryAsync(countSql, countParams);
+            int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
-            if (gameType.HasValue)
-            {
-                whereParts.Add("gc.gamecode_game_type = @gameType");
-                parameters["@gameType"] = gameType.Value;
-            }
-
-            string whereClause = "WHERE " + string.Join(" AND ", whereParts);
-
-            // COUNT (join because we may filter by gameType)
-            string countSql = $@"
-                SELECT COUNT(1) AS TotalCount
-                FROM mg_betting b
-                LEFT JOIN mg_gamecode gc ON gc.gamecode_id = b.betting_gamecode_id
-                {whereClause};";
-
-            DataTable countTable = await SelectQueryAsync(countSql, parameters);
-            int total = countTable.Rows.Count > 0
-                ? Convert.ToInt32(countTable.Rows[0]["TotalCount"])
-                : 0;
-
-            // PAGE
+            // page query (always join gamecode)
             string pageSql = $@"
                 SELECT 
                     b.betting_id,
@@ -91,7 +70,6 @@ namespace AGAMinigameApi.Repositories
                     b.betting_benefit,
                     b.betting_result,
                     b.betting_datetime,
-
                     gc.gamecode_id                      AS gc_id,
                     gc.gamecode_code                    AS gc_code,
                     gc.gamecode_name                    AS gc_name,
@@ -102,18 +80,22 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_order                   AS gc_order,
                     gc.gamecode_game_type               AS gc_game_type
                 FROM mg_betting b
-                LEFT JOIN mg_gamecode gc ON gc.gamecode_id = b.betting_gamecode_id
-                {whereClause}
+                LEFT JOIN mg_gamecode gc 
+                    ON gc.gamecode_id = b.betting_gamecode_id
+                WHERE b.betting_member_id = @memberId
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-            parameters["@offset"] = offset;
-            parameters["@pageSize"] = pageSize;
+            var pageParams = new Dictionary<string, object>
+                {
+                    { "@memberId", memberId },
+                    { "@offset", offset },
+                    { "@pageSize", pageSize }
+                };
 
-            var items = new List<Betting>();
-            DataTable pageTable = await SelectQueryAsync(pageSql, parameters);
+            DataTable pageTable = await SelectQueryAsync(pageSql, pageParams);
             foreach (DataRow row in pageTable.Rows)
-                items.Add(row.ToBettingFromDataRow());
+                items.Add(row.ToFavoriteFromDataRow());
 
             return (items, total);
         }

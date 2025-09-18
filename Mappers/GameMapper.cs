@@ -1,4 +1,5 @@
 using System.Data;
+using System.Text.Json;
 using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Models;
 
@@ -8,36 +9,62 @@ namespace api.Mappers
     {
         public static GameDto ToGameDto(this Game gameModel)
         {
-            return new GameDto
+            var dto = new GameDto
             {
-                Id = gameModel.Id,
                 Code = gameModel.Code,
-                Name = gameModel.Name,
                 Description = gameModel.Description,
                 Image = gameModel.Image,
                 Url = gameModel.Url,
                 Status = gameModel.Status,
                 Top = gameModel.Top,
                 Trending = gameModel.Trending,
-                Datetime =  gameModel.Datetime,
-             };
+                Datetime = gameModel.Datetime,
+            };
+            
+            if (gameModel.Gamecode != null)
+            {
+                var nameMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                    gameModel.Gamecode.NameMultiLanguage ?? "{}"
+                ) ?? new();
+
+                dto.Gamecode = new GamecodeDto
+                {
+                    Id = gameModel.Gamecode.Id,
+                    Code = gameModel.Gamecode.Code,
+                    Name = gameModel.Gamecode.Name,
+                    NameMultiLanguage = nameMultiLang,
+                };
+            }
+
+            return dto;
         }
 
-        public static Game ToGameFromDataRow(this DataRow reader)
+        public static Game ToGameFromDataRow(this DataRow row)
         {
-            return new Game
+            var game = new Game
             {
-                Id = Convert.ToInt32(reader["game_id"]),
-                Code = Convert.ToString(reader["game_code"]) ?? "",
-                Name = Convert.ToString(reader["game_name"]) ?? "",
-                Description = Convert.ToString(reader["game_description"]) ?? "",
-                Image = Convert.ToString(reader["game_image"]) ?? "",
-                Url = Convert.ToString(reader["game_url"]) ?? "",
-                Status = Convert.ToChar(reader["game_status"]),
-                Top = Convert.ToChar(reader["game_top"]),
-                Trending = Convert.ToChar(reader["game_trending"]),
-                Datetime =  Convert.ToDateTime(reader["game_datetime"]),
+                Code = Convert.ToString(row["game_code"]) ?? "",
+                Description = Convert.ToString(row["game_description"]) ?? "",
+                Image = Convert.ToString(row["game_image"]) ?? "",
+                Url = Convert.ToString(row["game_url"]) ?? "",
+                Status = Convert.ToChar(row["game_status"]),
+                Top = Convert.ToChar(row["game_top"]),
+                Trending = Convert.ToChar(row["game_trending"]),
+                Datetime = Convert.ToDateTime(row["game_datetime"]),
             };
+
+            if (row.Table.Columns.Contains("gamecode_id"))
+            {
+                game.Gamecode = new Gamecode
+                {
+                    Id = Convert.ToByte(row["gamecode_id"]),
+                    Code = Convert.ToString(row["gamecode_code"]) ?? "",
+                    Name = Convert.ToString(row["gamecode_name"]) ?? "",
+                    NameMultiLanguage = Convert.ToString(row["gamecode_name_multi_language"]) ?? "",
+                };
+            }
+            
+            return game;
         }
     }
 }

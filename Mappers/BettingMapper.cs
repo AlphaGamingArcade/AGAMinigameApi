@@ -1,5 +1,7 @@
 using System.Data;
+using System.Text.Json;
 using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Betting;
 using AGAMinigameApi.Models;
 using Namotion.Reflection;
 
@@ -9,16 +11,33 @@ namespace api.Mappers
     {
         public static BettingDto ToBettingDto(this Betting bettingModel)
         {
-            return new BettingDto
+            var betting = new BettingDto
             {
                 Id = bettingModel.Id,
                 MemberId = bettingModel.MemberId,
-                GamecodeName = bettingModel.Gamecode?.Name ?? "",
                 Money = bettingModel.Money,
                 Benefit = bettingModel.Benefit,
                 Result = bettingModel.Result,
                 Datetime = bettingModel.Datetime
             };
+
+            if (bettingModel.Gamecode != null)
+            {
+                var nameMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                    bettingModel.Gamecode.NameMultiLanguage ?? "{}"
+                ) ?? new();
+
+
+                betting.Gamecode = new GamecodeDto
+                {
+                    Id = bettingModel.Gamecode.Id,
+                    Code = bettingModel.Gamecode.Code,
+                    Name = bettingModel.Gamecode.Name,
+                    NameMultiLanguage = nameMultiLang,
+                };
+            }
+
+            return betting;
         }
 
 
@@ -37,8 +56,9 @@ namespace api.Mappers
             };
 
             // Populate nested Gamecode only when the joined columns exist
-            if (row.HasProperty("gc_id"))
+            if (row.Table.Columns.Contains("gc_id"))
             {
+                Console.WriteLine(Convert.ToString(row["gc_code"]));
                 betting.Gamecode = new Gamecode
                 {
                     Id = Convert.ToByte(row["gc_id"]),

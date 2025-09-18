@@ -11,7 +11,8 @@ namespace AGAMinigameApi.Repositories
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize
+            int pageSize,
+            char? gameType
         );
         // Task<Banner> GetById(int id);
         // Task<int> Add(Banner banner);
@@ -23,77 +24,85 @@ namespace AGAMinigameApi.Repositories
     {
         public GameRepository(IConfiguration configuration) : base(configuration) { }
 
-        public async Task<IEnumerable<Game>> GetAll()
-        {
-            var games = new List<Game>();
-            var table = await SelectQueryAsync("SELECT * FROM mg_app_game");
-            try
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    games.Add(row.ToGameFromDataRow());
-                }
-                return games;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         public async Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
             string? search,
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize)
+            int pageSize,
+            char? gameType = null
+        )
         {
             var items = new List<Game>();
 
-            // Whitelist sortable columns to avoid ORDER BY injection
-            string orderColumn = sortBy?.ToLowerInvariant() switch
+            // Normalize paging
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 200);
+            int offset = (pageNumber - 1) * pageSize;
+
+            // Whitelist sortable columns
+            string orderColumn = (sortBy ?? "").ToLowerInvariant() switch
             {
-                "name" => "game_name",
-                "datetime" => "game_datetime",
-                "code" => "game_code",
-                "category" => "game_category",
-                _ => "game_id"
+                "name" => "gc.gamecode_name",
+                "datetime" => "ag.game_datetime",
+                "code" => "ag.game_code",
+                "category" => "ag.game_category",
+                _ => "gc.gamecode_id"
             };
             string orderDir = descending ? "DESC" : "ASC";
 
-            int offset = Math.Max(0, (pageNumber - 1) * pageSize);
-
-            // Build WHERE condition for search
-            string whereClause = "";
+            // Build WHERE parts
+            var whereParts = new List<string>();
             var parameters = new Dictionary<string, object>();
+
+            if (gameType != null)
+            {
+                whereParts.Add("gc.gamecode_game_type = @gameType");
+                parameters["@gameType"] = gameType;
+            }
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                whereClause = @"
-                WHERE 
-                    game_name LIKE @search OR 
-                    game_code LIKE @search OR 
-                    game_category LIKE @search OR
-                    game_description LIKE @search";
-                    parameters["@search"] = $"%{search}%";
+                whereParts.Add(@"
+                (
+                    gc.gamecode_name    LIKE CONCAT('%', @search, '%') OR
+                    ag.game_code        LIKE CONCAT('%', @search, '%') OR
+                    ag.game_category    LIKE CONCAT('%', @search, '%') OR
+                    ag.game_description LIKE CONCAT('%', @search, '%')
+                )");
+                parameters["@search"] = search;
             }
 
-            // Count query
-            string countSql = $@"SELECT COUNT(1) AS TotalCount 
-                         FROM mg_app_game
-                         {whereClause};";
+            string whereClause = whereParts.Count > 0 ? "WHERE " + string.Join(" AND ", whereParts) : "";
+
+            // Count
+            string countSql = $@"
+                SELECT COUNT(1) AS TotalCount
+                FROM mg_app_game ag
+                INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
+                {whereClause};";
 
             DataTable countTable = await SelectQueryAsync(countSql, parameters);
-            int total = countTable.Rows.Count > 0
-                ? Convert.ToInt32(countTable.Rows[0]["TotalCount"])
-                : 0;
+            int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
-            // Page query
+            // Page
             string pageSql = $@"
                 SELECT 
-                    game_id, game_code, game_name, game_description, game_image, game_url,
-                    game_status, game_top, game_trending, game_datetime
-                FROM mg_app_game
+                    gc.gamecode_id,
+                    gc.gamecode_code,
+                    gc.gamecode_name,
+                    gc.gamecode_name_multi_language,
+                    ag.game_code,
+                    ag.game_description,
+                    ag.game_image,
+                    ag.game_url,
+                    ag.game_status,
+                    ag.game_category,
+                    ag.game_top,
+                    ag.game_trending,
+                    ag.game_datetime
+                FROM mg_app_game ag
+                INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
                 {whereClause}
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
@@ -103,9 +112,7 @@ namespace AGAMinigameApi.Repositories
 
             DataTable pageTable = await SelectQueryAsync(pageSql, parameters);
             foreach (DataRow row in pageTable.Rows)
-            {
                 items.Add(row.ToGameFromDataRow());
-            }
 
             return (items, total);
         }

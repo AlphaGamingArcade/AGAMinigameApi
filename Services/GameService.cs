@@ -27,7 +27,8 @@ namespace AGAMinigameApi.Services
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,
-                requestDto.PageSize
+                requestDto.PageSize,
+                's' // slots only
             );
 
             var gameDtos = games.Select(g =>
@@ -56,7 +57,8 @@ namespace AGAMinigameApi.Services
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,
-                requestDto.PageSize
+                requestDto.PageSize,
+                's' // slots only
             );
 
             var gameDtos = games.Select(g => g.ToGameDto());
