@@ -1,3 +1,4 @@
+using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
@@ -132,7 +133,7 @@ namespace AGAMinigameApi.Repositories
                 ["@agent_id"] = user.AgentId,
                 ["@account"] = user.Account,
                 ["@nickname"] = user.Nickname,
-                ["@token"] = string.Empty,
+                ["@token"] = user.Token,
                 ["@level"] = 1,
                 ["@datetime"] = dateTime,
 

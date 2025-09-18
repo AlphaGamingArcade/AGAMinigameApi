@@ -3,10 +3,9 @@ using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations.Rules;
 
 namespace AGAMinigameApi.Controllers;
-
+  
 [ApiController]
 [Route("members")]
 public class MemberController : ControllerBase
@@ -15,13 +14,15 @@ public class MemberController : ControllerBase
     private readonly IChargeService _chargeService;
     private readonly IMemberService _memberService;
     private readonly IBettingService _bettingService;
+    private readonly IGameService _gameService;
 
-    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService)
+    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService, IGameService gameService)
     {
         _logger = logger;
         _chargeService = chargeService;
         _memberService = memberService;
         _bettingService = bettingService;
+        _gameService = gameService;
     }
 
     [HttpGet("{id:int}")]
@@ -72,10 +73,18 @@ public class MemberController : ControllerBase
         return Ok(new ApiResponse<object>(true, "Success", charge, 200));
     }
 
-    
+
     [HttpGet("{id:int}/bettings")]
     [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> GetPaginatedMemberBettings(int id, [FromQuery] PagedRequestDto requestDto)
+    {
+        var result = await _bettingService.GetPaginatedMemberBettingsAsync(id, requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
+
+    [HttpGet("{id:int}/favorites")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> GetPaginatedMemberFavorites(int id, [FromQuery] PagedRequestDto requestDto)
     {
         var result = await _bettingService.GetPaginatedMemberBettingsAsync(id, requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));

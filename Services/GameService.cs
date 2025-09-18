@@ -7,6 +7,7 @@ namespace AGAMinigameApi.Services
 {
     public interface IGameService
     {
+        Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, PagedRequestDto requestDto);
         Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto);
     }
 
@@ -18,6 +19,35 @@ namespace AGAMinigameApi.Services
         {
             _gameRepository = gameRepository;
         }
+
+        public async Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, PagedRequestDto requestDto)
+        {
+            var (games, total) = await _gameRepository.GetPaginatedGamesAsync(
+                requestDto.Search,
+                requestDto.SortBy,
+                requestDto.Descending,
+                requestDto.PageNumber,
+                requestDto.PageSize
+            );
+
+            var gameDtos = games.Select(g =>
+            {
+                var dto = g.ToGameDto();
+                dto.Url = $"{dto.Url}?{memberId}";
+                return dto;
+            });
+
+            var pagedResult = new PagedResult<GameDto>
+            {
+                Items = gameDtos,
+                TotalRecords = total,
+                PageNumber = requestDto.PageNumber,
+                PageSize = requestDto.PageSize
+            };
+
+            return pagedResult;
+        }
+        
 
         public async Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto)
         {

@@ -77,6 +77,7 @@ namespace AGAMinigameApi.Services
             {
                 AgentId = agent.Id,
                 Nickname = request.Nickname,
+                Token = HashHelper.ComputeSHA256(request.Account),
                 Dob = request.Dob,
                 Account = request.Account,
                 Email = request.Email,
