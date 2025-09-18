@@ -7,6 +7,7 @@ namespace AGAMinigameApi.Repositories
     public interface IGameRepository
     {
         Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
+            string? search,
             string? sortBy,
             bool descending,
             int pageNumber,
@@ -41,12 +42,12 @@ namespace AGAMinigameApi.Repositories
         }
 
         public async Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
+            string? search,
             string? sortBy,
             bool descending,
             int pageNumber,
             int pageSize)
         {
-            // Manually map DataTable rows to a List<Game>
             var items = new List<Game>();
 
             // Whitelist sortable columns to avoid ORDER BY injection
@@ -62,27 +63,45 @@ namespace AGAMinigameApi.Repositories
 
             int offset = Math.Max(0, (pageNumber - 1) * pageSize);
 
-            // Get total count separately using SelectQueryAsync
-            const string countSql = @"SELECT COUNT(1) AS TotalCount FROM mg_app_game;";
-            DataTable countTable = await SelectQueryAsync(countSql);
-            int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
+            // Build WHERE condition for search
+            string whereClause = "";
+            var parameters = new Dictionary<string, object>();
 
-            // Get paginated data using SelectQueryAsync
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                whereClause = @"
+                WHERE 
+                    game_name LIKE @search OR 
+                    game_code LIKE @search OR 
+                    game_category LIKE @search OR
+                    game_description LIKE @search";
+                    parameters["@search"] = $"%{search}%";
+            }
+
+            // Count query
+            string countSql = $@"SELECT COUNT(1) AS TotalCount 
+                         FROM mg_app_game
+                         {whereClause};";
+
+            DataTable countTable = await SelectQueryAsync(countSql, parameters);
+            int total = countTable.Rows.Count > 0
+                ? Convert.ToInt32(countTable.Rows[0]["TotalCount"])
+                : 0;
+
+            // Page query
             string pageSql = $@"
                 SELECT 
                     game_id, game_code, game_name, game_description, game_image, game_url,
                     game_status, game_top, game_trending, game_datetime
                 FROM mg_app_game
+                {whereClause}
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-            var pageParameters = new Dictionary<string, object>
-            {
-                { "@offset", offset },
-                { "@pageSize", pageSize }
-            };
+            parameters["@offset"] = offset;
+            parameters["@pageSize"] = pageSize;
 
-            DataTable pageTable = await SelectQueryAsync(pageSql, pageParameters);
+            DataTable pageTable = await SelectQueryAsync(pageSql, parameters);
             foreach (DataRow row in pageTable.Rows)
             {
                 items.Add(row.ToGameFromDataRow());

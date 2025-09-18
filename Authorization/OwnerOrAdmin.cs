@@ -40,24 +40,24 @@ public sealed class OwnerOrAdminHandler : AuthorizationHandler<OwnerOrAdminRequi
 
         // 4) Get {memberId} from route
         var routeValues = _http.HttpContext?.Request.RouteValues;
-        var routeMemberId = routeValues != null && routeValues.TryGetValue("memberId", out var v)
+        var routeId = routeValues != null && routeValues.TryGetValue("id", out var v)
             ? v?.ToString()
             : null;
 
-        if (string.IsNullOrEmpty(routeMemberId))
+        if (string.IsNullOrEmpty(routeId))
         {
-            context.Fail(new AuthorizationFailureReason(this, "MissingRouteMemberId"));
+            context.Fail(new AuthorizationFailureReason(this, "MissingRouteId"));
             return Task.CompletedTask;
         }
 
         // 5) Compare consistently (int↔int recommended)
-        if (!int.TryParse(sub, out var subId) || !int.TryParse(routeMemberId, out var routeId))
+        if (!int.TryParse(sub, out var subId) || !int.TryParse(routeId, out var memberId))
         {
             context.Fail(new AuthorizationFailureReason(this, "TypeMismatch"));
             return Task.CompletedTask;
         }
 
-        if (subId != routeId)
+        if (subId != memberId)
         {
             context.Fail(new AuthorizationFailureReason(this, "DifferentUser"));
             return Task.CompletedTask;

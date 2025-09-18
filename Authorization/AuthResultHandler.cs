@@ -20,7 +20,7 @@ public sealed class AuthResultHandler : IAuthorizationMiddlewareResultHandler
             var message = code switch
             {
                 "MissingSubClaim"      => "Token has no 'sub' claim.",
-                "MissingRouteMemberId" => "Route is missing 'memberId'.",
+                "MissingRouteId" => "Route is missing 'id'.",
                 "TypeMismatch"         => "Token sub and route memberId have different types.",
                 "DifferentUser"        => "You are not authorized to access this resource.",
                 _                      => "Insufficient permissions."

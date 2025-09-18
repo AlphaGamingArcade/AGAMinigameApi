@@ -22,6 +22,7 @@ namespace AGAMinigameApi.Services
         public async Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto)
         {
             var (games, total) = await _gameRepository.GetPaginatedGamesAsync(
+                requestDto.Search,
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,
