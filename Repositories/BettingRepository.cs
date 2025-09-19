@@ -92,15 +92,15 @@ namespace AGAMinigameApi.Repositories
                     b.betting_result,
                     b.betting_datetime,
 
-                    gc.gamecode_id                      AS gc_id,
-                    gc.gamecode_code                    AS gc_code,
-                    gc.gamecode_name                    AS gc_name,
-                    gc.gamecode_name_multi_language     AS gc_name_multi_language,
-                    gc.gamecode_percent                 AS gc_percent,
-                    gc.gamecode_datetime                AS gc_datetime,
-                    gc.gamecode_status                  AS gc_status,
-                    gc.gamecode_order                   AS gc_order,
-                    gc.gamecode_game_type               AS gc_game_type
+                    gc.gamecode_id,
+                    gc.gamecode_code,
+                    gc.gamecode_name,
+                    gc.gamecode_name_multi_language,
+                    gc.gamecode_percent,
+                    gc.gamecode_datetime,
+                    gc.gamecode_status,
+                    gc.gamecode_order,
+                    gc.gamecode_game_type
                 FROM mg_betting b
                 LEFT JOIN mg_gamecode gc ON gc.gamecode_id = b.betting_gamecode_id
                 {whereClause}

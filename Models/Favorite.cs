@@ -7,5 +7,8 @@ namespace AGAMinigameApi.Models
         public int GameId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        // extra
+        public Game? Game { get; set; }
     }
 }

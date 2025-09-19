@@ -8,7 +8,7 @@ namespace AGAMinigameApi.Models
         public string NameMultiLanguage { get; set; } = string.Empty;
         public double Percent { get; set; }
         public DateTime Datetime { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public char Status { get; set; }
         public byte Order { get; set; }
         public string GameType { get; set; } = string.Empty;
     }

@@ -10,7 +10,7 @@ namespace AGAMinigameApi.Services
     public interface IFavoriteService
     {
         Task<FavoriteDto?> GetMemberFavoriteAsync(int memberId, int gameId);
-        Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId, string gameType);
+        Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId);
         Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto);
         Task<PagedResult<FavoriteDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto);
     }
@@ -24,7 +24,7 @@ namespace AGAMinigameApi.Services
             _favoriteRepository = favoriteRepository;
         }
 
-        public async Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId, string gameType) => await _favoriteRepository.ExistsAsync(memberId, gameId, gameType);
+        public async Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId) => await _favoriteRepository.ExistsAsync(memberId, gameId);
 
         public async Task<FavoriteDto?> GetMemberFavoriteAsync(int memberId, int gameId)
         {

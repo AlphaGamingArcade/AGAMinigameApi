@@ -13,7 +13,7 @@ namespace AGAMinigameApi.Repositories
             int pageNumber,
             int pageSize);
         Task<Favorite> AddAsync(Favorite favorite);
-        Task<bool> ExistsAsync(int memberId, int gameId, string gameType);
+        Task<bool> ExistsAsync(int memberId, int gameId);
         Task<Favorite?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId);
         // Task<Banner> GetById(int id);
         // Task<int> Update(Banner banner);
@@ -24,7 +24,7 @@ namespace AGAMinigameApi.Repositories
     {
         public FavoriteRepository(IConfiguration configuration) : base(configuration) { }
 
-        public async Task<bool> ExistsAsync(int memberId, int gameId, string gameType)
+        public async Task<bool> ExistsAsync(int memberId, int gameId)
         {
             const string sql = @"
                 SELECT TOP 1 1
@@ -35,7 +35,6 @@ namespace AGAMinigameApi.Repositories
             var parameters = new Dictionary<string, object>
             {
                 { "@memberId", memberId },
-                { "@gameType", gameType },    // expect 1-char string
                 { "@gameId", gameId }
             };
 
@@ -51,8 +50,32 @@ namespace AGAMinigameApi.Repositories
                     f.favorite_member_id,
                     f.favorite_game_id,
                     f.favorite_created_at,
-                    f.favorite_updated_at
+                    f.favorite_updated_at,
+                    -- mg_app_game (for mapper: game_*)
+                    ag.game_code,
+                    ag.game_description,
+                    ag.game_description_multi_language,
+                    ag.game_image,
+                    ag.game_url,
+                    ag.game_status,
+                    ag.game_category,
+                    ag.game_top,
+                    ag.game_latest,
+                    ag.game_trending,
+                    ag.game_datetime,
+                    -- mg_gamecode (for mapper: gamecode_*)
+                    gc.gamecode_id,
+                    gc.gamecode_code,
+                    gc.gamecode_name,
+                    gc.gamecode_name_multi_language,
+                    gc.gamecode_percent,
+                    gc.gamecode_datetime,
+                    gc.gamecode_status,
+                    gc.gamecode_order,
+                    gc.gamecode_game_type
                 FROM mg_favorite f
+                INNER JOIN mg_gamecode gc ON gc.gamecode_id = f.favorite_game_id
+                INNER JOIN mg_app_game  g ON gc.gamecode_code = gc.gamecode_code
                 WHERE f.favorite_member_id = @memberId
                 AND f.favorite_game_id   = @gameId;";
 
@@ -100,7 +123,7 @@ namespace AGAMinigameApi.Repositories
             var row = dataTable.Rows[0];
             return row.ToFavoriteFromDataRow();
         }
-        
+
         public async Task<(List<Favorite> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
             int memberId,
             string? sortBy,
@@ -113,35 +136,62 @@ namespace AGAMinigameApi.Repositories
             var items = new List<Favorite>();
             int offset = (pageNumber - 1) * pageSize;
 
-            // Whitelist sortable columns
-            string orderColumn = sortBy?.ToLowerInvariant() switch
+            // Whitelist sortable columns (default to created_at is often nicer)
+            string orderColumn = (sortBy ?? "").ToLowerInvariant() switch
             {
                 "id" => "f.favorite_id",
                 "memberid" => "f.favorite_member_id",
                 "itemid" => "f.favorite_game_id",
-                "createdat" => "f.favorite_created_at", 
+                "createdat" => "f.favorite_created_at",
                 "updatedat" => "f.favorite_updated_at",
-                _ => "f.favorite_id"
+                _ => "f.favorite_created_at"
             };
             string orderDir = descending ? "DESC" : "ASC";
 
             // total count (filtered)
-            const string countSql = @"SELECT COUNT(1) AS TotalCount 
-                              FROM mg_favorite 
-                              WHERE favorite_member_id = @memberId;";
+            const string countSql = @"
+                SELECT COUNT(1) AS TotalCount
+                FROM mg_favorite
+                WHERE favorite_member_id = @memberId;";
             var countParams = new Dictionary<string, object> { { "@memberId", memberId } };
             DataTable countTable = await SelectQueryAsync(countSql, countParams);
             int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
-            // page query
+            // page query (JOIN gamecode -> app_game so mapper fields are present)
             string pageSql = $@"
                 SELECT 
                     f.favorite_id,
                     f.favorite_member_id,
                     f.favorite_game_id,
                     f.favorite_created_at,
-                    f.favorite_updated_at
+                    f.favorite_updated_at,
+                    -- mg_app_game (for mapper: game_*)
+                    ag.game_code,
+                    ag.game_description,
+                    ag.game_description_multi_language,
+                    ag.game_image,
+                    ag.game_url,
+                    ag.game_status,
+                    ag.game_category,
+                    ag.game_top,
+                    ag.game_latest,
+                    ag.game_trending,
+                    ag.game_datetime,
+                    -- mg_gamecode (for mapper: gamecode_*)
+                    gc.gamecode_id,
+                    gc.gamecode_code,
+                    gc.gamecode_name,
+                    gc.gamecode_name_multi_language,
+                    gc.gamecode_percent,
+                    gc.gamecode_datetime,
+                    gc.gamecode_status,
+                    gc.gamecode_order,
+                    gc.gamecode_game_type
                 FROM mg_favorite f
+                INNER JOIN mg_gamecode gc
+                    ON gc.gamecode_id = f.favorite_game_id
+                INNER JOIN mg_app_game ag
+                    ON ag.game_code = gc.gamecode_code
                 WHERE f.favorite_member_id = @memberId
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";

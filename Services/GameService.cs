@@ -7,6 +7,7 @@ namespace AGAMinigameApi.Services
 {
     public interface IGameService
     {
+        Task<GameDto?> GetGameAsync(int gameId);
         Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, PagedRequestDto requestDto);
         Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto);
     }
@@ -18,6 +19,13 @@ namespace AGAMinigameApi.Services
         public GameService(IGameRepository gameRepository)
         {
             _gameRepository = gameRepository;
+        }
+
+        public async Task<GameDto?> GetGameAsync(int gameId)
+        {
+            var game = await _gameRepository.GetByIdAsync(gameId);
+            if (game is null) return null;
+            return game.ToGameDto();
         }
 
         public async Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, PagedRequestDto requestDto)

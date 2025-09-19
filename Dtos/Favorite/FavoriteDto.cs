@@ -1,3 +1,6 @@
+using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Models;
+
 namespace AGAMinigameApi.Dtos.Favorite
 {
     public class FavoriteDto
@@ -7,5 +10,7 @@ namespace AGAMinigameApi.Dtos.Favorite
         public int GameId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        // extra
+        public GameDto? Game { get; set; }
     }
 }

@@ -28,17 +28,7 @@ namespace api.Mappers
             
             if (gameModel.Gamecode != null)
             {
-                var nameMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
-                    gameModel.Gamecode.NameMultiLanguage ?? "{}"
-                ) ?? new();
-
-                dto.Gamecode = new GamecodeDto
-                {
-                    Id = gameModel.Gamecode.Id,
-                    Code = gameModel.Gamecode.Code,
-                    Name = gameModel.Gamecode.Name,
-                    NameMultiLanguage = nameMultiLang,
-                };
+                dto.Gamecode = gameModel.Gamecode.ToGamecodeDto();
             }
 
             return dto;
@@ -61,13 +51,7 @@ namespace api.Mappers
 
             if (row.Table.Columns.Contains("gamecode_id"))
             {
-                game.Gamecode = new Gamecode
-                {
-                    Id = Convert.ToByte(row["gamecode_id"]),
-                    Code = Convert.ToString(row["gamecode_code"]) ?? "",
-                    Name = Convert.ToString(row["gamecode_name"]) ?? "",
-                    NameMultiLanguage = Convert.ToString(row["gamecode_name_multi_language"]) ?? "",
-                };
+                game.Gamecode = row.ToGamecodeFromDataRow();
             }
             
             return game;

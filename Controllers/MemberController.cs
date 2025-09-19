@@ -16,14 +16,16 @@ public class MemberController : ControllerBase
     private readonly IMemberService _memberService;
     private readonly IBettingService _bettingService;
     private readonly IFavoriteService _favoriteService;
+    private readonly IGameService _gameService;
 
-    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService, IFavoriteService favoriteService)
+    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService, IFavoriteService favoriteService, IGameService gameService)
     {
         _logger = logger;
         _chargeService = chargeService;
         _memberService = memberService;
         _bettingService = bettingService;
         _favoriteService = favoriteService;
+        _gameService = gameService;
     }
 
     [HttpGet("{id:int}")]
@@ -32,9 +34,7 @@ public class MemberController : ControllerBase
     {
         var result = await _memberService.GetMemberByIdAsync(id);
         if (result == null)
-        {
             return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
-        }
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
@@ -55,9 +55,7 @@ public class MemberController : ControllerBase
 
         var member = await _memberService.GetMemberByIdAsync(id);
         if (member == null)
-        {
             return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
-        }
 
         if (await _chargeService.IsChargeExistsAsync(id, now))
         {
@@ -95,6 +93,15 @@ public class MemberController : ControllerBase
     [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> CreateMemberFavorite(int id, [FromBody] CreateFavoriteDto createDto)
     {
+        var game = await _gameService.GetGameAsync(createDto.GameId);
+        if (game == null)
+            return NotFound(new ApiResponse<object>(false, "Failed", "Game not found", 404));
+
+        if (await _favoriteService.IsMemberFavoriteExistsAsync(id, createDto.GameId))
+        {
+            return Conflict(new ApiResponse<object>(false, "Failed", "Favorite already added", 409));
+        }
+        
         var result = await _favoriteService.CreateMemberFavoriteAsync(id, createDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }

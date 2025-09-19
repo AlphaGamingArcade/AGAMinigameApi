@@ -14,7 +14,7 @@ namespace AGAMinigameApi.Repositories
             int pageSize,
             char? gameType
         );
-        // Task<Banner> GetById(int id);
+        Task<Game?> GetByIdAsync(int id);
         // Task<int> Add(Banner banner);
         // Task<int> Update(Banner banner);
         // Task<int> Delete(int id);
@@ -23,6 +23,35 @@ namespace AGAMinigameApi.Repositories
     public class GameRepository : BaseRepository, IGameRepository
     {
         public GameRepository(IConfiguration configuration) : base(configuration) { }
+
+        public async Task<Game?> GetByIdAsync(int id)
+        {
+            const string sql = @"
+                SELECT 
+                    gc.gamecode_id,
+                    gc.gamecode_code,
+                    gc.gamecode_name,
+                    gc.gamecode_name_multi_language,
+                    ag.game_code,
+                    ag.game_description,
+                    ag.game_description_multi_language,
+                    ag.game_image,
+                    ag.game_url,
+                    ag.game_status,
+                    ag.game_category,
+                    ag.game_top,
+                    ag.game_trending,
+                    ag.game_datetime
+                FROM mg_app_game ag
+                INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
+                WHERE gc.gamecode_id = @id;";
+
+            var dt = await SelectQueryAsync(sql, new Dictionary<string, object> { { "@id", id } });
+            if (dt.Rows.Count == 0) return null;
+
+            var row = dt.Rows[0];
+            return row.ToGameFromDataRow();
+        }
 
         public async Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
             string? search,

@@ -55,21 +55,9 @@ namespace api.Mappers
             };
 
             // Populate nested Gamecode only when the joined columns exist
-            if (row.Table.Columns.Contains("gc_id"))
+            if (row.Table.Columns.Contains("gamecode_id"))
             {
-                Console.WriteLine(Convert.ToString(row["gc_code"]));
-                betting.Gamecode = new Gamecode
-                {
-                    Id = Convert.ToByte(row["gc_id"]),
-                    Code = Convert.ToString(row["gc_code"]) ?? string.Empty,
-                    Name = Convert.ToString(row["gc_name"]) ?? string.Empty,
-                    NameMultiLanguage = Convert.ToString(row["gc_name_multi_language"]) ?? string.Empty,
-                    Percent = row.HasProperty("gc_percent") ? Convert.ToDouble(row["gc_percent"]) : 0d,
-                    Datetime = row.HasProperty("gc_datetime") ? Convert.ToDateTime(row["gc_datetime"]) : default,
-                    Status = Convert.ToString(row["gc_status"]) ?? string.Empty,
-                    Order = row.HasProperty("gc_order") ? Convert.ToByte(row["gc_order"]) : (byte)0,
-                    GameType = Convert.ToString(row["gc_game_type"]) ?? string.Empty
-                };
+                betting.Gamecode = row.ToGamecodeFromDataRow();
             }
 
             return betting;
