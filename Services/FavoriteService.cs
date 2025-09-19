@@ -9,7 +9,9 @@ namespace AGAMinigameApi.Services
 {
     public interface IFavoriteService
     {
-        Task<FavoriteDto> CreateMemberFavoriteDto(int memberId, CreateFavoriteDto createDto);
+        Task<FavoriteDto?> GetMemberFavoriteAsync(int memberId, int gameId);
+        Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId, string gameType);
+        Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto);
         Task<PagedResult<FavoriteDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto);
     }
 
@@ -22,14 +24,22 @@ namespace AGAMinigameApi.Services
             _favoriteRepository = favoriteRepository;
         }
 
-        public async Task<FavoriteDto> CreateMemberFavoriteDto(int memberId, CreateFavoriteDto createDto)
+        public async Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId, string gameType) => await _favoriteRepository.ExistsAsync(memberId, gameId, gameType);
+
+        public async Task<FavoriteDto?> GetMemberFavoriteAsync(int memberId, int gameId)
+        {
+            var favorite = await _favoriteRepository.GetFavoriteByMemberIdAndGameIdAsync(memberId, gameId);
+            if (favorite is null) return null;
+            return favorite.ToFavoriteDto();
+        }
+        
+        public async Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto)
         {
             var now = DateHelper.GetUtcNow();
             var favorite = new Favorite
             {
                 MemberId = memberId,
                 GameId = createDto.GameId,
-                GameType = createDto.GameType ?? "",
                 CreatedAt = now,
                 UpdatedAt = null
             };

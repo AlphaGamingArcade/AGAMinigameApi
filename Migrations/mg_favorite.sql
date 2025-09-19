@@ -1,16 +1,18 @@
+-- Drop if exists (for iterative dev)
+-- DROP TABLE IF EXISTS mg_favorite;
+
 CREATE TABLE mg_favorite (
-    favorite_id          BIGINT IDENTITY(1,1) PRIMARY KEY,     -- internal ID
-    favorite_member_id   INT          NOT NULL,                -- who favorited
-    favorite_game_type   VARCHAR(32)  NOT NULL,                -- 'game', 'post', 'video', etc.
-    favorite_game_id     INT          NOT NULL,                -- ID of the item being favorited
-    favorite_created_at  DATETIME2(3) NOT NULL,
-    favorite_updated_at  DATETIME2(3) NULL,
-    -- Ensure a member can favorite an item only once
-    CONSTRAINT uq_favorite UNIQUE (favorite_member_id, favorite_game_type, favorite_game_id)
+    favorite_id         BIGINT IDENTITY(1,1) PRIMARY KEY,
+    favorite_member_id  INT          NOT NULL,
+    favorite_game_id    INT          NOT NULL,
+    favorite_created_at DATETIME2(3) NOT NULL,
+    favorite_updated_at DATETIME2(3) NULL
 );
 
--- Indexes for fast lookups
-CREATE INDEX ix_favorite_member  ON mg_favorite(favorite_member_id, favorite_game_type);
-CREATE INDEX ix_favorite_item    ON mg_favorite(favorite_game_type, favorite_game_id);
-CREATE INDEX ix_favorite_created ON mg_favorite(favorite_created_at DESC);
-CREATE INDEX ix_favorite_updated ON mg_favorite(favorite_updated_at DESC);
+CREATE UNIQUE INDEX UX_mg_favorite_member_game
+ON mg_favorite (favorite_member_id, favorite_game_id);
+
+-- Includes columns to make it covering for your SELECT.
+CREATE INDEX IX_mg_favorite_member_created
+ON mg_favorite (favorite_member_id, favorite_created_at DESC)
+INCLUDE (favorite_id, favorite_game_id, favorite_updated_at);

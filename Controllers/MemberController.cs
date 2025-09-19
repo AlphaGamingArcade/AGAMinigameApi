@@ -1,4 +1,5 @@
 using AGAMinigameApi.Dtos.Common;
+using AGAMinigameApi.Dtos.Favorite;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +48,7 @@ public class MemberController : ControllerBase
 
     [HttpPost("{id:int}/charges")]
     [Authorize(Policy = "OwnerOrAdmin")]
-    public async Task<IActionResult> PostMemberCharge(int id)
+    public async Task<IActionResult> CreateMemberCharge(int id)
     {
         var now = DateHelper.GetUtcNow();
         var amount = 100000;
@@ -87,6 +88,14 @@ public class MemberController : ControllerBase
     public async Task<IActionResult> GetPaginatedMemberFavorites(int id, [FromQuery] PagedRequestDto requestDto)
     {
         var result = await _favoriteService.GetPaginatedMemberFavoritesAsync(id, requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
+
+    [HttpPost("{id:int}/favorites")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> CreateMemberFavorite(int id, [FromBody] CreateFavoriteDto createDto)
+    {
+        var result = await _favoriteService.CreateMemberFavoriteAsync(id, createDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 }

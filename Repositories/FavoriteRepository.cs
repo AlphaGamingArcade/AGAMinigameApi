@@ -13,6 +13,8 @@ namespace AGAMinigameApi.Repositories
             int pageNumber,
             int pageSize);
         Task<Favorite> AddAsync(Favorite favorite);
+        Task<bool> ExistsAsync(int memberId, int gameId, string gameType);
+        Task<Favorite?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId);
         // Task<Banner> GetById(int id);
         // Task<int> Update(Banner banner);
         // Task<int> Delete(int id);
@@ -22,26 +24,70 @@ namespace AGAMinigameApi.Repositories
     {
         public FavoriteRepository(IConfiguration configuration) : base(configuration) { }
 
+        public async Task<bool> ExistsAsync(int memberId, int gameId, string gameType)
+        {
+            const string sql = @"
+                SELECT TOP 1 1
+                FROM mg_favorite
+                WHERE favorite_member_id = @memberId
+                AND favorite_game_id   = @gameId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@memberId", memberId },
+                { "@gameType", gameType },    // expect 1-char string
+                { "@gameId", gameId }
+            };
+
+            var dt = await SelectQueryAsync(sql, parameters);
+            return dt.Rows.Count > 0;
+        }
+
+        public async Task<Favorite?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId)
+        {
+            const string sql = @"
+                SELECT TOP 1
+                    f.favorite_id,
+                    f.favorite_member_id,
+                    f.favorite_game_id,
+                    f.favorite_created_at,
+                    f.favorite_updated_at
+                FROM mg_favorite f
+                WHERE f.favorite_member_id = @memberId
+                AND f.favorite_game_id   = @gameId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@memberId", memberId },
+                { "@gameId", gameId }
+            };
+
+            var dt = await SelectQueryAsync(sql, parameters);
+            if (dt.Rows.Count == 0) return null;
+
+            var row = dt.Rows[0];
+            return row.ToFavoriteFromDataRow();
+        }
+
+        
         public async Task<Favorite> AddAsync(Favorite favorite)
         {
             const string query = @"
                 INSERT INTO mg_favorite
-                    (favorite_member_id, favorite_game_type, favorite_game_id, favorite_created_at, favorite_updated_at)
+                    (favorite_member_id, favorite_game_id, favorite_created_at, favorite_updated_at)
                 OUTPUT
                     INSERTED.favorite_id,
                     INSERTED.favorite_member_id,
-                    INSERTED.favorite_game_type,
                     INSERTED.favorite_game_id,
                     INSERTED.favorite_created_at,
                     INSERTED.favorite_updated_at
                 VALUES
-                    (@memberId, @gameType, @gameId, @createdAt, @updatedAt);
+                    (@memberId, @gameId, @createdAt, @updatedAt);
             ";
 
             var parameters = new Dictionary<string, object>
             {
-                { "@memberId", favorite.MemberId },
-                { "@gameType", favorite.GameType },                
+                { "@memberId", favorite.MemberId },            
                 { "@gameId", favorite.GameId },            
                 { "@createdAt", favorite.CreatedAt == default ? DateTime.UtcNow : favorite.CreatedAt },
                 { "@updatedAt", favorite.UpdatedAt.HasValue ? favorite.UpdatedAt.Value : DBNull.Value }
@@ -72,8 +118,7 @@ namespace AGAMinigameApi.Repositories
             {
                 "id" => "f.favorite_id",
                 "memberid" => "f.favorite_member_id",
-                "itemtype" => "f.favorite_item_type",
-                "itemid" => "f.favorite_item_id",
+                "itemid" => "f.favorite_game_id",
                 "createdat" => "f.favorite_created_at", 
                 "updatedat" => "f.favorite_updated_at",
                 _ => "f.favorite_id"
@@ -93,8 +138,7 @@ namespace AGAMinigameApi.Repositories
                 SELECT 
                     f.favorite_id,
                     f.favorite_member_id,
-                    f.favorite_item_type,
-                    f.favorite_item_id,
+                    f.favorite_game_id,
                     f.favorite_created_at,
                     f.favorite_updated_at
                 FROM mg_favorite f
