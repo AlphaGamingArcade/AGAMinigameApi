@@ -54,7 +54,6 @@ namespace api.Mappers
                 Datetime = Convert.ToDateTime(row["betting_datetime"]),
             };
 
-            // Populate nested Gamecode only when the joined columns exist
             if (row.Table.Columns.Contains("gamecode_id"))
             {
                 betting.Gamecode = row.ToGamecodeFromDataRow();

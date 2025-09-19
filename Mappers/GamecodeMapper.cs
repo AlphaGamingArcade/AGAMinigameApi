@@ -34,7 +34,7 @@ namespace api.Mappers
                 Datetime = row.HasProperty("gamecode_datetime") ? Convert.ToDateTime(row["gamecode_datetime"]) : default,
                 Status = row.HasProperty("gamecode_status") ? Convert.ToChar(row["gamecode_status"]) : default,
                 Order = row.HasProperty("gamecode_order") ? Convert.ToByte(row["gamecode_order"]) : (byte)0,
-                GameType = Convert.ToString(row["gamecode_game_type"]) ?? string.Empty
+                GameType = row.HasProperty("gamecode_game_type") ? Convert.ToChar(row["gamecode_game_type"]) : default
             };
             return game;
         }

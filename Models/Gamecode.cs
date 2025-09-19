@@ -10,6 +10,6 @@ namespace AGAMinigameApi.Models
         public DateTime Datetime { get; set; }
         public char Status { get; set; }
         public byte Order { get; set; }
-        public string GameType { get; set; } = string.Empty;
+        public char GameType { get; set; }
     }
 }
