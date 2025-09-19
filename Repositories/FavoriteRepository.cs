@@ -1,4 +1,5 @@
 using System.Data;
+using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
@@ -6,7 +7,7 @@ namespace AGAMinigameApi.Repositories
 {
     public interface IFavoriteRepository
     {
-        Task<(List<Favorite> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
+        Task<(List<Game> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
             int memberId,
             string? sortBy,
             bool descending,
@@ -14,7 +15,7 @@ namespace AGAMinigameApi.Repositories
             int pageSize);
         Task<Favorite> AddAsync(Favorite favorite);
         Task<bool> ExistsAsync(int memberId, int gameId);
-        Task<Favorite?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId);
+        Task<Game?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId);
         // Task<Banner> GetById(int id);
         // Task<int> Update(Banner banner);
         // Task<int> Delete(int id);
@@ -42,7 +43,7 @@ namespace AGAMinigameApi.Repositories
             return dt.Rows.Count > 0;
         }
 
-        public async Task<Favorite?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId)
+        public async Task<Game?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId)
         {
             const string sql = @"
                 SELECT TOP 1
@@ -89,7 +90,7 @@ namespace AGAMinigameApi.Repositories
             if (dt.Rows.Count == 0) return null;
 
             var row = dt.Rows[0];
-            return row.ToFavoriteFromDataRow();
+            return row.ToGameFromDataRow();
         }
 
         
@@ -124,7 +125,7 @@ namespace AGAMinigameApi.Repositories
             return row.ToFavoriteFromDataRow();
         }
 
-        public async Task<(List<Favorite> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
+        public async Task<(List<Game> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
             int memberId,
             string? sortBy,
             bool descending,
@@ -133,7 +134,7 @@ namespace AGAMinigameApi.Repositories
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Max(1, pageSize);
-            var items = new List<Favorite>();
+            var items = new List<Game>();
             int offset = (pageNumber - 1) * pageSize;
 
             // Whitelist sortable columns (default to created_at is often nicer)
@@ -205,7 +206,7 @@ namespace AGAMinigameApi.Repositories
 
             DataTable pageTable = await SelectQueryAsync(pageSql, pageParams);
             foreach (DataRow row in pageTable.Rows)
-                items.Add(row.ToFavoriteFromDataRow());
+                items.Add(row.ToGameFromDataRow());
 
             return (items, total);
         }

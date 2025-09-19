@@ -1,3 +1,4 @@
+using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Dtos.Favorite;
 using AGAMinigameApi.Helpers;
@@ -9,10 +10,10 @@ namespace AGAMinigameApi.Services
 {
     public interface IFavoriteService
     {
-        Task<FavoriteDto?> GetMemberFavoriteAsync(int memberId, int gameId);
+        Task<GameDto?> GetMemberFavoriteAsync(int memberId, int gameId);
         Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId);
         Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto);
-        Task<PagedResult<FavoriteDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto);
+        Task<PagedResult<GameDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto);
     }
 
     public class FavoriteService : IFavoriteService
@@ -26,11 +27,11 @@ namespace AGAMinigameApi.Services
 
         public async Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId) => await _favoriteRepository.ExistsAsync(memberId, gameId);
 
-        public async Task<FavoriteDto?> GetMemberFavoriteAsync(int memberId, int gameId)
+        public async Task<GameDto?> GetMemberFavoriteAsync(int memberId, int gameId)
         {
-            var favorite = await _favoriteRepository.GetFavoriteByMemberIdAndGameIdAsync(memberId, gameId);
-            if (favorite is null) return null;
-            return favorite.ToFavoriteDto();
+            var game = await _favoriteRepository.GetFavoriteByMemberIdAndGameIdAsync(memberId, gameId);
+            if (game is null) return null;
+            return game.ToGameDto();
         }
         
         public async Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto)
@@ -48,9 +49,9 @@ namespace AGAMinigameApi.Services
             return result.ToFavoriteDto();
         }
 
-        public async Task<PagedResult<FavoriteDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto)
+        public async Task<PagedResult<GameDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto)
         {
-            var (favorites, total) = await _favoriteRepository.GetPaginatedFavoritesByMemberIdAsync(
+            var (games, total) = await _favoriteRepository.GetPaginatedFavoritesByMemberIdAsync(
                 memberId,
                 requestDto.SortBy,
                 requestDto.Descending,
@@ -58,11 +59,11 @@ namespace AGAMinigameApi.Services
                 requestDto.PageSize
             );
 
-            var favoriteDtos = favorites.Select(g => g.ToFavoriteDto());
+            var gameDtos = games.Select(g => g.ToGameDto());
 
-            var pagedResult = new PagedResult<FavoriteDto>
+            var pagedResult = new PagedResult<GameDto>
             {
-                Items = favoriteDtos,
+                Items = gameDtos,
                 TotalRecords = total,
                 PageNumber = requestDto.PageNumber,
                 PageSize = requestDto.PageSize
