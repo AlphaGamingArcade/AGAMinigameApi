@@ -13,6 +13,7 @@ namespace AGAMinigameApi.Services
         Task<GameDto?> GetMemberFavoriteAsync(int memberId, int gameId);
         Task<bool> IsMemberFavoriteExistsAsync(int memberId, int gameId);
         Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto);
+        Task<int> DeleteMemberFavoriteAsync(int memberId, int gameId);
         Task<PagedResult<GameDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto);
     }
 
@@ -33,7 +34,7 @@ namespace AGAMinigameApi.Services
             if (game is null) return null;
             return game.ToGameDto();
         }
-        
+
         public async Task<FavoriteDto> CreateMemberFavoriteAsync(int memberId, CreateFavoriteDto createDto)
         {
             var now = DateHelper.GetUtcNow();
@@ -48,6 +49,9 @@ namespace AGAMinigameApi.Services
             var result = await _favoriteRepository.AddAsync(favorite);
             return result.ToFavoriteDto();
         }
+
+        public async Task<int> DeleteMemberFavoriteAsync(int memberId, int gameId) 
+            => await _favoriteRepository.DeleteByMemberIdAndGameIdAsync(memberId, gameId);
 
         public async Task<PagedResult<GameDto>> GetPaginatedMemberFavoritesAsync(int memberId, PagedRequestDto requestDto)
         {

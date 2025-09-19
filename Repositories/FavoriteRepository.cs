@@ -16,6 +16,7 @@ namespace AGAMinigameApi.Repositories
         Task<Favorite> AddAsync(Favorite favorite);
         Task<bool> ExistsAsync(int memberId, int gameId);
         Task<Game?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId);
+        Task<int> DeleteByMemberIdAndGameIdAsync(int memberId, int gameId);
         // Task<Banner> GetById(int id);
         // Task<int> Update(Banner banner);
         // Task<int> Delete(int id);
@@ -93,7 +94,22 @@ namespace AGAMinigameApi.Repositories
             return row.ToGameFromDataRow();
         }
 
-        
+        public async Task<int> DeleteByMemberIdAndGameIdAsync(int memberId, int gameId)
+        {
+            const string query = @"
+                DELETE FROM mg_favorite
+                WHERE favorite_member_id = @memberId
+                AND favorite_game_id = @gameId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["@memberId"] = memberId,
+                ["@gameId"] = gameId
+            };
+
+            return await DeleteQueryAsync(query, parameters);
+        }
+
         public async Task<Favorite> AddAsync(Favorite favorite)
         {
             const string query = @"
@@ -111,8 +127,8 @@ namespace AGAMinigameApi.Repositories
 
             var parameters = new Dictionary<string, object>
             {
-                { "@memberId", favorite.MemberId },            
-                { "@gameId", favorite.GameId },            
+                { "@memberId", favorite.MemberId },
+                { "@gameId", favorite.GameId },
                 { "@createdAt", favorite.CreatedAt == default ? DateTime.UtcNow : favorite.CreatedAt },
                 { "@updatedAt", favorite.UpdatedAt.HasValue ? favorite.UpdatedAt.Value : DBNull.Value }
             };

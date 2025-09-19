@@ -105,16 +105,17 @@ public class MemberController : ControllerBase
         var result = await _favoriteService.CreateMemberFavoriteAsync(id, createDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
-    
-    // [HttpDelete("{id:int}/favorites")]
-    // [Authorize(Policy = "OwnerOrAdmin")]
-    // public async Task<IActionResult> DeleteMemberFavorite(int id, [FromBody] CreateFavoriteDto createDto)
-    // {
-    //     if (!await _favoriteService.IsMemberFavoriteExistsAsync(id, createDto.GameId))
-    //     {
-    //         return NotFound(new ApiResponse<object>(false, "Failed", "Favorite not found", 404));
-    //     }
-    //     var result = await _favoriteService.DeleteMemberFavoriteAsync(id, createDto);
-    //     return Ok(new ApiResponse<object>(true, "Success", result, 200));
-    // }
+
+    [HttpDelete("{id:int}/favorites/{gameId:int}")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> DeleteMemberFavorite(int id, int gameId)
+    {
+        if (!await _favoriteService.IsMemberFavoriteExistsAsync(id, gameId))
+        {
+            return NotFound(new ApiResponse<object>(
+                false, "Failed", "Favorite not found", 404));
+        }
+        var result = await _favoriteService.DeleteMemberFavoriteAsync(id, gameId);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
 }
