@@ -9,10 +9,15 @@ namespace api.Mappers
     {
         public static GameDto ToGameDto(this Game gameModel)
         {
+            var descMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                gameModel.DescriptionMultiLanguage ?? "{}"
+            ) ?? new();
+                
             var dto = new GameDto
             {
                 Code = gameModel.Code,
                 Description = gameModel.Description,
+                DescriptionMultiLanguage = descMultiLang,
                 Image = gameModel.Image,
                 Url = gameModel.Url,
                 Status = gameModel.Status,
@@ -45,6 +50,7 @@ namespace api.Mappers
             {
                 Code = Convert.ToString(row["game_code"]) ?? "",
                 Description = Convert.ToString(row["game_description"]) ?? "",
+                DescriptionMultiLanguage = Convert.ToString(row["game_description_multi_language"]) ?? "{}",
                 Image = Convert.ToString(row["game_image"]) ?? "",
                 Url = Convert.ToString(row["game_url"]) ?? "",
                 Status = Convert.ToChar(row["game_status"]),

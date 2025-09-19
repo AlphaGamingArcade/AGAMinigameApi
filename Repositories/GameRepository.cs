@@ -94,6 +94,7 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_name_multi_language,
                     ag.game_code,
                     ag.game_description,
+                    ag.game_description_multi_language,
                     ag.game_image,
                     ag.game_url,
                     ag.game_status,

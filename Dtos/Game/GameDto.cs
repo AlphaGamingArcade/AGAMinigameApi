@@ -4,6 +4,7 @@ namespace AGAMinigameApi.Dtos.Banner
     {
         public string? Code { get; set; }
         public string? Description { get; set; }
+        public object DescriptionMultiLanguage { get; set; } = new();
         public string? Image { get; set; }
         public string? Url { get; set; }
         public char Status { get; set; }

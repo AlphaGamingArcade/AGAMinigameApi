@@ -1,8 +1,6 @@
 using System.Data;
-using AGAMinigameApi.Dtos.Betting;
 using AGAMinigameApi.Dtos.Favorite;
 using AGAMinigameApi.Models;
-using Namotion.Reflection;
 
 namespace api.Mappers
 {
@@ -14,7 +12,8 @@ namespace api.Mappers
             {
                 Id = favoriteModel.Id,
                 MemberId = favoriteModel.MemberId,
-                ItemType = favoriteModel.ItemType,
+                GameId = favoriteModel.GameId,
+                GameType = favoriteModel.GameType,
                 CreatedAt = favoriteModel.CreatedAt,
                 UpdatedAt = favoriteModel.UpdatedAt
             };
@@ -27,10 +26,12 @@ namespace api.Mappers
             {
                 Id = Convert.ToInt32(row["favorite_id"]),
                 MemberId = Convert.ToInt32(row["favorite_member_id"]),
-                ItemType = Convert.ToString(row["favorite_item_type"]) ?? "",
-                ItemId = Convert.ToInt32(row["favorite_item_id"]),
+                GameId = Convert.ToInt32(row["favorite_game_id"]),
+                GameType = Convert.ToString(row["favorite_game_type"]) ?? "",
                 CreatedAt = Convert.ToDateTime(row["favorite_created_at"]),
-                UpdatedAt = Convert.ToDateTime(row["favorite_updated_at"])
+                UpdatedAt = row["favorite_updated_at"] == DBNull.Value 
+                    ? null 
+                    : Convert.ToDateTime(row["favorite_updated_at"]) 
             };
 
             return favorite;

@@ -10,7 +10,7 @@ namespace api.Mappers
     public static class BettingMapper
     {
         public static BettingDto ToBettingDto(this Betting bettingModel)
-        {
+        {                
             var betting = new BettingDto
             {
                 Id = bettingModel.Id,
@@ -26,7 +26,6 @@ namespace api.Mappers
                 var nameMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
                     bettingModel.Gamecode.NameMultiLanguage ?? "{}"
                 ) ?? new();
-
 
                 betting.Gamecode = new GamecodeDto
                 {
