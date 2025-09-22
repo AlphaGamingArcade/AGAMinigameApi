@@ -57,16 +57,16 @@ namespace AGAMinigameApi.Repositories
         }
 
         public async Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
-    string? search,
-    string? sortBy,
-    bool descending,
-    int pageNumber,
-    int pageSize,
-    char? gameType = null,
-    bool? top = null,
-    bool? trending = null,
-    bool? latest = null
-)
+            string? search,
+            string? sortBy,
+            bool descending,
+            int pageNumber,
+            int pageSize,
+            char? gameType = null,
+            bool? top = null,
+            bool? trending = null,
+            bool? latest = null
+        )
         {
             var items = new List<Game>();
 
