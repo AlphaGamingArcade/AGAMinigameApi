@@ -6,10 +6,9 @@ namespace AGAMinigameApi.Models
         public int MemberId { get; set; }
         public string Email { get; set; } = string.Empty;
         public string AppKey { get; set; } = string.Empty;
-        public string Token { get; set; } = string.Empty;
+        public string TokenHash { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
-        public char IsUsed { get; set; }
-        public DateTime? UsedAt { get; set; }
+        public DateTime? ConsumedAt { get; set; }
     }
 }

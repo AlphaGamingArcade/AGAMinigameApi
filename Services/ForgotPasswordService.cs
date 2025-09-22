@@ -1,8 +1,10 @@
 using System.Security.Cryptography;
+using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
 using AGAMinigameApi.Services.EmailSender;
+using api.Mappers;
 using Microsoft.Extensions.Options;
 using SmptOptions;
 
@@ -11,9 +13,9 @@ namespace AGAMinigameApi.Services
     public interface IForgotPasswordService
     {
         Task<string> CreateResetTokenAsync(int memberId, string email, DateTime now);
-        Task<bool> ValidateResetTokenAsync(string token);
         Task SendLinkAsync(int memberId, string email, string displayName, DateTime utcNow);
-        Task<bool> ResetPasswordAsync(string token, string newPassword, string ipAddress);
+        Task MarkAsUsedAsync(string tokenHash, DateTime now);
+        Task<ForgotPasswordDto?> GetByTokenAsync(string tokenHash);
     }
 
     public class ForgotPasswordService : IForgotPasswordService
@@ -49,15 +51,16 @@ namespace AGAMinigameApi.Services
             var tokenHash = HashHelper.ComputeSHA256(token);
             var expiresAt = DateHelper.GetUtcNow().AddMinutes(TOKEN_EXPIRY_MINUTES);
 
+            Console.WriteLine($"WHEN REQUESTIONG {token} ========== {tokenHash}");
+
             // Create forgot password record
             var forgotPassword = new ForgotPassword
             {
                 MemberId = memberId,
                 AppKey = _appOptions.Value.Key,
                 Email = email,
-                Token = tokenHash,
+                TokenHash = tokenHash,
                 ExpiresAt = expiresAt,
-                IsUsed = 'n',
                 CreatedAt = DateHelper.GetUtcNow()
             };
 
@@ -66,55 +69,15 @@ namespace AGAMinigameApi.Services
             return token;
         }
 
-        public async Task<bool> ValidateResetTokenAsync(string token)
+        public async Task<ForgotPasswordDto?> GetByTokenAsync(string tokenHash)
         {
-            var now = DateHelper.GetUtcNow();
-            if (string.IsNullOrWhiteSpace(token))
-                return false;
-
-            var forgotPasswordRecord = await _forgotPasswordRepository.GetByTokenAsync(token, now);
-
-            if (forgotPasswordRecord == null)
-                return false;
-
-            // Check if token is valid
-            return forgotPasswordRecord.IsUsed == 'n' &&
-                   forgotPasswordRecord.ExpiresAt > DateHelper.GetUtcNow();
+            var forgotPassword = await _forgotPasswordRepository.GetByTokenAsync(tokenHash);
+            if (forgotPassword == null) return null;
+            return forgotPassword.ToForgotPasswordDto(); 
         }
-
-        public async Task<bool> ResetPasswordAsync(string token, string newPassword, string ipAddress)
-        {
-            var now = DateHelper.GetUtcNow();
-
-            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(newPassword))
-                return false;
-
-            var forgotPasswordRecord = await _forgotPasswordRepository.GetByTokenAsync(token, now);
-
-            if (forgotPasswordRecord == null)
-                return false;
-
-            // Validate token
-            if (forgotPasswordRecord.IsUsed == 'y' ||
-                forgotPasswordRecord.ExpiresAt <= DateHelper.GetUtcNow())
-            {
-                return false;
-            }
-
-            await _memberRepository.UpdatePasswordAsync(forgotPasswordRecord.MemberId, newPassword);
-
-            // Mark token as used
-            await _forgotPasswordRepository.MarkAsUsedAsync(forgotPasswordRecord.Id, DateHelper.GetUtcNow());
-
-            return true;
-        }
-
-        public async Task CleanupExpiredTokensAsync()
-        {
-            var cutoffDate = DateHelper.GetUtcNow().AddHours(-24); // Keep records for 24 hours for audit
-            await _forgotPasswordRepository.DeleteExpiredTokensAsync(cutoffDate);
-        }
-
+        
+        public async Task MarkAsUsedAsync(string tokenHash, DateTime now) =>
+            await _forgotPasswordRepository.MarkAsUsedAsync(tokenHash, now);
         public async Task SendLinkAsync(int memberId, string email, string displayName, DateTime utcNow)
         {
             var token = await CreateResetTokenAsync(memberId, email, utcNow);

@@ -1,10 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace AGAMinigameApi.Dtos.Auth;
 
 public class ForgotPasswordDto
 {
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    public int MemberId { get; set; }
+    public string Token { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public DateTime ExpiresAt { get; set; }
+    public DateTime? ConsumedAt { get; set; }
 }

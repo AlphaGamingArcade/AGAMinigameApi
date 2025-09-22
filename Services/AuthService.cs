@@ -16,9 +16,9 @@ namespace AGAMinigameApi.Services
         Task RegisterAsync(RegisterRequestDto request, Agent agent);
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user);
         Task LogoutAsync(int memberId);
-        Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request);
         Task<RefreshTokenResponseDto> RefreshTokenAsync(int memberId);
-        Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request);
+        Task ForgotPasswordAsync(ForgotPasswordRequestDto request);
+        Task ResetPasswordAsync(int memberId, string tokenHash, string newPassword);
         Task SetEmailVerifiedAsync(string email, DateTime dateTime);
     }
 
@@ -28,14 +28,16 @@ namespace AGAMinigameApi.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IEmailVerificationService _emailVerificationService;
+        private readonly IForgotPasswordService _forgotPasswordService;
         private readonly AppOptions _appOptions;
 
-        public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository, IEmailVerificationService emailVerificationService, IOptions<AppOptions> appOptions)
+        public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository, IForgotPasswordService forgotPasswordService, IEmailVerificationService emailVerificationService, IOptions<AppOptions> appOptions)
         {
             _authRepository = authRepository;
             _jwtTokenService = jwtTokenService;
             _refreshTokenRepository = refreshTokenRepository;
             _emailVerificationService = emailVerificationService;
+            _forgotPasswordService = forgotPasswordService;
             _appOptions = appOptions.Value;
         }
 
@@ -108,10 +110,30 @@ namespace AGAMinigameApi.Services
         public async Task LogoutAsync(int memberId) => await _refreshTokenRepository.DeleteRefreshTokenByMemberIdAsync(memberId);
 
 
-        public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto request)
+        public async Task ForgotPasswordAsync(ForgotPasswordRequestDto request)
         {
-            await Task.Delay(1000);
-            return new ForgotPasswordResponseDto();
+            var utcNow = DateHelper.GetUtcNow();
+            
+            var user = await GetUserByEmailAsync(request.Email);
+            if (user == null)
+            {
+                await Task.Delay(1000);
+                return;
+            }
+
+            await _forgotPasswordService.SendLinkAsync(
+                user.Id, 
+                user.Email, 
+                user.Nickname, 
+                utcNow
+            );
+        }
+
+        public async Task ResetPasswordAsync(int memberId, string tokenHash, string newPassword)
+        {
+            var utcNow = DateHelper.GetUtcNow();
+            await _authRepository.UpdatePasswordAsync(memberId, newPassword);
+            await _forgotPasswordService.MarkAsUsedAsync(tokenHash, utcNow);
         }
 
         public async Task<RefreshTokenResponseDto> RefreshTokenAsync(int memberId)
@@ -125,11 +147,6 @@ namespace AGAMinigameApi.Services
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
-        }
-        public async Task<ResetPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto request)
-        {
-            await Task.Delay(1000);
-            return new ResetPasswordResponseDto();
         }
 
         public async Task SetEmailVerifiedAsync(string email, DateTime dateTime) => await _authRepository.SetEmailVerifiedAsync(email, dateTime);

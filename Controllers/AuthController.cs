@@ -111,23 +111,9 @@ public class AuthController : ControllerBase
 
     // POST /auth/forgot-password
     [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
     {
-        var now = DateHelper.GetUtcNow();
-        var member = await _memberService.GetMemberByEmailAsync(request.Email!);
-        if (member == null)
-        {
-            await Task.Delay(2000); // trick hacker that it process something
-            return Ok(new ApiResponse<object>(true, "Forgot password sent to email.", null, 200));
-        }
-
-        await _forgotPasswordService.SendLinkAsync(
-            member.Id,
-            member.Email!,
-            member.Nickname!,
-            now
-        );
-        
+        await _authService.ForgotPasswordAsync(request);
         return Ok(new ApiResponse<object>(true, "Forgot password sent to email.", null, 200));
     }
 
@@ -135,7 +121,23 @@ public class AuthController : ControllerBase
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
     {
-        await Task.Delay(1000);
+        string tokenHash = HashHelper.ComputeSHA256(request.Token);
+        var forgotPassword = await _forgotPasswordService.GetByTokenAsync(tokenHash);
+        if (forgotPassword == null)
+            return NotFound(new ApiResponse<object>(false, "Invalid token.", null, 404));
+
+        if (forgotPassword.ExpiresAt <= DateTime.UtcNow)
+            return StatusCode(StatusCodes.Status410Gone,
+                new ApiResponse<object>(false, "Token has expired.", null, 410));
+
+        if (forgotPassword.ConsumedAt != null)
+            return Conflict(new ApiResponse<object>(false, "Token already used.", null, 409));
+    
+        await _authService.ResetPasswordAsync(
+            forgotPassword.MemberId,
+            forgotPassword.Token,
+            request.ConfirmPassword
+        );
         return Ok(new ApiResponse<object>(true, "Reset password successfully.", null, 200));
     }
 

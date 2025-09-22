@@ -66,6 +66,7 @@ namespace AGAMinigameApi.Repositories
             return null;
         }
 
+
         public async Task<User> CreateUserAsync(User user, DateTime dateTime)
         {
             const string sql = @"
@@ -148,6 +149,7 @@ namespace AGAMinigameApi.Repositories
             return user;
         }
 
+        
         public async Task UpdatePasswordAsync(int userId, string newPassword)
         {
             const string query = @"

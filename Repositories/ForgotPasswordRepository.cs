@@ -9,9 +9,9 @@ namespace AGAMinigameApi.Repositories
     public interface IForgotPasswordRepository
     {
         Task CreateAsync(ForgotPassword forgotPassword);
-        Task<ForgotPassword?> GetByTokenAsync(string token, DateTime now);
+        Task<ForgotPassword?> GetByTokenAsync(string token);
         Task InvalidateUserTokensAsync(long memberId, DateTime now);
-        Task MarkAsUsedAsync(int forgotPasswordId, DateTime usedAt);
+        Task MarkAsUsedAsync(string token, DateTime usedAt);
         Task DeleteExpiredTokensAsync(DateTime cutoffDate);
     }
 
@@ -32,22 +32,20 @@ namespace AGAMinigameApi.Repositories
                     forgot_password_member_id,
                     forgot_password_email,
                     forgot_password_app_key,
-                    forgot_password_token,
+                    forgot_password_token_hash,
                     forgot_password_created_at,
                     forgot_password_expires_at,
-                    forgot_password_is_used,
-                    forgot_password_used_at
+                    forgot_password_consumed_at
                 )
                 VALUES 
                 (
                     @memberId,
                     @email,
                     @appKey,
-                    @token,
+                    @tokenHash,
                     @createdAt,
                     @expiresAt,
-                    @isUsed,
-                    @usedAt
+                    @consumedAt
                 );";
 
             var parameters = new Dictionary<string, object>
@@ -55,17 +53,16 @@ namespace AGAMinigameApi.Repositories
                 { "@memberId", forgotPassword.MemberId },
                 { "@email", forgotPassword.Email },
                 { "@appKey", forgotPassword.AppKey },
-                { "@token", forgotPassword.Token },
+                { "@tokenHash", forgotPassword.TokenHash },
                 { "@createdAt", forgotPassword.CreatedAt },
                 { "@expiresAt", forgotPassword.ExpiresAt },
-                { "@isUsed", forgotPassword.IsUsed },
-                { "@usedAt", (object?)forgotPassword.UsedAt ?? DBNull.Value }
+                { "@consumedAt", (object?)forgotPassword.ConsumedAt ?? DBNull.Value }
             };
 
             await InsertQueryAsync(query, parameters);
         }
 
-        public async Task<ForgotPassword?> GetByTokenAsync(string token, DateTime now)
+        public async Task<ForgotPassword?> GetByTokenAsync(string tokenHash)
         {
             const string query = @"
                 SELECT 
@@ -73,23 +70,18 @@ namespace AGAMinigameApi.Repositories
                     forgot_password_member_id,
                     forgot_password_email,
                     forgot_password_app_key,
-                    forgot_password_token,
+                    forgot_password_token_hash,
                     forgot_password_created_at,
                     forgot_password_expires_at,
-                    forgot_password_is_used,
-                    forgot_password_used_at
+                    forgot_password_consumed_at
                 FROM mg_forgot_password
                 WHERE forgot_password_app_key = @appKey 
-                AND forgot_password_token = @token
-                AND forgot_password_is_used = 'n'
-                AND forgot_password_expires_at > @now
-                LIMIT 1;";
+                AND forgot_password_token_hash = @tokenHash;";
 
             var parameters = new Dictionary<string, object>
             {
                 { "@appKey", _appOptions.Value.Key},
-                { "@token", token },
-                { "@now", now }
+                { "@tokenHash", tokenHash },
             };
 
             var dataTable = await SelectQueryAsync(query, parameters);
@@ -118,20 +110,20 @@ namespace AGAMinigameApi.Repositories
             await UpdateQueryAsync(query, parameters);
         }
 
-        public async Task MarkAsUsedAsync(int forgotPasswordId, DateTime usedAt)
+        public async Task MarkAsUsedAsync(string tokenHash, DateTime usedAt)
         {
+            Console.WriteLine($"WHEN WHEN VERIFYING {tokenHash}");
             const string query = @"
                 UPDATE mg_forgot_password
                 SET 
-                    forgot_password_is_used = 'y',
-                    forgot_password_used_at = @usedAt
-                WHERE forgot_password_app_key = @appKey AND forgot_password_id = @forgotPasswordId;";
+                    forgot_password_consumed_at = @consumedAt
+                WHERE forgot_password_app_key = @appKey AND forgot_password_token_hash = @tokenHash;";
 
             var parameters = new Dictionary<string, object>
             {
-                {  "@appKey", _appOptions.Value.Key },
-                { "@forgotPasswordId", forgotPasswordId },
-                { "@usedAt", usedAt }
+                { "@appKey", _appOptions.Value.Key },
+                { "@tokenHash", tokenHash },
+                { "@consumedAt", usedAt }
             };
 
             await UpdateQueryAsync(query, parameters);
@@ -142,7 +134,7 @@ namespace AGAMinigameApi.Repositories
             const string query = @"
                 DELETE FROM mg_forgot_password
                 WHERE forgot_password_app_key = @appKey 
-                AND (forgot_password_created_at < @cutoffDate OR (forgot_password_is_used = 'y' AND forgot_password_used_at < @cutoffDate));";
+                AND (forgot_password_created_at < @cutoffDate OR (forgot_password_is_used = 'y' AND forgot_password_consumed_at < @cutoffDate));";
 
             var parameters = new Dictionary<string, object>
             {

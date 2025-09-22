@@ -9,7 +9,6 @@ namespace AGAMinigameApi.Repositories
         Task<Member?> GetByIdAsync(int id);
         Task<Member?> GetByEmailAsync(string email);
         Task UpdateOnChargeAsync(int memberId, decimal amount);
-        Task UpdatePasswordAsync(int memberId, string password);
         Task PatchNicknameAsync(int memberId, string nickname, DateTime datetime);
     }
 
@@ -75,25 +74,7 @@ namespace AGAMinigameApi.Repositories
                 return row.ToMemberFromDataRow();
             }
             return null;
-        }
-
-        public async Task UpdatePasswordAsync(int memberId, string newPassword)
-        {
-            const string query = @"
-                UPDATE mg_app_user
-                SET 
-                    app_user_password = @newPassword
-                WHERE app_user_member_id = @memberId;";
-
-            var parameters = new Dictionary<string, object>
-            {
-                { "@newPassword", newPassword },
-                { "@memberId", memberId }
-            };
-
-            await UpdateQueryAsync(query, parameters);
-        }
-    
+        }    
 
         public async Task UpdateOnChargeAsync(int memberId, decimal amount)
         {
