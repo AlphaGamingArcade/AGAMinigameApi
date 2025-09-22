@@ -41,7 +41,6 @@ namespace AGAMinigameApi.Repositories
             };
 
             var dataTable = await SelectQueryAsync(query, parameters);
-            Console.WriteLine(dataTable.Rows.Count);
             return dataTable.Rows.Count > 0;
         }
 

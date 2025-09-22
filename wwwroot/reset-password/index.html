@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Your Password</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-out;
+      }
+      .input-focus {
+        transition: all 0.2s ease-in-out;
+      }
+      .input-focus:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full fade-in">
+      <!-- Lock Icon -->
+      <div
+        class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6"
+      >
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center bg-blue-500"
+        >
+          <svg
+            class="w-6 h-6 text-white"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-semibold text-gray-900 mb-3">
+          Reset Your Password
+        </h1>
+        <p class="text-gray-600 leading-relaxed">
+          Enter your new password below. Make sure it's strong and secure.
+        </p>
+      </div>
+
+      <!-- Password Form -->
+      <form class="space-y-6">
+        <!-- New Password Field -->
+        <div>
+          <label
+            for="newPassword"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            New Password
+          </label>
+          <input
+            type="password"
+            id="newPassword"
+            name="newPassword"
+            required
+            minlength="8"
+            class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            placeholder="Enter your new password"
+          />
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div>
+          <label
+            for="confirmPassword"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Confirm New Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            minlength="8"
+            required
+            class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            placeholder="Confirm your new password"
+          />
+        </div>
+
+        <!-- Password Requirements -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-sm font-medium text-gray-700 mb-2">
+            Password must contain:
+          </p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li class="flex items-center">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              At least 8 characters
+            </li>
+            <!-- <li class="flex items-center">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              One uppercase letter
+            </li>
+            <li class="flex items-center">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              One lowercase letter
+            </li>
+            <li class="flex items-center">
+              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></span>
+              One number or special character
+            </li> -->
+          </ul>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+        >
+          Update Password
+        </button>
+      </form>
+
+      <!-- Footer Note -->
+      <p class="text-xs text-gray-500 mt-6 text-center">
+        Your password will be encrypted and stored securely
+      </p>
+    </div>
+  </body>
+</html>

@@ -135,8 +135,6 @@ namespace AGAMinigameApi.Repositories
                 INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
                 {whereClause};";
 
-            Console.WriteLine(countSql);
-
             DataTable countTable = await SelectQueryAsync(countSql, parameters);
             int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
