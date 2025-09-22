@@ -2,55 +2,60 @@ using System.Security.Cryptography;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
+using AGAMinigameApi.Services.EmailSender;
+using Microsoft.Extensions.Options;
+using SmptOptions;
 
 namespace AGAMinigameApi.Services
 {
     public interface IForgotPasswordService
     {
-        Task<string> CreateResetTokenAsync(string email);
+        Task<string> CreateResetTokenAsync(int memberId, string email, DateTime now);
         Task<bool> ValidateResetTokenAsync(string token);
+        Task SendLinkAsync(int memberId, string email, string displayName, DateTime utcNow);
         Task<bool> ResetPasswordAsync(string token, string newPassword, string ipAddress);
-        Task CleanupExpiredTokensAsync();
     }
 
     public class ForgotPasswordService : IForgotPasswordService
     {
         private readonly IForgotPasswordRepository _forgotPasswordRepository;
         private readonly IMemberRepository _memberRepository;
+        private readonly IEmailSender _emailSender;
+        private readonly IOptions<AppOptions> _appOptions;
         private const int TOKEN_EXPIRY_MINUTES = 5;
 
         public ForgotPasswordService(
             IForgotPasswordRepository forgotPasswordRepository,
-            IMemberRepository memberRepository)
+            IMemberRepository memberRepository,
+            IOptions<AppOptions> appOptions,
+            IEmailSender emailSender
+        )
         {
             _forgotPasswordRepository = forgotPasswordRepository;
             _memberRepository = memberRepository;
+            _appOptions = appOptions;
+            _emailSender = emailSender;
         }
 
-        public async Task<string> CreateResetTokenAsync(string email)
+        public async Task<string> CreateResetTokenAsync(int memberId, string email, DateTime now)
         {
-            var now = DateHelper.GetUtcNow();
-            // Check if user exists
-            var member = await _memberRepository.GetByEmailAsync(email);
-            if (member == null)
-            {
-                return string.Empty;
-            }
-
             // Invalidate any existing tokens for this user
-            await _forgotPasswordRepository.InvalidateUserTokensAsync(member.Id, now);
+            await _forgotPasswordRepository.InvalidateUserTokensAsync(memberId, now);
 
-            // Generate secure token
-            var randomToken = GenerateSecureToken();
-            var token = HashHelper.ComputeSHA256(randomToken);
+            // 32 bytes random → Base64Url token sent to user
+            var tokenBytes = new byte[32];
+            RandomNumberGenerator.Fill(tokenBytes);
+            var token = HashHelper.Base64UrlEncode(tokenBytes);
+            var tokenHash = HashHelper.ComputeSHA256(token);
             var expiresAt = DateHelper.GetUtcNow().AddMinutes(TOKEN_EXPIRY_MINUTES);
 
             // Create forgot password record
             var forgotPassword = new ForgotPassword
             {
-                MemberId = member.Id,
+                MemberId = memberId,
+                AppKey = _appOptions.Value.Key,
                 Email = email,
-                Token = token,
+                Token = tokenHash,
                 ExpiresAt = expiresAt,
                 IsUsed = 'n',
                 CreatedAt = DateHelper.GetUtcNow()
@@ -110,16 +115,11 @@ namespace AGAMinigameApi.Services
             await _forgotPasswordRepository.DeleteExpiredTokensAsync(cutoffDate);
         }
 
-        private static string GenerateSecureToken()
+        public async Task SendLinkAsync(int memberId, string email, string displayName, DateTime utcNow)
         {
-            // Generate a cryptographically secure token
-            using var rng = RandomNumberGenerator.Create();
-            var tokenBytes = new byte[32];
-            rng.GetBytes(tokenBytes);
-            return Convert.ToBase64String(tokenBytes)
-                .Replace("+", "-")
-                .Replace("/", "_")
-                .Replace("=", "");
+            var token = await CreateResetTokenAsync(memberId, email, utcNow);
+            var link = $"{_appOptions.Value.Url}/forgot-password/reset-password.html?token={token}";
+            await _emailSender.SendForgotPasswordAsync(email, displayName, link);
         }
     }
 }

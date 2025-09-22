@@ -2,7 +2,6 @@ using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
-using AGAMinigameApi.Services.EmailSender;
 using Microsoft.Extensions.Options;
 using SlotsApi.Services;
 using SmptOptions;
@@ -29,16 +28,14 @@ namespace AGAMinigameApi.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IEmailVerificationService _emailVerificationService;
-        private readonly IEmailSender _emailSender;
         private readonly AppOptions _appOptions;
 
-        public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository, IEmailVerificationService emailVerificationService, IEmailSender emailSender, IOptions<AppOptions> appOptions)
+        public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService, IRefreshTokenRepository refreshTokenRepository, IEmailVerificationService emailVerificationService, IOptions<AppOptions> appOptions)
         {
             _authRepository = authRepository;
             _jwtTokenService = jwtTokenService;
             _refreshTokenRepository = refreshTokenRepository;
             _emailVerificationService = emailVerificationService;
-            _emailSender = emailSender;
             _appOptions = appOptions.Value;
         }
 

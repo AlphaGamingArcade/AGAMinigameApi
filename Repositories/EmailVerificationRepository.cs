@@ -1,6 +1,8 @@
 using System.Data;
 using AGAMinigameApi.Models;
 using api.Mappers;
+using Microsoft.Extensions.Options;
+using SmptOptions;
 
 namespace AGAMinigameApi.Repositories
 {
@@ -16,7 +18,11 @@ namespace AGAMinigameApi.Repositories
 
     public class EmailVerificationRepository : BaseRepository, IEmailVerificationRepository
     {
-        public EmailVerificationRepository(IConfiguration configuration) : base(configuration) { }
+        private readonly IOptions<AppOptions> _appOptions;
+        public EmailVerificationRepository(IConfiguration configuration, IOptions<AppOptions> appOptions) : base(configuration)
+        {
+            _appOptions = appOptions;
+        }
 
         public async Task<EmailVerification> CreateEmailVerificationAsync(EmailVerification ev)
         {
@@ -68,10 +74,11 @@ namespace AGAMinigameApi.Repositories
             const string sql = @"
                 SELECT TOP (1) *
                 FROM mg_email_verify
-                WHERE email_verify_token_hash = @tokenHash;";
+                WHERE email_verify_app_key = @appKey AND email_verify_token_hash = @tokenHash;";
 
             var parameters = new Dictionary<string, object>
             {
+                ["@appKey"] = _appOptions.Value.Key,
                 ["@tokenHash"] = tokenHash
             };
 
@@ -86,12 +93,14 @@ namespace AGAMinigameApi.Repositories
             const string consumeSql = @"
                 UPDATE mg_email_verify
                 SET email_verify_consumed_at = @now
-                WHERE email_verify_member_id = @memberId
+                WHERE email_verify_app_key = @appKey 
+                AND email_verify_member_id = @memberId
                 AND email_verify_email = @email
                 AND email_verify_consumed_at IS NULL;";
 
             var parameters = new Dictionary<string, object>
             {
+                ["@appKey"] = _appOptions.Value.Key,
                 ["@now"] = now,
                 ["@memberId"] = memberId,
                 ["@email"] = email
@@ -105,13 +114,15 @@ namespace AGAMinigameApi.Repositories
             const string sql = @"
                 UPDATE mg_email_verify
                 SET email_verify_consumed_at = @nowUtc
-                WHERE email_verify_member_id = @memberId
+                WHERE email_verify_app_key = @appKey 
+                AND email_verify_member_id = @memberId
                 AND email_verify_email = @email
                 AND email_verify_consumed_at IS NULL
                 AND email_verify_purpose = @purpose;";
 
             var p = new Dictionary<string, object>
             {
+                ["@appKey"] = _appOptions.Value.Key,
                 ["@nowUtc"] = nowUtc,
                 ["@memberId"] = userId,
                 ["@email"] = email,
@@ -125,13 +136,15 @@ namespace AGAMinigameApi.Repositories
             const string sql = @"
                 SELECT MAX(email_verify_created_at) AS last_created_at
                 FROM mg_email_verify
-                WHERE email_verify_member_id = @memberId
+                WHERE email_verify_app_key = @appKey 
+                AND email_verify_member_id = @memberId
                 AND email_verify_email = @email
                 AND email_verify_consumed_at IS NULL
                 AND email_verify_purpose = @purpose;";
 
                 var p = new Dictionary<string, object>
                 {
+                    ["@appKey"] = _appOptions.Value.Key,
                     ["@memberId"] = userId,
                     ["@email"] = email,
                     ["@purpose"] = "email_verification"
@@ -147,13 +160,15 @@ namespace AGAMinigameApi.Repositories
             const string sql = @"
                 SELECT COUNT(1) AS cnt
                 FROM mg_email_verify
-                WHERE email_verify_member_id = @memberId
+                WHERE email_verify_app_key = @appKey 
+                AND email_verify_member_id = @memberId
                 AND email_verify_email = @email
                 AND email_verify_created_at >= @sinceUtc
                 AND email_verify_purpose = @purpose;";
 
             var p = new Dictionary<string, object>
             {
+                ["@appKey"] = _appOptions.Value.Key,
                 ["@memberId"] = userId,
                 ["@email"] = email,
                 ["@sinceUtc"] = sinceUtc,

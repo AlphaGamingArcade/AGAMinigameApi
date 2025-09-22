@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using System.Text;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Models;
 using AGAMinigameApi.Repositories;
@@ -14,7 +13,6 @@ namespace AGAMinigameApi.Services
         Task<string> CreateEmailVerificationAsync(long userId, string email, DateTime utcNow);
         Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email);
         Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc);
-        Task InvalidateUnconsumedAsync(long userId, string email, DateTime utcNow);
         Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow);
         Task<bool> VerifyAsync(string token, DateTime utcNow);
     }
@@ -23,7 +21,7 @@ namespace AGAMinigameApi.Services
     {
         private readonly IEmailVerificationRepository _repo;
         private readonly IEmailSender _emailSender;
-        private readonly AppOptions _appOptions;
+        private readonly IOptions<AppOptions> _appOptions;
 
         public EmailVerificationService(
             IEmailVerificationRepository repo,
@@ -32,11 +30,13 @@ namespace AGAMinigameApi.Services
         {
             _repo = repo;
             _emailSender = emailSender;
-            _appOptions = appOptions.Value;
+            _appOptions = appOptions;
         }
 
         public async Task<string> CreateEmailVerificationAsync(long userId, string email, DateTime utcNow)
         {
+            await _repo.InvalidateUnconsumedAsync(userId, email, utcNow);
+            
             // 32 bytes random → Base64Url token sent to user
             var tokenBytes = new byte[32];
             RandomNumberGenerator.Fill(tokenBytes);
@@ -48,7 +48,7 @@ namespace AGAMinigameApi.Services
             {
                 MemberId = checked((int)userId),
                 Email = email,
-                AppKey = _appOptions.Key,
+                AppKey = _appOptions.Value.Key,
                 TokenHash = tokenHash,
                 Purpose = VerificationPurposes.EmailVerification,
                 CreatedAtUtc = utcNow,
@@ -57,6 +57,7 @@ namespace AGAMinigameApi.Services
             };
 
             await _repo.CreateEmailVerificationAsync(entity);
+            
             return token; // return plaintext for composing the link
         }
 
@@ -72,13 +73,10 @@ namespace AGAMinigameApi.Services
         public async Task<DateTime?> GetLastUnconsumedCreatedAtAsync(long userId, string email) => await _repo.GetLastUnconsumedCreatedAtAsync(userId, email);
         public async Task<int> CountCreatedSinceAsync(long userId, string email, DateTime sinceUtc) => await _repo.CountCreatedSinceAsync(userId, email, sinceUtc);
 
-        public async Task InvalidateUnconsumedAsync(long userId, string email, DateTime nowUtc)
-            => await _repo.InvalidateUnconsumedAsync(userId, email, nowUtc);
-
         public async Task SendLinkAsync(long userId, string email, string displayName, DateTime utcNow)
         {
             var token = await CreateEmailVerificationAsync(userId, email, utcNow);
-            var link = $"{_appOptions.Url}/auth/confirm-email?token={token}";
+            var link = $"{_appOptions.Value.Url}/auth/confirm-email?token={token}";
             await _emailSender.SendVerificationEmailAsync(email, displayName, link);
         }
     }

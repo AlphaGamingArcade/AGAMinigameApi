@@ -9,6 +9,7 @@ namespace AGAMinigameApi.Services
     {
         Task UpdateMemberNicknameAsync(int memberId, string newNickname);
         Task<MemberDto?> GetMemberByIdAsync(int memberId);
+        Task<MemberDto?> GetMemberByEmailAsync(string email);
     }
 
     public class MemberService : IMemberService
@@ -26,6 +27,14 @@ namespace AGAMinigameApi.Services
             if (member == null) return null;
             return member.ToMemberDto();
         }
+
+        public async Task<MemberDto?> GetMemberByEmailAsync(string email)
+        {
+            var member = await _memberRepository.GetByEmailAsync(email);
+            if (member == null) return null;
+            return member.ToMemberDto();
+        }
+        
         
         public async Task UpdateMemberNicknameAsync(int memberId, string newNickname)
         {

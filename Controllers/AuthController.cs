@@ -18,9 +18,10 @@ public class AuthController : ControllerBase
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IEmailVerificationService _emailVerificationService;
     private readonly IForgotPasswordService _forgotPasswordService;
+    private readonly IMemberService _memberService;
     private readonly IOptions<AppOptions> _appOptions;
 
-    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IEmailVerificationService emailVerificationService, IForgotPasswordService forgotPasswordService, IOptions<AppOptions> appOptions)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IMemberService memberService, IEmailVerificationService emailVerificationService, IForgotPasswordService forgotPasswordService, IOptions<AppOptions> appOptions)
     {
         _logger = logger;
         _authService = authService;
@@ -28,6 +29,7 @@ public class AuthController : ControllerBase
         _refreshTokenService = refreshTokenService;
         _emailVerificationService = emailVerificationService;
         _forgotPasswordService = forgotPasswordService;
+        _memberService = memberService;
         _appOptions = appOptions;
     }
 
@@ -111,7 +113,21 @@ public class AuthController : ControllerBase
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
     {
-        await _forgotPasswordService.CreateResetTokenAsync(request.Email!);
+        var now = DateHelper.GetUtcNow();
+        var member = await _memberService.GetMemberByEmailAsync(request.Email!);
+        if (member == null)
+        {
+            await Task.Delay(2000); // trick hacker that it process something
+            return Ok(new ApiResponse<object>(true, "Forgot password sent to email.", null, 200));
+        }
+
+        await _forgotPasswordService.SendLinkAsync(
+            member.Id,
+            member.Email!,
+            member.Nickname!,
+            now
+        );
+        
         return Ok(new ApiResponse<object>(true, "Forgot password sent to email.", null, 200));
     }
 
@@ -185,15 +201,7 @@ public class AuthController : ControllerBase
         var sentCount = await _emailVerificationService.CountCreatedSinceAsync(user.Id, user.Email, now.AddHours(-1));
         if (sentCount >= 5)
             return Ok(new ApiResponse<object>(true, message, null, status));
-        
-        // 3) Invalidate older unconsumed tokens (one link active at a time)
-        await _emailVerificationService.InvalidateUnconsumedAsync(
-            user.Id,
-            user.Email,
-            now
-        );
 
-        // 4) Create a fresh token and send
         await _emailVerificationService.SendLinkAsync(
             user.Id,
             user.Email,
