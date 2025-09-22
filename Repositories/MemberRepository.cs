@@ -23,6 +23,7 @@ namespace AGAMinigameApi.Repositories
                     m.member_account,
                     m.member_nickname,
                     m.member_gamemoney,
+                    m.member_token,
                     a.agent_currency
                 FROM mg_app_user au
                 INNER JOIN mg_member m ON m.member_id = au.app_user_member_id

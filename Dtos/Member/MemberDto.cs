@@ -9,5 +9,6 @@ namespace AGAMinigameApi.Dtos.Member
         public string? Email { get; set; }
         public decimal Gamemoney { get; set; }
         public string? Currency { get; set; }
+        public string? Token { get; set; }
     }
 }
