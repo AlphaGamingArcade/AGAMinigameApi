@@ -12,7 +12,10 @@ namespace AGAMinigameApi.Repositories
             bool descending,
             int pageNumber,
             int pageSize,
-            char? gameType
+            char? gameType,
+            bool? top,
+            bool? trending,
+            bool? latest
         );
         Task<Game?> GetByIdAsync(int id);
         // Task<int> Add(Banner banner);
@@ -54,13 +57,16 @@ namespace AGAMinigameApi.Repositories
         }
 
         public async Task<(List<Game> items, int total)> GetPaginatedGamesAsync(
-            string? search,
-            string? sortBy,
-            bool descending,
-            int pageNumber,
-            int pageSize,
-            char? gameType = null
-        )
+    string? search,
+    string? sortBy,
+    bool descending,
+    int pageNumber,
+    int pageSize,
+    char? gameType = null,
+    bool? top = null,
+    bool? trending = null,
+    bool? latest = null
+)
         {
             var items = new List<Game>();
 
@@ -90,6 +96,24 @@ namespace AGAMinigameApi.Repositories
                 parameters["@gameType"] = gameType;
             }
 
+            if (top.HasValue &&  top is true)
+            {
+                whereParts.Add("ag.game_top = @top");
+                parameters["@top"] = 'y';
+            }
+
+            if (trending.HasValue && trending is true)
+            {
+                whereParts.Add("ag.game_trending = @trending");
+                parameters["@trending"] = 'y';
+            }
+
+            if (latest.HasValue && latest is true)
+            {
+                whereParts.Add("ag.game_latest = @latest");
+                parameters["@latest"] = 'y';
+            }
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 whereParts.Add(@"
@@ -110,6 +134,8 @@ namespace AGAMinigameApi.Repositories
                 FROM mg_app_game ag
                 INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
                 {whereClause};";
+
+            Console.WriteLine(countSql);
 
             DataTable countTable = await SelectQueryAsync(countSql, parameters);
             int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;

@@ -1,3 +1,4 @@
+using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedGames([FromQuery] PagedRequestDto requestDto)
+    public async Task<IActionResult> GetPaginatedGames([FromQuery] GamePagedRequestDto requestDto)
     {
         var result = await _gameService.GetPaginatedGamesAsync(requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));

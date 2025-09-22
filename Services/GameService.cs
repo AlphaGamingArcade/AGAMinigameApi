@@ -8,8 +8,8 @@ namespace AGAMinigameApi.Services
     public interface IGameService
     {
         Task<GameDto?> GetGameAsync(int gameId);
-        Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, PagedRequestDto requestDto);
-        Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto);
+        Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, GamePagedRequestDto requestDto);
+        Task<PagedResult<GameDto>> GetPaginatedGamesAsync(GamePagedRequestDto requestDto);
     }
 
     public class GameService : IGameService
@@ -28,7 +28,7 @@ namespace AGAMinigameApi.Services
             return game.ToGameDto();
         }
 
-        public async Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, PagedRequestDto requestDto)
+        public async Task<PagedResult<GameDto>> GetPaginatedMemberGamesAsync(int memberId, GamePagedRequestDto requestDto)
         {
             var (games, total) = await _gameRepository.GetPaginatedGamesAsync(
                 requestDto.Search,
@@ -36,7 +36,10 @@ namespace AGAMinigameApi.Services
                 requestDto.Descending,
                 requestDto.PageNumber,
                 requestDto.PageSize,
-                's' // slots only
+                's', // slots only
+                requestDto.Top,
+                requestDto.Trending,
+                requestDto.Latest
             );
 
             var gameDtos = games.Select(g =>
@@ -58,7 +61,7 @@ namespace AGAMinigameApi.Services
         }
         
 
-        public async Task<PagedResult<GameDto>> GetPaginatedGamesAsync(PagedRequestDto requestDto)
+        public async Task<PagedResult<GameDto>> GetPaginatedGamesAsync(GamePagedRequestDto requestDto)
         {
             var (games, total) = await _gameRepository.GetPaginatedGamesAsync(
                 requestDto.Search,
@@ -66,7 +69,10 @@ namespace AGAMinigameApi.Services
                 requestDto.Descending,
                 requestDto.PageNumber,
                 requestDto.PageSize,
-                's' // slots only
+                's', // slots only
+                requestDto.Top,
+                requestDto.Trending,
+                requestDto.Latest
             );
 
             var gameDtos = games.Select(g => g.ToGameDto());
