@@ -8,6 +8,7 @@ namespace AGAMinigameApi.Repositories
     {
         Task<Member?> GetByIdAsync(int id);
         Task UpdateOnChargeAsync(int memberId, decimal amount);
+        Task PatchNicknameAsync(int memberId, string nickname, DateTime datetime);
     }
 
     public class MemberRepository : BaseRepository, IMemberRepository
@@ -24,6 +25,7 @@ namespace AGAMinigameApi.Repositories
                     m.member_nickname,
                     m.member_gamemoney,
                     m.member_token,
+                    m.member_nickname_update,
                     a.agent_currency
                 FROM mg_app_user au
                 INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
@@ -56,6 +58,25 @@ namespace AGAMinigameApi.Repositories
             {
                 { "@amount", amount },
                 { "@memberId", memberId }
+            };
+
+            await UpdateQueryAsync(query, parameters);
+        }
+
+        public async Task PatchNicknameAsync(int memberId, string nickname, DateTime datetime)
+        {
+            const string query = @"
+                UPDATE mg_member
+                SET 
+                    member_nickname = @nickname,
+                    member_nickname_update = @datetime
+                WHERE member_id = @memberId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@nickname", nickname },
+                { "@memberId", memberId },
+                { "@datetime", datetime}
             };
 
             await UpdateQueryAsync(query, parameters);

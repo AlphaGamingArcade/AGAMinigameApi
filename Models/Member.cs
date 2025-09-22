@@ -10,5 +10,6 @@ namespace AGAMinigameApi.Models
         public string Currency { get; set; } = string.Empty;
         public decimal Gamemoney { get; set; }
         public string Token { get; set; } = string.Empty;
+        public DateTime? NicknameUpdate { get; set; }
     }
 }

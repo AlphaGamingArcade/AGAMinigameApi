@@ -1,5 +1,6 @@
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Dtos.Favorite;
+using AGAMinigameApi.Dtos.Member;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +38,45 @@ public class MemberController : ControllerBase
             return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
+
+    [HttpPatch("{id:int}")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> PatchMember(int id, [FromBody] PatchMemberDto request)
+    {
+        var member = await _memberService.GetMemberByIdAsync(id);
+        if (member == null)
+            return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
+
+        if (string.Equals(member.Nickname, request.Nickname, StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new ApiResponse<object>(
+                false,
+                "NicknameUnchanged",
+                "New nickname must be different from the current nickname.",
+                400));
+        }
+
+        if (member.NicknameUpdate.HasValue)
+        {
+            var lastUpdate = member.NicknameUpdate.Value;
+            var nextAllowedAt = lastUpdate.AddDays(30);
+
+            if (DateTime.UtcNow < nextAllowedAt)
+            {
+                return StatusCode(429, new ApiResponse<object>(
+                    false,
+                    "Nickname change cooldown",
+                    new { nextAllowedAt }, 429));
+            }
+        }
+
+        await _memberService.UpdateMemberNicknameAsync(id, request.Nickname!);
+
+        var refreshed = await _memberService.GetMemberByIdAsync(id);
+
+        return Ok(new ApiResponse<object>(true, "Success", refreshed, 200));
+    }
+    
 
     [HttpGet("{id:int}/charges")]
     [Authorize(Policy = "OwnerOrAdmin")]

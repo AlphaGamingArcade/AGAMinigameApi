@@ -18,6 +18,9 @@ namespace api.Mappers
                 Gamemoney = Convert.ToDecimal(reader["member_gamemoney"]),
                 Currency = Convert.ToString(reader["agent_currency"]) ?? "",
                 Token = Convert.ToString(reader["member_token"]) ?? "",
+                NicknameUpdate = reader["member_nickname_update"] == DBNull.Value
+                    ? null
+                    : Convert.ToDateTime(reader["member_nickname_update"])
             };
         }
         
@@ -32,7 +35,8 @@ namespace api.Mappers
                 Nickname = memberModel.Nickname,
                 Gamemoney = memberModel.Gamemoney,
                 Currency = memberModel.Currency,
-                Token = memberModel.Token
+                Token = memberModel.Token,
+                NicknameUpdate = memberModel.NicknameUpdate
             };
         }
     }
