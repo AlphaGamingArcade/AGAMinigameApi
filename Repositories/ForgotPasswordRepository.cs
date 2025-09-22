@@ -112,7 +112,6 @@ namespace AGAMinigameApi.Repositories
 
         public async Task MarkAsUsedAsync(string tokenHash, DateTime usedAt)
         {
-            Console.WriteLine($"WHEN WHEN VERIFYING {tokenHash}");
             const string query = @"
                 UPDATE mg_forgot_password
                 SET 

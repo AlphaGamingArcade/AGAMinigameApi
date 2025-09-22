@@ -50,9 +50,7 @@ namespace AGAMinigameApi.Services
             var token = HashHelper.Base64UrlEncode(tokenBytes);
             var tokenHash = HashHelper.ComputeSHA256(token);
             var expiresAt = DateHelper.GetUtcNow().AddMinutes(TOKEN_EXPIRY_MINUTES);
-
-            Console.WriteLine($"WHEN REQUESTIONG {token} ========== {tokenHash}");
-
+            
             // Create forgot password record
             var forgotPassword = new ForgotPassword
             {
