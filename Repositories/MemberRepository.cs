@@ -7,7 +7,9 @@ namespace AGAMinigameApi.Repositories
     public interface IMemberRepository
     {
         Task<Member?> GetByIdAsync(int id);
+        Task<Member?> GetByEmailAsync(string email);
         Task UpdateOnChargeAsync(int memberId, decimal amount);
+        Task UpdatePasswordAsync(int memberId, string password);
         Task PatchNicknameAsync(int memberId, string nickname, DateTime datetime);
     }
 
@@ -44,6 +46,54 @@ namespace AGAMinigameApi.Repositories
             }
             return null;
         }
+
+        public async Task<Member?> GetByEmailAsync(string email)
+        {
+            const string query = @"SELECT 
+                    au.app_user_member_id,
+                    au.app_user_email,
+                    m.member_agent_id,
+                    m.member_account,
+                    m.member_nickname,
+                    m.member_gamemoney,
+                    m.member_token,
+                    m.member_nickname_update,
+                    a.agent_currency
+                FROM mg_app_user au
+                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
+                INNER JOIN mg_agent a ON a.agent_id = m.member_agent_id
+                WHERE au.app_user_email = @email;";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@email", email }
+            };
+
+            var dataTable = await SelectQueryAsync(query, parameters);
+            if (dataTable.Rows.Count > 0)
+            {
+                var row = dataTable.Rows[0];
+                return row.ToMemberFromDataRow();
+            }
+            return null;
+        }
+
+        public async Task UpdatePasswordAsync(int memberId, string newPassword)
+        {
+            const string query = @"
+                UPDATE mg_app_user
+                SET 
+                    app_user_password = @newPassword
+                WHERE app_user_member_id = @memberId;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@newPassword", newPassword },
+                { "@memberId", memberId }
+            };
+
+            await UpdateQueryAsync(query, parameters);
+        }
+    
 
         public async Task UpdateOnChargeAsync(int memberId, decimal amount)
         {

@@ -17,15 +17,17 @@ public class AuthController : ControllerBase
     private readonly IAgentService _agentService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IEmailVerificationService _emailVerificationService;
+    private readonly IForgotPasswordService _forgotPasswordService;
     private readonly IOptions<AppOptions> _appOptions;
 
-    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IEmailVerificationService emailVerificationService, IOptions<AppOptions> appOptions)
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IAgentService agentService, IRefreshTokenService refreshTokenService, IEmailVerificationService emailVerificationService, IForgotPasswordService forgotPasswordService, IOptions<AppOptions> appOptions)
     {
         _logger = logger;
         _authService = authService;
         _agentService = agentService;
         _refreshTokenService = refreshTokenService;
         _emailVerificationService = emailVerificationService;
+        _forgotPasswordService = forgotPasswordService;
         _appOptions = appOptions;
     }
 
@@ -109,7 +111,7 @@ public class AuthController : ControllerBase
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
     {
-        await Task.Delay(1000);
+        await _forgotPasswordService.CreateResetTokenAsync(request.Email!);
         return Ok(new ApiResponse<object>(true, "Forgot password sent to email.", null, 200));
     }
 
