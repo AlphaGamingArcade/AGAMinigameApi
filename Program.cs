@@ -117,14 +117,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddHttpContextAccessor(); // for handler
 builder.Services.AddSingleton<IAuthorizationHandler, OwnerOrAdminHandler>();
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("OwnerOrAdmin", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.AddRequirements(new OwnerOrAdminRequirement());
-    });
-});
+builder.Services.AddOwnerOrAdminAuthorization();
 builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthResultHandler>();
 
 builder.Services.AddScoped<IBannerRepository, BannerRepository>();
