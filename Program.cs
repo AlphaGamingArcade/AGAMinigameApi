@@ -84,7 +84,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 context.Response.ContentType = "application/json; charset=utf-8";
 
                 var response = new ApiResponse<object>(
-                    true,
+                    false,
                     "Unauthorized",
                     string.IsNullOrWhiteSpace(context.ErrorDescription)
                         ? "Invalid or expired access token."

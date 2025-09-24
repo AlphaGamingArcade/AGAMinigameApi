@@ -20,7 +20,7 @@ namespace AGAMinigameApi.Services
         {
             _memberRepository = memberRepository;
         }
-
+        
         public async Task<MemberDto?> GetMemberByIdAsync(int memberId)
         {
             var member = await _memberRepository.GetByIdAsync(memberId);

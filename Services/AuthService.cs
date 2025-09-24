@@ -12,6 +12,7 @@ namespace AGAMinigameApi.Services
     {
         Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account);
         Task<User?> GetUserByEmailAsync(string email);
+        Task<User?> GetUserByIdAsync(int id);
         Task<EmailStatusResponseDto> GetEmailStatusAsync(string email);
         Task RegisterAsync(RegisterRequestDto request, Agent agent);
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request, User user);
@@ -20,6 +21,7 @@ namespace AGAMinigameApi.Services
         Task ForgotPasswordAsync(ForgotPasswordRequestDto request);
         Task ResetPasswordAsync(int memberId, string tokenHash, string newPassword);
         Task SetEmailVerifiedAsync(string email, DateTime dateTime);
+        Task ChangePasswordAsync(int userId, ChangePasswordDto request);
     }
 
     public class AuthService : IAuthService
@@ -68,6 +70,7 @@ namespace AGAMinigameApi.Services
 
         public async Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account) => await _authRepository.CheckUserConflictsAsync(email, account);
         public async Task<User?> GetUserByEmailAsync(string email) => await _authRepository.GetUserByEmailAsync(email);
+        public async Task<User?> GetUserByIdAsync(int id) => await _authRepository.GetUserByIdAsync(id);
         public async Task RegisterAsync(RegisterRequestDto request, Agent agent)
         {
             var dateTime = DateHelper.GetUtcNow();
@@ -113,7 +116,7 @@ namespace AGAMinigameApi.Services
         public async Task ForgotPasswordAsync(ForgotPasswordRequestDto request)
         {
             var utcNow = DateHelper.GetUtcNow();
-            
+
             var user = await GetUserByEmailAsync(request.Email);
             if (user == null)
             {
@@ -122,12 +125,13 @@ namespace AGAMinigameApi.Services
             }
 
             await _forgotPasswordService.SendLinkAsync(
-                user.Id, 
-                user.Email, 
-                user.Nickname, 
+                user.Id,
+                user.Email,
+                user.Nickname,
                 utcNow
             );
         }
+        
 
         public async Task ResetPasswordAsync(int memberId, string tokenHash, string newPassword)
         {
@@ -159,6 +163,11 @@ namespace AGAMinigameApi.Services
                 IsVerified = isVerified,
                 Datetime = datetime
             };
+        }
+
+        public async Task ChangePasswordAsync(int userId, ChangePasswordDto request)
+        {
+            await _authRepository.UpdatePasswordAsync(userId, request.ConfirmPassword);
         }
     }
 }

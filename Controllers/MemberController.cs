@@ -76,7 +76,6 @@ public class MemberController : ControllerBase
 
         return Ok(new ApiResponse<object>(true, "Success", refreshed, 200));
     }
-    
 
     [HttpGet("{id:int}/charges")]
     [Authorize(Policy = "OwnerOrAdmin")]

@@ -10,6 +10,7 @@ namespace AGAMinigameApi.Repositories
         Task SetEmailVerifiedAsync(string email, DateTime datetime);
         Task<(bool EmailTaken, bool AccountTaken)> CheckUserConflictsAsync(string email, string account);
         Task<User?> GetUserByEmailAsync(string email);
+        Task<User?> GetUserByIdAsync(int id);
         Task<User> CreateUserAsync(User user, DateTime dateTime);
         Task UpdatePasswordAsync(int userId, string newPassword);
         Task<(bool isVerified, DateTime? datetime)> GetEmailStatusAsync(string email);
@@ -66,6 +67,29 @@ namespace AGAMinigameApi.Repositories
             return null;
         }
 
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            const string query = @"SELECT 
+                    au.app_user_member_id,
+                    au.app_user_email,
+                    au.app_user_email_status,
+                    au.app_user_password
+                FROM mg_app_user au
+                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
+                WHERE au.app_user_member_id = @id;";
+            var parameters = new Dictionary<string, object>
+            {
+                { "@id", id }
+            };
+
+            var dataTable = await SelectQueryAsync(query, parameters);
+            if (dataTable.Rows.Count > 0)
+            {
+                var row = dataTable.Rows[0];
+                return row.ToUserFromDataRow();
+            }
+            return null;
+        }
 
         public async Task<User> CreateUserAsync(User user, DateTime dateTime)
         {

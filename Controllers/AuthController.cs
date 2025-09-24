@@ -1,7 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
 using AGAMinigameApi.Dtos.Auth;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SmptOptions;
@@ -212,5 +214,62 @@ public class AuthController : ControllerBase
         );
 
         return Ok(new ApiResponse<object>(true, message, null, status));
+    }
+
+    [HttpPut("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
+    {
+        // Get user ID from JWT token
+        var sub = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        if (string.IsNullOrEmpty(sub))
+        {
+            return Unauthorized(new ApiResponse<object>(
+                false,
+                "Invalid token",
+                "User identification not found in token.",
+                401));
+        }
+
+        if (!int.TryParse(sub, out var userId))
+        {
+            return BadRequest(new ApiResponse<object>(
+                false,
+                "Invalid user ID",
+                "User ID in token is not a valid number.",
+                400));
+        }
+        
+        var user = await _authService.GetUserByIdAsync(userId);
+        if (user is null)
+        {
+            return NotFound(new ApiResponse<object>(
+                false,
+                "User not found.",
+                null,
+                404));
+        }
+
+        if (!string.Equals(user.Password, request.CurrentPassword))
+        {
+            return BadRequest(new ApiResponse<object>(
+                false,
+                "Incorrect password",
+                "Current password is incorrect.",
+                400));
+        }
+
+        if (string.Equals(user.Password, request.ConfirmPassword))
+        {
+            return BadRequest(new ApiResponse<object>(
+                false,
+                "Password unchanged",
+                "New password must be different from the current password.",
+                400));
+        }
+
+        await _authService.ChangePasswordAsync(userId, request);
+
+        return Ok(new ApiResponse<object>(true, "Success", "Password updateed successfully", 200));
     }
 }
