@@ -1,4 +1,3 @@
-using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +18,30 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedGames([FromQuery] GamePagedRequestDto requestDto)
+    public async Task<IActionResult> GetPaginatedGames([FromQuery] PagedRequestDto requestDto)
     {
         var result = await _gameService.GetPaginatedGamesAsync(requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
+
+    [HttpGet("top")]
+    public async Task<IActionResult> GetTopPaginatedGames([FromQuery] PagedRequestDto requestDto)
+    {
+        var result = await _gameService.GetTopPaginatedGamesAsync(requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
+
+    [HttpGet("trending")]
+    public async Task<IActionResult> GetTrendingPaginatedGames([FromQuery] PagedRequestDto requestDto)
+    {
+        var result = await _gameService.GetTrendingPaginatedGamesAsync(requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
+
+    [HttpGet("latest")]
+    public async Task<IActionResult> GetLatestPaginatedGames([FromQuery] PagedRequestDto requestDto)
+    {
+        var result = await _gameService.GetLatestPaginatedGamesAsync(requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 }

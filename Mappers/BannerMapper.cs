@@ -15,7 +15,7 @@ namespace api.Mappers
                 Title = bannerModel.Title,
                 Description = bannerModel.Description,
                 Image = bannerModel.Image,
-                Url = bannerModel.Image,
+                Url = bannerModel.Url,
                 Order = bannerModel.Order,
                 Datetime = bannerModel.Datetime
             };

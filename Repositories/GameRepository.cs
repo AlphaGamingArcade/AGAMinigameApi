@@ -12,10 +12,10 @@ namespace AGAMinigameApi.Repositories
             bool descending,
             int pageNumber,
             int pageSize,
-            char? gameType,
-            bool? top,
-            bool? trending,
-            bool? latest
+            char? gameType = null,
+            bool? top = null,
+            bool? trending = null,
+            bool? latest = null
         );
         Task<Game?> GetByIdAsync(int id);
         // Task<int> Add(Banner banner);
