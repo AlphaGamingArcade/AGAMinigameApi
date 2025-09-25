@@ -42,12 +42,7 @@ namespace AGAMinigameApi.Services
                 's'
             );
 
-            var gameDtos = games.Select(g =>
-            {
-                var dto = g.ToGameDto();
-                dto.Url = $"{dto.Url}?{memberId}";
-                return dto;
-            });
+            var gameDtos = games.Select(g => g.ToGameDto());
 
             var pagedResult = new PagedResult<GameDto>
             {

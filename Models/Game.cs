@@ -6,7 +6,7 @@ namespace AGAMinigameApi.Models
         public string Description { get; set; } = string.Empty;
         public string DescriptionMultiLanguage { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
-        public string Url { get; set; } = string.Empty;
+        public string PlayUrl { get; set; } = string.Empty;
         public char Status { get; set; }
         public char Top { get; set; }
         public char Trending { get; set; }
