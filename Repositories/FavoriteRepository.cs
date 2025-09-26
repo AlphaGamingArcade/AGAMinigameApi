@@ -1,5 +1,4 @@
 using System.Data;
-using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Models;
 using api.Mappers;
 
@@ -9,10 +8,16 @@ namespace AGAMinigameApi.Repositories
     {
         Task<(List<Game> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
             int memberId,
+            string? search,
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize);
+            int pageSize,
+            char? gameType = null,
+            bool? top = null,
+            bool? trending = null,
+            bool? latest = null
+        );
         Task<Favorite> AddAsync(Favorite favorite);
         Task<bool> ExistsAsync(int memberId, int gameId);
         Task<Game?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId);
@@ -142,18 +147,24 @@ namespace AGAMinigameApi.Repositories
         }
 
         public async Task<(List<Game> items, int total)> GetPaginatedFavoritesByMemberIdAsync(
-            int memberId,
-            string? sortBy,
-            bool descending,
-            int pageNumber,
-            int pageSize)
+                int memberId,
+                string? search,
+                string? sortBy,
+                bool descending,
+                int pageNumber,
+                int pageSize,
+                char? gameType = null,
+                bool? top = null,
+                bool? trending = null,
+                bool? latest = null
+            )
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Max(1, pageSize);
             var items = new List<Game>();
             int offset = (pageNumber - 1) * pageSize;
 
-            // Whitelist sortable columns (default to created_at is often nicer)
+            // Whitelist sortable columns
             string orderColumn = (sortBy ?? "").ToLowerInvariant() switch
             {
                 "id" => "f.favorite_id",
@@ -165,16 +176,63 @@ namespace AGAMinigameApi.Repositories
             };
             string orderDir = descending ? "DESC" : "ASC";
 
-            // total count (filtered)
-            const string countSql = @"
+            // Build WHERE conditions
+            var whereConditions = new List<string> { "f.favorite_member_id = @memberId" };
+            var queryParams = new Dictionary<string, object> { { "@memberId", memberId } };
+
+            // Search condition
+            if (!string.IsNullOrEmpty(search))
+            {
+                whereConditions.Add(@"
+                (
+                    gc.gamecode_name LIKE CONCAT('%', @search, '%') OR
+                    ag.game_code LIKE CONCAT('%', @search, '%') OR
+                    ag.game_category LIKE CONCAT('%', @search, '%') OR
+                    ag.game_description LIKE CONCAT('%', @search, '%')
+                )");
+                queryParams["@search"] = search;
+            }
+
+            // Game type filter
+            if (gameType.HasValue)
+            {
+                whereConditions.Add("gc.gamecode_game_type = @gameType");
+                queryParams["@gameType"] = gameType.Value;
+            }
+
+            // Boolean filters
+            if (top.HasValue)
+            {
+                whereConditions.Add("ag.game_top = @top");
+                queryParams["@top"] = top.Value ? "y" : "n";
+            }
+
+            if (trending.HasValue)
+            {
+                whereConditions.Add("ag.game_trending = @trending");
+                queryParams["@trending"] = trending.Value ? "y" : "n";
+            }
+
+            if (latest.HasValue)
+            {
+                whereConditions.Add("ag.game_latest = @latest");
+                queryParams["@latest"] = latest.Value ? "y" : "n";
+            }
+
+            string whereClause = string.Join(" AND ", whereConditions);
+
+            // Total count query (with all filters)
+            string countSql = $@"
                 SELECT COUNT(1) AS TotalCount
-                FROM mg_favorite
-                WHERE favorite_member_id = @memberId;";
-            var countParams = new Dictionary<string, object> { { "@memberId", memberId } };
-            DataTable countTable = await SelectQueryAsync(countSql, countParams);
+                FROM mg_favorite f
+                INNER JOIN mg_gamecode gc ON gc.gamecode_id = f.favorite_game_id
+                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
+                WHERE {whereClause};";
+
+            DataTable countTable = await SelectQueryAsync(countSql, queryParams);
             int total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
-            // page query (JOIN gamecode -> app_game so mapper fields are present)
+            // Page query with all filters
             string pageSql = $@"
                 SELECT 
                     f.favorite_id,
@@ -205,17 +263,14 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_order,
                     gc.gamecode_game_type
                 FROM mg_favorite f
-                INNER JOIN mg_gamecode gc
-                    ON gc.gamecode_id = f.favorite_game_id
-                INNER JOIN mg_app_game ag
-                    ON ag.game_code = gc.gamecode_code
-                WHERE f.favorite_member_id = @memberId
+                INNER JOIN mg_gamecode gc ON gc.gamecode_id = f.favorite_game_id
+                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
+                WHERE {whereClause}
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-            var pageParams = new Dictionary<string, object>
+            var pageParams = new Dictionary<string, object>(queryParams)
             {
-                { "@memberId", memberId },
                 { "@offset", offset },
                 { "@pageSize", pageSize }
             };

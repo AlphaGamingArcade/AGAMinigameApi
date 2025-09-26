@@ -57,10 +57,12 @@ namespace AGAMinigameApi.Services
         {
             var (games, total) = await _favoriteRepository.GetPaginatedFavoritesByMemberIdAsync(
                 memberId,
+                requestDto.Search,
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,
-                requestDto.PageSize
+                requestDto.PageSize,
+                's'
             );
 
             var gameDtos = games.Select(g => g.ToGameDto());

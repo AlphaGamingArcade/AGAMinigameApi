@@ -1,5 +1,6 @@
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AGAMinigameApi.Controllers;
@@ -43,5 +44,13 @@ public class GameController : ControllerBase
     {
         var result = await _gameService.GetLatestPaginatedGamesAsync(requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
+    }
+
+    [Authorize]
+    [HttpGet("{gameId:int}/play")]
+    public async Task<IActionResult> GetPlay(int gameId)
+    {
+        await Task.Delay(1000);
+        return Ok(new ApiResponse<object>(true, "Success", "this will be link", 200));
     }
 }
