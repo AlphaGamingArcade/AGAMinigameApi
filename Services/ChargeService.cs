@@ -11,6 +11,7 @@ namespace AGAMinigameApi.Services
     public interface IChargeService
     {
         Task<bool> IsChargeExistsAsync(int memberId, DateTime dateTime);
+        Task<FreeChargeClaimDto> GetFreeClaimStatusAsync(int memberId, DateTime nowUtc);
         Task<ChargeDto> ChargeMemberAsync(MemberDto member, DateTime dateTime, decimal amount);
         Task<PagedResult<ChargeDto>> GetPaginatedChargesAsync(PagedRequestDto requestDto);
         Task<PagedResult<ChargeDto>> GetPaginatedMemberChargesAsync(int memberId, PagedRequestDto requestDto);
@@ -69,6 +70,24 @@ namespace AGAMinigameApi.Services
             };
 
             return pagedResult;
+        }
+
+        public async Task<FreeChargeClaimDto> GetFreeClaimStatusAsync(int memberId, DateTime nowUtc)
+        {
+            const int amount = 100_000;
+
+            var todayMidnightUtc = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, 0, 0, 0, DateTimeKind.Utc);
+            var nextResetUtc = todayMidnightUtc.AddDays(1);
+
+            var alreadyClaimed = await IsChargeExistsAsync(memberId, nowUtc);
+
+            return new FreeChargeClaimDto
+            {
+                Claimed = alreadyClaimed,
+                Amount = amount,
+                NextClaimDateUtc = alreadyClaimed ? nextResetUtc : null,
+                SecondsUntilNextClaim = alreadyClaimed ? Math.Max(0, (int)(nextResetUtc - nowUtc).TotalSeconds) : 0
+            };
         }
 
         public async Task<PagedResult<ChargeDto>> GetPaginatedMemberChargesAsync(int memberId, PagedRequestDto requestDto)

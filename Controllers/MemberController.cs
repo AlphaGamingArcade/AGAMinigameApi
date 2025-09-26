@@ -1,3 +1,4 @@
+using AGAMinigameApi.Dtos.Charge;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Dtos.Favorite;
 using AGAMinigameApi.Dtos.Member;
@@ -85,7 +86,17 @@ public class MemberController : ControllerBase
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
-    [HttpPost("{id:int}/charges")]
+    [HttpGet("{id:int}/charges/free-claim")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> GetMemberChargeFreeClaim(int id)
+    {
+        var nowUtc = DateHelper.GetUtcNow();
+        var dto = await _chargeService.GetFreeClaimStatusAsync(id, nowUtc);
+        var message = dto.Claimed ? "Already claimed" : "Recharge available";
+        return Ok(new ApiResponse<FreeChargeClaimDto>(true, message, dto, 200));
+    }
+
+    [HttpPost("{id:int}/charges/free-claim")]
     [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> CreateMemberCharge(int id)
     {

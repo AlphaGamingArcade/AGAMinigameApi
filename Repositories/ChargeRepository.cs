@@ -12,6 +12,7 @@ namespace AGAMinigameApi.Repositories
     public interface IChargeRepository
     {
         Task<bool> IsChargeExistsAsync(int memberId, DateTime datetime);
+        Task<Charge> GetByMemberIdAndDateAsync(int memberId, DateTime dateTime);
         Task<Charge> AddAsync(Charge charge);
         Task<(List<Charge> items, int total)> GetPaginatedChargesAsync(
             string? sortBy,
@@ -183,6 +184,36 @@ namespace AGAMinigameApi.Repositories
             }
 
             return (items, total);
+        }
+
+        public async Task<Charge> GetByMemberIdAndDateAsync(int memberId, DateTime dateTime)
+        {
+            const string sql = @"
+                SELECT TOP (1)
+                    charge_id,
+                    charge_member_id,
+                    charge_agent_id,
+                    charge_gamemoney,
+                    charge_currency,
+                    charge_date,
+                    charge_datetime
+                FROM mg_charge
+                WHERE charge_member_id = @memberId
+                AND charge_date = @date
+                ORDER BY charge_datetime DESC, charge_id DESC;";
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["@memberId"] = memberId,
+                ["@date"] = DateOnly.FromDateTime(dateTime),
+            };
+
+            var table = await SelectQueryAsync(sql, parameters);
+            if (table.Rows.Count == 0)
+                throw new KeyNotFoundException(
+                    $"No charge found for memberId {memberId} on {DateOnly.FromDateTime(dateTime):yyyy-MM-dd}.");
+
+            return table.Rows[0].ToChargeFromDataRow();
         }
     }
 }
