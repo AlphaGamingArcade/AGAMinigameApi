@@ -1,6 +1,6 @@
 using System.Data;
 using System.Text.Json;
-using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Gamecode;
 using AGAMinigameApi.Models;
 using Namotion.Reflection;
 

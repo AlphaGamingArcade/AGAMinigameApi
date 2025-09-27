@@ -47,7 +47,7 @@ public class GameController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{gameId:int}/play")]
+    [HttpGet("recently-play")]
     public async Task<IActionResult> GetPlay(int gameId)
     {
         await Task.Delay(1000);

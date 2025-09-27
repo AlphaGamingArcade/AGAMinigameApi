@@ -1,6 +1,6 @@
 using System.Data;
 using System.Text.Json;
-using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Game;
 using AGAMinigameApi.Models;
 
 namespace api.Mappers

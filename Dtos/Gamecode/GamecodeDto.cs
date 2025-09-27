@@ -1,4 +1,4 @@
-namespace AGAMinigameApi.Dtos.Banner
+namespace AGAMinigameApi.Dtos.Gamecode
 {
     public class GamecodeDto
     {

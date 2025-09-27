@@ -1,5 +1,4 @@
-using AGAMinigameApi.Dtos.Banner;
-using AGAMinigameApi.Models;
+using AGAMinigameApi.Dtos.Game;
 
 namespace AGAMinigameApi.Dtos.Favorite
 {

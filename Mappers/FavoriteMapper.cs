@@ -1,5 +1,4 @@
 using System.Data;
-using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Favorite;
 using AGAMinigameApi.Models;
 

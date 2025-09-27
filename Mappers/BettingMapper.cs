@@ -1,9 +1,8 @@
 using System.Data;
 using System.Text.Json;
-using AGAMinigameApi.Dtos.Banner;
 using AGAMinigameApi.Dtos.Betting;
+using AGAMinigameApi.Dtos.Gamecode;
 using AGAMinigameApi.Models;
-using Namotion.Reflection;
 
 namespace api.Mappers
 {

@@ -1,4 +1,5 @@
 using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Gamecode;
 
 namespace AGAMinigameApi.Dtos.Betting
 {

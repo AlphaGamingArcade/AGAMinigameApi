@@ -2,6 +2,7 @@ using AGAMinigameApi.Dtos.Charge;
 using AGAMinigameApi.Dtos.Common;
 using AGAMinigameApi.Dtos.Favorite;
 using AGAMinigameApi.Dtos.Member;
+using AGAMinigameApi.Dtos.Play;
 using AGAMinigameApi.Helpers;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -131,6 +132,22 @@ public class MemberController : ControllerBase
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
+    [HttpGet("{id:int}/plays")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> GetPaginatedMemberPlays(int id, [FromQuery] PagedRequestDto requestDto)
+    {
+        await Task.Delay(1000);
+        return Ok(new ApiResponse<object>(true, "Success", "Paginated recent games", 200));
+    }
+    
+    [HttpPost("{id:int}/plays")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> CreateMemberPlay(int id, [FromBody] CreatePlayRequestDto requestDto)
+    {
+        await Task.Delay(1000);
+        return Ok(new ApiResponse<object>(true, "Success", "Played successfully", 200));
+    }
+    
     [HttpGet("{id:int}/favorites")]
     [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> GetPaginatedMemberFavorites(int id, [FromQuery] PagedRequestDto requestDto)
