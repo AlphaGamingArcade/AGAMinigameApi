@@ -2,12 +2,10 @@ namespace AGAMinigameApi.Models
 {
     public class Play
     {
+        public long Id { get; set; }
         public int MemberId { get; set; }
-        public string Gamecode { get; set; } = string.Empty;
+        public int GameId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-
-        // extra
-        public Game? Game { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

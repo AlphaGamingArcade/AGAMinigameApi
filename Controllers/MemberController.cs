@@ -144,10 +144,29 @@ public class MemberController : ControllerBase
     
     [HttpPost("{id:int}/plays")]
     [Authorize(Policy = "OwnerOrAdmin")]
-    public async Task<IActionResult> CreateMemberPlay(int id, [FromBody] CreatePlayRequestDto requestDto)
+    public async Task<IActionResult> CreateMemberPlay(int id, [FromBody] CreatePlayRequestDto createDto)
     {
-        await Task.Delay(1000);
-        return Ok(new ApiResponse<object>(true, "Success", "Played successfully", 200));
+        var member = await _memberService.GetMemberByIdAsync(id);
+        if (member == null)
+            return NotFound(new ApiResponse<object>(false, "Member not found", null, 404));
+
+        var game = await _gameService.GetGameAsync(createDto.GameId);
+        if (game == null)
+            return NotFound(new ApiResponse<object>(false, "Failed", "Game not found", 404));
+
+        var existingPlay = await _playService.GetMemberPlayAsync(id, createDto.GameId);
+        if (existingPlay == null)
+        {
+            var newPlay = await _playService.CreateMemberPlayAsync(id, createDto);
+            newPlay.PlayUrl = $"{game.PlayUrl}{member.Token}";
+            return Ok(new ApiResponse<PlayDto>(true, "Play created successfully", newPlay, 200));
+        } 
+        else
+        {
+            var updatedPlay = await _playService.UpdateMemberPlayAsync(id, existingPlay);
+            updatedPlay.PlayUrl = $"{game.PlayUrl}{member.Token}";
+            return Ok(new ApiResponse<PlayDto>(true, "Play updated successfully", updatedPlay, 200));
+        }
     }
     
     [HttpGet("{id:int}/favorites")]

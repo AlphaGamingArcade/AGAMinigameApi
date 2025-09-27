@@ -1,4 +1,6 @@
 using System.Data;
+using AGAMinigameApi.Dtos.Banner;
+using AGAMinigameApi.Dtos.Play;
 using AGAMinigameApi.Models;
 
 namespace api.Mappers
@@ -9,18 +11,27 @@ namespace api.Mappers
         {
             var play = new Play
             {
+                Id = Convert.ToInt64(row["app_play_id"]),
                 MemberId = Convert.ToInt32(row["app_play_member_id"]),
-                Gamecode = Convert.ToString(row["app_play_game_code"]) ?? "",
+                GameId = Convert.ToInt32(row["app_play_game_id"]),
                 CreatedAt = Convert.ToDateTime(row["app_play_created_at"]),
-                UpdatedAt = row["app_play_updated_at"] == DBNull.Value ? null : Convert.ToDateTime(row["app_play_updated_at"]),
+                UpdatedAt = Convert.ToDateTime(row["app_play_updated_at"]),
+            };
+            return play;
+        }
+
+        public static PlayDto ToPlayDto(this Play playModel)
+        {
+            var dto = new PlayDto
+            {
+                Id =  playModel.Id,
+                MemberId = playModel.MemberId,
+                GameId =  playModel.GameId,
+                CreatedAt = playModel.CreatedAt,
+                UpdatedAt = playModel.UpdatedAt
             };
 
-            if (row.Table.Columns.Contains("game_code"))
-            {
-                play.Game = row.ToGameFromDataRow();
-            }
-
-            return play;
+            return dto;
         }
     }
 }
