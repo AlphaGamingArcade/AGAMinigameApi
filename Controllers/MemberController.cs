@@ -19,9 +19,10 @@ public class MemberController : ControllerBase
     private readonly IMemberService _memberService;
     private readonly IBettingService _bettingService;
     private readonly IFavoriteService _favoriteService;
+    private readonly IPlayService _playService;
     private readonly IGameService _gameService;
 
-    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService, IFavoriteService favoriteService, IGameService gameService)
+    public MemberController(ILogger<MemberController> logger, IChargeService chargeService, IMemberService memberService, IBettingService bettingService, IFavoriteService favoriteService, IGameService gameService, IPlayService playService)
     {
         _logger = logger;
         _chargeService = chargeService;
@@ -29,6 +30,7 @@ public class MemberController : ControllerBase
         _bettingService = bettingService;
         _favoriteService = favoriteService;
         _gameService = gameService;
+        _playService = playService;
     }
 
     [HttpGet("{id:int}")]
@@ -136,8 +138,8 @@ public class MemberController : ControllerBase
     [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> GetPaginatedMemberPlays(int id, [FromQuery] PagedRequestDto requestDto)
     {
-        await Task.Delay(1000);
-        return Ok(new ApiResponse<object>(true, "Success", "Paginated recent games", 200));
+        var result = await _playService.GetPaginatedMemberPlaysAsync(id, requestDto);
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
     
     [HttpPost("{id:int}/plays")]

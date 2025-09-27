@@ -131,6 +131,7 @@ builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IBettingRepository, BettingRepository>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<IForgotPasswordRepository, ForgotPasswordRepository>();
+builder.Services.AddScoped<IPlayRepository, PlayRepository>();
 
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
@@ -145,6 +146,7 @@ builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IBettingService, BettingService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
+builder.Services.AddScoped<IPlayService, PlayService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi(options =>
