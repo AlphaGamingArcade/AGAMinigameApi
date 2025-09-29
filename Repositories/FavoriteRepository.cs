@@ -52,39 +52,42 @@ namespace AGAMinigameApi.Repositories
         public async Task<Game?> GetFavoriteByMemberIdAndGameIdAsync(int memberId, int gameId)
         {
             const string sql = @"
-                SELECT TOP 1
-                    f.favorite_id,
-                    f.favorite_member_id,
-                    f.favorite_game_id,
-                    f.favorite_created_at,
-                    f.favorite_updated_at,
-                    -- mg_app_game (for mapper: game_*)
-                    ag.game_code,
-                    ag.game_description,
-                    ag.game_description_multi_language,
-                    ag.game_image,
-                    ag.game_play_url,
-                    ag.game_status,
-                    ag.game_category,
-                    ag.game_top,
-                    ag.game_latest,
-                    ag.game_trending,
-                    ag.game_datetime,
-                    -- mg_gamecode (for mapper: gamecode_*)
-                    gc.gamecode_id,
-                    gc.gamecode_code,
-                    gc.gamecode_name,
-                    gc.gamecode_name_multi_language,
-                    gc.gamecode_percent,
-                    gc.gamecode_datetime,
-                    gc.gamecode_status,
-                    gc.gamecode_order,
-                    gc.gamecode_game_type
-                FROM mg_favorite f
-                INNER JOIN mg_gamecode gc ON gc.gamecode_id = f.favorite_game_id
-                INNER JOIN mg_app_game  g ON gc.gamecode_code = gc.gamecode_code
-                WHERE f.favorite_member_id = @memberId
-                AND f.favorite_game_id   = @gameId;";
+                 SELECT TOP (1)
+                -- favorite
+                f.favorite_id,
+                f.favorite_member_id,
+                f.favorite_game_id,
+                f.favorite_created_at,
+                f.favorite_updated_at,
+
+                -- mg_app_game (aliased to game_*)
+                ag.game_code,
+                ag.game_description,
+                ag.game_description_multi_language,
+                ag.game_image,
+                ag.game_play_url,
+                ag.game_status,
+                ag.game_category,
+                ag.game_top,
+                ag.game_latest,
+                ag.game_trending,
+                ag.game_datetime,
+
+                -- mg_gamecode (kept as gamecode_*)
+                gc.gamecode_id,
+                gc.gamecode_code,
+                gc.gamecode_name,
+                gc.gamecode_name_multi_language,
+                gc.gamecode_percent,
+                gc.gamecode_datetime,
+                gc.gamecode_status,
+                gc.gamecode_order,
+                gc.gamecode_game_type
+            FROM dbo.mg_favorite AS f
+            JOIN dbo.mg_gamecode AS gc ON gc.gamecode_id = f.favorite_game_id
+            JOIN dbo.mg_app_game AS ag ON ag.game_code = gc.gamecode_code
+            WHERE f.favorite_member_id = @memberId AND f.favorite_game_id   = @gameId
+            ORDER BY f.favorite_created_at DESC, f.favorite_id DESC;";
 
             var parameters = new Dictionary<string, object>
             {

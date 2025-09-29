@@ -1,4 +1,4 @@
-CREATE TABLE mg_banner(
+CREATE TABLE mg_app_banner(
     banner_id INT IDENTITY(1, 1) NOT NULL,
     banner_title VARCHAR(100) NOT NULL,
     banner_description VARCHAR(250) NOT NULL,

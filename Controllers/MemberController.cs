@@ -194,6 +194,19 @@ public class MemberController : ControllerBase
         return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
+    [HttpGet("{id:int}/favorites/{gameId:int}")]
+    [Authorize(Policy = "OwnerOrAdmin")]
+    public async Task<IActionResult> GetMemberFavorite(int id, int gameId)
+    {
+        var game = await _favoriteService.GetMemberFavoriteAsync(id, gameId);
+        if (game == null)
+        {
+            return NotFound(new ApiResponse<object>(
+                false, "Failed", "Favorite not found", 404));
+        }
+        return Ok(new ApiResponse<object>(true, "Success", game, 200));
+    }
+
     [HttpDelete("{id:int}/favorites/{gameId:int}")]
     [Authorize(Policy = "OwnerOrAdmin")]
     public async Task<IActionResult> DeleteMemberFavorite(int id, int gameId)
