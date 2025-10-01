@@ -14,7 +14,7 @@ namespace AGAMinigameApi.Services
         Task<FreeChargeClaimDto> GetFreeClaimStatusAsync(int memberId, DateTime nowUtc);
         Task<ChargeDto> ChargeMemberAsync(MemberDto member, DateTime dateTime, decimal amount);
         Task<PagedResult<ChargeDto>> GetPaginatedChargesAsync(PagedRequestDto requestDto);
-        Task<PagedResult<ChargeDto>> GetPaginatedMemberChargesAsync(int memberId, PagedRequestDto requestDto);
+        Task<PagedResult<ChargeDto>> GetPaginatedMemberChargesAsync(int memberId, DateFilteredPagedRequestDto requestDto);
     }
 
     public class ChargeService : IChargeService
@@ -90,14 +90,16 @@ namespace AGAMinigameApi.Services
             };
         }
 
-        public async Task<PagedResult<ChargeDto>> GetPaginatedMemberChargesAsync(int memberId, PagedRequestDto requestDto)
+        public async Task<PagedResult<ChargeDto>> GetPaginatedMemberChargesAsync(int memberId, DateFilteredPagedRequestDto requestDto)
         {
             var (charges, total) = await _chargeRepository.GetPaginatedChargesByMemberIdAsync(
                 memberId,
                 requestDto.SortBy,
                 requestDto.Descending,
                 requestDto.PageNumber,
-                requestDto.PageSize
+                requestDto.PageSize,
+                requestDto.StartDate,
+                requestDto.EndDate
             );
 
             var ChargeDtos = charges.Select(g => g.ToChargeDto());

@@ -83,7 +83,7 @@ public class MemberController : ControllerBase
 
     [HttpGet("{id:int}/charges")]
     [Authorize(Policy = "OwnerOrAdmin")]
-    public async Task<IActionResult> GetPaginatedMemberCharges(int id, [FromQuery] PagedRequestDto requestDto)
+    public async Task<IActionResult> GetPaginatedMemberCharges(int id, [FromQuery] DateFilteredPagedRequestDto requestDto)
     {
         var result = await _chargeService.GetPaginatedMemberChargesAsync(id, requestDto);
         return Ok(new ApiResponse<object>(true, "Success", result, 200));

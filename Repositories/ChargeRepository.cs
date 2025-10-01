@@ -24,7 +24,9 @@ namespace AGAMinigameApi.Repositories
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize);
+            int pageSize,
+            DateTime? startDate,
+            DateTime? endDate);
     }
 
     public class ChargeRepository : BaseRepository, IChargeRepository
@@ -85,7 +87,9 @@ namespace AGAMinigameApi.Repositories
             string? sortBy,
             bool descending,
             int pageNumber,
-            int pageSize)
+            int pageSize,
+            DateTime? startDate,
+            DateTime? endDate)
         {
             var items = new List<Charge>();
 
@@ -102,13 +106,35 @@ namespace AGAMinigameApi.Repositories
             var safeSize = Math.Clamp(pageSize, 1, 200);
             var offset = (safePage - 1) * safeSize;
 
+            // Build WHERE clause with date filters
+            var whereConditions = new List<string> { "charge_member_id = @memberId" };
+            var parameters = new Dictionary<string, object> { ["@memberId"] = memberId };
+
+            if (startDate.HasValue)
+            {
+                whereConditions.Add("charge_datetime >= @startDate");
+                parameters["@startDate"] = startDate.Value;
+            }
+
+            if (endDate.HasValue)
+            {
+                // Set to end of day if no time component
+                var endDateTime = endDate.Value.Date == endDate.Value
+                    ? endDate.Value.AddDays(1).AddTicks(-1)
+                    : endDate.Value;
+                whereConditions.Add("charge_datetime <= @endDate");
+                parameters["@endDate"] = endDateTime;
+            }
+
+            var whereClause = string.Join(" AND ", whereConditions);
+
             // Count (filtered)
-            const string countSql = @"
+            var countSql = $@"
                 SELECT COUNT(1) AS TotalCount
                 FROM mg_charge
-                WHERE charge_member_id = @memberId;";
-            var countParams = new Dictionary<string, object> { ["@memberId"] = memberId };
-            var countTable = await SelectQueryAsync(countSql, countParams);
+                WHERE {whereClause};";
+
+            var countTable = await SelectQueryAsync(countSql, parameters);
             var total = countTable.Rows.Count > 0 ? Convert.ToInt32(countTable.Rows[0]["TotalCount"]) : 0;
 
             // Build ORDER BY safely (avoid duplicate column)
@@ -121,23 +147,20 @@ namespace AGAMinigameApi.Repositories
                 SELECT charge_id, charge_member_id, charge_agent_id,
                     charge_gamemoney, charge_currency, charge_date, charge_datetime
                 FROM mg_charge
-                WHERE charge_member_id = @memberId
+                WHERE {whereClause}
                 {orderBySql}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-            var pageParams = new Dictionary<string, object>
-            {
-                ["@memberId"] = memberId,
-                ["@offset"] = offset,
-                ["@pageSize"] = safeSize
-            };
+            parameters["@offset"] = offset;
+            parameters["@pageSize"] = safeSize;
 
-            var pageTable = await SelectQueryAsync(pageSql, pageParams);
+            var pageTable = await SelectQueryAsync(pageSql, parameters);
             foreach (DataRow row in pageTable.Rows)
                 items.Add(row.ToChargeFromDataRow());
 
             return (items, total);
         }
+
         public async Task<(List<Charge> items, int total)> GetPaginatedChargesAsync(
             string? sortBy,
             bool descending,
