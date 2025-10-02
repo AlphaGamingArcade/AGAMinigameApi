@@ -74,14 +74,14 @@ public class AuthController : ControllerBase
         if (user is null)
         {
             const int status = StatusCodes.Status404NotFound;
-            return Conflict(new ApiResponse<object>(false, "Email not registered.", null, status));
+            return NotFound(new ApiResponse<object>(false, "Email not registered.", null, status));
         }
 
         // TODO : Make this hashed
         if (user.Password != request.Password)
         {
             const int status = StatusCodes.Status401Unauthorized;
-            return Conflict(new ApiResponse<object>(false, "Incorrect password.", null, status));
+            return Unauthorized(new ApiResponse<object>(false, "Incorrect password.", null, status));
         }
 
         if (user.EmailStatus != 'y')
