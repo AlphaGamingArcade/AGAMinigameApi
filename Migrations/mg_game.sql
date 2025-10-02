@@ -1,4 +1,4 @@
-CREATE TABLE mg_app_game(
+CREATE TABLE mg_game(
     game_code VARCHAR(100) UNIQUE NOT NULL,
     game_description VARCHAR(250) NOT NULL,
     game_description_multi_language NVARCHAR(MAX) NOT NULL,

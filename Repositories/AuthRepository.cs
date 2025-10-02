@@ -24,7 +24,7 @@ namespace AGAMinigameApi.Repositories
         {
             const string sql = @"
                 SELECT 
-                    EmailTaken   = CASE WHEN EXISTS (SELECT 1 FROM mg_app_user where app_user_email = @email) THEN 1 ELSE 0 END,
+                    EmailTaken   = CASE WHEN EXISTS (SELECT 1 FROM mg_user where user_email = @email) THEN 1 ELSE 0 END,
                     AccountTaken = CASE WHEN EXISTS (SELECT 1 FROM mg_member WHERE member_account = @account) THEN 1 ELSE 0 END;";
 
             var p = new Dictionary<string, object>
@@ -46,13 +46,13 @@ namespace AGAMinigameApi.Repositories
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             const string query = @"SELECT 
-                    au.app_user_member_id,
-                    au.app_user_email,
-                    au.app_user_email_status,
-                    au.app_user_password
-                FROM mg_app_user au
-                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
-                WHERE au.app_user_email = @email;";
+                    au.user_member_id,
+                    au.user_email,
+                    au.user_email_status,
+                    au.user_password
+                FROM mg_user au
+                INNER JOIN mg_member m ON m.member_id = au.user_member_id
+                WHERE au.user_email = @email;";
             var parameters = new Dictionary<string, object>
             {
                 { "@email", email }
@@ -70,13 +70,13 @@ namespace AGAMinigameApi.Repositories
         public async Task<User?> GetUserByIdAsync(int id)
         {
             const string query = @"SELECT 
-                    au.app_user_member_id,
-                    au.app_user_email,
-                    au.app_user_email_status,
-                    au.app_user_password
-                FROM mg_app_user au
-                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
-                WHERE au.app_user_member_id = @id;";
+                    au.user_member_id,
+                    au.user_email,
+                    au.user_email_status,
+                    au.user_password
+                FROM mg_user au
+                INNER JOIN mg_member m ON m.member_id = au.user_member_id
+                WHERE au.user_member_id = @id;";
             var parameters = new Dictionary<string, object>
             {
                 { "@id", id }
@@ -129,14 +129,14 @@ namespace AGAMinigameApi.Repositories
                     @level
                 );
 
-                INSERT INTO dbo.mg_app_user (
-                    app_user_member_id,
-                    app_user_email,
-                    app_user_password,
-                    app_user_email_status,
-                    app_user_dob,
-                    app_user_created_at,
-                    app_user_updated_at
+                INSERT INTO dbo.mg_user (
+                    user_member_id,
+                    user_email,
+                    user_password,
+                    user_email_status,
+                    user_dob,
+                    user_created_at,
+                    user_updated_at
                 )
                 SELECT
                     m.member_id,
@@ -177,9 +177,9 @@ namespace AGAMinigameApi.Repositories
         public async Task UpdatePasswordAsync(int userId, string newPassword)
         {
             const string query = @"
-                UPDATE mg_app_user
-                SET app_user_password = @newPassword
-                WHERE app_user_member_id = @userId;";
+                UPDATE mg_user
+                SET user_password = @newPassword
+                WHERE user_member_id = @userId;";
 
             var parameters = new Dictionary<string, object>
             {
@@ -193,13 +193,13 @@ namespace AGAMinigameApi.Repositories
         public async Task SetEmailVerifiedAsync(string tokenHash, DateTime dateTime)
         {
             const string query = @"
-                -- 1) Mark app_user as verified
+                -- 1) Mark user as verified
                 UPDATE au
-                SET au.app_user_email_status = 'y',
-                    au.app_user_updated_at   = @datetime
-                FROM dbo.mg_app_user au
+                SET au.user_email_status = 'y',
+                    au.user_updated_at   = @datetime
+                FROM dbo.mg_user au
                 INNER JOIN dbo.mg_email_verify ev 
-                    ON au.app_user_email = ev.email_verify_email
+                    ON au.user_email = ev.email_verify_email
                 WHERE ev.email_verify_token_hash = @tokenHash
                 AND ev.email_verify_consumed_at IS NULL;
 
@@ -222,11 +222,11 @@ namespace AGAMinigameApi.Repositories
         {
             const string query = @"
                 SELECT TOP 1 ev.email_verify_consumed_at
-                FROM dbo.mg_app_user au
+                FROM dbo.mg_user au
                 INNER JOIN dbo.mg_email_verify ev 
-                    ON ev.email_verify_email = au.app_user_email
-                WHERE au.app_user_email_status = 'y'
-                AND au.app_user_email = @email
+                    ON ev.email_verify_email = au.user_email
+                WHERE au.user_email_status = 'y'
+                AND au.user_email = @email
                 AND ev.email_verify_purpose = @purpose
                 AND ev.email_verify_consumed_at IS NOT NULL
                 ORDER BY ev.email_verify_consumed_at DESC;

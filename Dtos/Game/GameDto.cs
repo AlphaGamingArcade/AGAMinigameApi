@@ -1,4 +1,5 @@
 using AGAMinigameApi.Dtos.Gamecode;
+using AGAMinigameApi.Dtos.GamePreview;
 
 namespace AGAMinigameApi.Dtos.Game
 {
@@ -14,5 +15,15 @@ namespace AGAMinigameApi.Dtos.Game
         public char Trending { get; set; }
         public DateTime Datetime { get; set; }
         public GamecodeDto? Gamecode { get; set; }
+    }
+
+    // Extended DTO for details
+    public class GameDetailDto : GameDto
+    {
+        public List<GamePreviewDto> GamePreviews { get; set; } = new();
+        public int? TotalPlayers { get; set; }
+        // public int ActivePlayers { get; set; }
+        // public double AverageRating { get; set; }
+        // public int TotalReviews { get; set; }
     }
 }

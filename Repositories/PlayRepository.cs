@@ -33,9 +33,9 @@ namespace AGAMinigameApi.Repositories
         {
             const string sql = @"
                 SELECT TOP 1 1
-                FROM mg_app_play
-                WHERE app_play_member_id = @memberId
-                AND app_play_game_id = @gameId;";
+                FROM mg_play
+                WHERE play_member_id = @memberId
+                AND play_game_id = @gameId;";
 
             var parameters = new Dictionary<string, object>
             {
@@ -50,14 +50,14 @@ namespace AGAMinigameApi.Repositories
         public async Task<Play> AddAsync(Play play)
         {
             const string query = @"
-                INSERT INTO mg_app_play
-                    (app_play_member_id, app_play_game_id, app_play_created_at, app_play_updated_at)
+                INSERT INTO mg_play
+                    (play_member_id, play_game_id, play_created_at, play_updated_at)
                 OUTPUT
-                    INSERTED.app_play_id,
-                    INSERTED.app_play_member_id,
-                    INSERTED.app_play_game_id,
-                    INSERTED.app_play_created_at,
-                    INSERTED.app_play_updated_at
+                    INSERTED.play_id,
+                    INSERTED.play_member_id,
+                    INSERTED.play_game_id,
+                    INSERTED.play_created_at,
+                    INSERTED.play_updated_at
                 VALUES
                     (@memberId, @gameId, @createdAt, @updatedAt);
             ";
@@ -81,19 +81,19 @@ namespace AGAMinigameApi.Repositories
         public async Task<Play> UpdateAsync(Play play)
         {
             const string query = @"
-                UPDATE mg_app_play
+                UPDATE mg_play
                 SET 
-                    app_play_member_id = @memberId,
-                    app_play_game_id = @gameId,
-                    app_play_updated_at = @updatedAt
+                    play_member_id = @memberId,
+                    play_game_id = @gameId,
+                    play_updated_at = @updatedAt
                 OUTPUT
-                    INSERTED.app_play_id,
-                    INSERTED.app_play_member_id,
-                    INSERTED.app_play_game_id,
-                    INSERTED.app_play_created_at,
-                    INSERTED.app_play_updated_at
+                    INSERTED.play_id,
+                    INSERTED.play_member_id,
+                    INSERTED.play_game_id,
+                    INSERTED.play_created_at,
+                    INSERTED.play_updated_at
                 WHERE 
-                    app_play_id = @playId;
+                    play_id = @playId;
             ";
 
             var parameters = new Dictionary<string, object>
@@ -115,18 +115,18 @@ namespace AGAMinigameApi.Repositories
         public async Task<Play> UpdateByMemberIdAndGameIdAsync(int memberId, int gameId, DateTime updatedAt)
         {
             const string query = @"
-                UPDATE mg_app_play
+                UPDATE mg_play
                 SET 
-                    app_play_updated_at = @updatedAt
+                    play_updated_at = @updatedAt
                 OUTPUT
-                    INSERTED.app_play_id,
-                    INSERTED.app_play_member_id,
-                    INSERTED.app_play_game_id,
-                    INSERTED.app_play_created_at,
-                    INSERTED.app_play_updated_at
+                    INSERTED.play_id,
+                    INSERTED.play_member_id,
+                    INSERTED.play_game_id,
+                    INSERTED.play_created_at,
+                    INSERTED.play_updated_at
                 WHERE 
-                    app_play_member_id = @memberId 
-                    AND app_play_game_id = @gameId;
+                    play_member_id = @memberId 
+                    AND play_game_id = @gameId;
             ";
 
             var parameters = new Dictionary<string, object>
@@ -148,12 +148,12 @@ namespace AGAMinigameApi.Repositories
         {
             const string sql = @"
                 SELECT TOP 1
-                    ap.app_play_id,
-                    ap.app_play_member_id,
-                    ap.app_play_game_id,
-                    ap.app_play_created_at,
-                    ap.app_play_updated_at,
-                    -- mg_app_game (for mapper: game_*)
+                    ap.play_id,
+                    ap.play_member_id,
+                    ap.play_game_id,
+                    ap.play_created_at,
+                    ap.play_updated_at,
+                    -- mg_game (for mapper: game_*)
                     ag.game_code,
                     ag.game_description,
                     ag.game_description_multi_language,
@@ -175,11 +175,11 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_status,
                     gc.gamecode_order,
                     gc.gamecode_game_type
-                FROM mg_app_play ap
-                INNER JOIN mg_gamecode gc ON gc.gamecode_id = ap.app_play_game_id
-                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
-                WHERE ap.app_play_member_id = @memberId
-                AND ap.app_play_game_id = @gameId;";
+                FROM mg_play ap
+                INNER JOIN mg_gamecode gc ON gc.gamecode_id = ap.play_game_id
+                INNER JOIN mg_game ag ON ag.game_code = gc.gamecode_code
+                WHERE ap.play_member_id = @memberId
+                AND ap.play_game_id = @gameId;";
 
             var parameters = new Dictionary<string, object>
             {
@@ -215,16 +215,16 @@ namespace AGAMinigameApi.Repositories
             // Whitelist sortable columns
             string orderColumn = (sortBy ?? "").ToLowerInvariant() switch
             {
-                "memberid" => "ap.app_play_member_id",
-                "gameid" => "ap.app_play_game_id",
-                "createdat" => "ap.app_play_created_at",
-                "updatedat" => "ap.app_play_updated_at",
-                _ => "ap.app_play_created_at"
+                "memberid" => "ap.play_member_id",
+                "gameid" => "ap.play_game_id",
+                "createdat" => "ap.play_created_at",
+                "updatedat" => "ap.play_updated_at",
+                _ => "ap.play_created_at"
             };
             string orderDir = descending ? "DESC" : "ASC";
 
             // Build WHERE conditions
-            var whereConditions = new List<string> { "ap.app_play_member_id = @memberId" };
+            var whereConditions = new List<string> { "ap.play_member_id = @memberId" };
             var queryParams = new Dictionary<string, object> { { "@memberId", memberId } };
 
             // Search condition
@@ -271,9 +271,9 @@ namespace AGAMinigameApi.Repositories
             // Total count query (with all filters)
             string countSql = $@"
                 SELECT COUNT(1) AS TotalCount
-                FROM mg_app_play ap
-                INNER JOIN mg_gamecode gc ON gc.gamecode_id = ap.app_play_game_id
-                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
+                FROM mg_play ap
+                INNER JOIN mg_gamecode gc ON gc.gamecode_id = ap.play_game_id
+                INNER JOIN mg_game ag ON ag.game_code = gc.gamecode_code
                 WHERE {whereClause};";
 
             DataTable countTable = await SelectQueryAsync(countSql, queryParams);
@@ -282,12 +282,12 @@ namespace AGAMinigameApi.Repositories
             // Page query with all filters
             string pageSql = $@"
                 SELECT
-                    ap.app_play_id,
-                    ap.app_play_member_id,
-                    ap.app_play_game_id,
-                    ap.app_play_created_at,
-                    ap.app_play_updated_at,
-                    -- mg_app_game (for mapper: game_*)
+                    ap.play_id,
+                    ap.play_member_id,
+                    ap.play_game_id,
+                    ap.play_created_at,
+                    ap.play_updated_at,
+                    -- mg_game (for mapper: game_*)
                     ag.game_code,
                     ag.game_description,
                     ag.game_description_multi_language,
@@ -309,9 +309,9 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_status,
                     gc.gamecode_order,
                     gc.gamecode_game_type
-                FROM mg_app_play ap
-                INNER JOIN mg_gamecode gc ON gc.gamecode_id = ap.app_play_game_id
-                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
+                FROM mg_play ap
+                INNER JOIN mg_gamecode gc ON gc.gamecode_id = ap.play_game_id
+                INNER JOIN mg_game ag ON ag.game_code = gc.gamecode_code
                 WHERE {whereClause}
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";

@@ -19,6 +19,7 @@ namespace api.Mappers
                 Code = gamecodeModel.Code,
                 Name = gamecodeModel.Name,
                 NameMultiLanguage = nameMultiLang,
+                GameType = gamecodeModel.GameType
             };
         }
 
@@ -30,12 +31,13 @@ namespace api.Mappers
                 Code = Convert.ToString(row["gamecode_code"]) ?? string.Empty,
                 Name = Convert.ToString(row["gamecode_name"]) ?? string.Empty,
                 NameMultiLanguage = Convert.ToString(row["gamecode_name_multi_language"]) ?? string.Empty,
-                Percent = row.HasProperty("gamecode_percent") ? Convert.ToDouble(row["gamecode_percent"]) : 0d,
-                Datetime = row.HasProperty("gamecode_datetime") ? Convert.ToDateTime(row["gamecode_datetime"]) : default,
-                Status = row.HasProperty("gamecode_status") ? Convert.ToChar(row["gamecode_status"]) : default,
-                Order = row.HasProperty("gamecode_order") ? Convert.ToByte(row["gamecode_order"]) : (byte)0,
-                GameType = row.HasProperty("gamecode_game_type") ? Convert.ToChar(row["gamecode_game_type"]) : default
+                Percent = Convert.ToDouble(row["gamecode_percent"]),
+                Datetime = Convert.ToDateTime(row["gamecode_datetime"]),
+                Status = Convert.ToChar(row["gamecode_status"]),
+                Order = Convert.ToByte(row["gamecode_order"]),
+                GameType = Convert.ToChar(row["gamecode_game_type"])
             };
+
             return game;
         }
     }

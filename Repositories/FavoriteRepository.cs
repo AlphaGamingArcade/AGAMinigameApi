@@ -60,7 +60,7 @@ namespace AGAMinigameApi.Repositories
                 f.favorite_created_at,
                 f.favorite_updated_at,
 
-                -- mg_app_game (aliased to game_*)
+                -- mg_game (aliased to game_*)
                 ag.game_code,
                 ag.game_description,
                 ag.game_description_multi_language,
@@ -85,7 +85,7 @@ namespace AGAMinigameApi.Repositories
                 gc.gamecode_game_type
             FROM dbo.mg_favorite AS f
             JOIN dbo.mg_gamecode AS gc ON gc.gamecode_id = f.favorite_game_id
-            JOIN dbo.mg_app_game AS ag ON ag.game_code = gc.gamecode_code
+            JOIN dbo.mg_game AS ag ON ag.game_code = gc.gamecode_code
             WHERE f.favorite_member_id = @memberId AND f.favorite_game_id   = @gameId
             ORDER BY f.favorite_created_at DESC, f.favorite_id DESC;";
 
@@ -229,7 +229,7 @@ namespace AGAMinigameApi.Repositories
                 SELECT COUNT(1) AS TotalCount
                 FROM mg_favorite f
                 INNER JOIN mg_gamecode gc ON gc.gamecode_id = f.favorite_game_id
-                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
+                INNER JOIN mg_game ag ON ag.game_code = gc.gamecode_code
                 WHERE {whereClause};";
 
             DataTable countTable = await SelectQueryAsync(countSql, queryParams);
@@ -243,7 +243,7 @@ namespace AGAMinigameApi.Repositories
                     f.favorite_game_id,
                     f.favorite_created_at,
                     f.favorite_updated_at,
-                    -- mg_app_game (for mapper: game_*)
+                    -- mg_game (for mapper: game_*)
                     ag.game_code,
                     ag.game_description,
                     ag.game_description_multi_language,
@@ -267,7 +267,7 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_game_type
                 FROM mg_favorite f
                 INNER JOIN mg_gamecode gc ON gc.gamecode_id = f.favorite_game_id
-                INNER JOIN mg_app_game ag ON ag.game_code = gc.gamecode_code
+                INNER JOIN mg_game ag ON ag.game_code = gc.gamecode_code
                 WHERE {whereClause}
                 ORDER BY {orderColumn} {orderDir}
                 OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;";

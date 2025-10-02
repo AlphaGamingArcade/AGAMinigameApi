@@ -19,8 +19,8 @@ namespace AGAMinigameApi.Repositories
         public async Task<Member?> GetByIdAsync(int id)
         {
             const string query = @"SELECT 
-                    au.app_user_member_id,
-                    au.app_user_email,
+                    au.user_member_id,
+                    au.user_email,
                     m.member_agent_id,
                     m.member_account,
                     m.member_nickname,
@@ -28,10 +28,10 @@ namespace AGAMinigameApi.Repositories
                     m.member_token,
                     m.member_nickname_update,
                     a.agent_currency
-                FROM mg_app_user au
-                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
+                FROM mg_user au
+                INNER JOIN mg_member m ON m.member_id = au.user_member_id
                 INNER JOIN mg_agent a ON a.agent_id = m.member_agent_id
-                WHERE au.app_user_member_id = @id;";
+                WHERE au.user_member_id = @id;";
             var parameters = new Dictionary<string, object>
             {
                 { "@id", id }
@@ -49,8 +49,8 @@ namespace AGAMinigameApi.Repositories
         public async Task<Member?> GetByEmailAsync(string email)
         {
             const string query = @"SELECT 
-                    au.app_user_member_id,
-                    au.app_user_email,
+                    au.user_member_id,
+                    au.user_email,
                     m.member_agent_id,
                     m.member_account,
                     m.member_nickname,
@@ -58,10 +58,10 @@ namespace AGAMinigameApi.Repositories
                     m.member_token,
                     m.member_nickname_update,
                     a.agent_currency
-                FROM mg_app_user au
-                INNER JOIN mg_member m ON m.member_id = au.app_user_member_id
+                FROM mg_user au
+                INNER JOIN mg_member m ON m.member_id = au.user_member_id
                 INNER JOIN mg_agent a ON a.agent_id = m.member_agent_id
-                WHERE au.app_user_email = @email;";
+                WHERE au.user_email = @email;";
             var parameters = new Dictionary<string, object>
             {
                 { "@email", email }

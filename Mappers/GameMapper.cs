@@ -12,7 +12,7 @@ namespace api.Mappers
             var descMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
                 gameModel.DescriptionMultiLanguage ?? "{}"
             ) ?? new();
-                
+
             var dto = new GameDto
             {
                 Code = gameModel.Code,
@@ -25,7 +25,7 @@ namespace api.Mappers
                 Trending = gameModel.Trending,
                 Datetime = gameModel.Datetime,
             };
-            
+
             if (gameModel.Gamecode != null)
             {
                 dto.Gamecode = gameModel.Gamecode.ToGamecodeDto();
@@ -33,6 +33,35 @@ namespace api.Mappers
 
             return dto;
         }
+        
+        public static GameDetailDto ToGameDetailDto(this Game gameModel)
+        {
+            var descMultiLang = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                gameModel.DescriptionMultiLanguage ?? "{}"
+            ) ?? new();
+                
+            var dto = new GameDetailDto
+            {
+                Code = gameModel.Code,
+                Description = gameModel.Description,
+                DescriptionMultiLanguage = descMultiLang,
+                Image = gameModel.Image,
+                PlayUrl = gameModel.PlayUrl,
+                Status = gameModel.Status,
+                Top = gameModel.Top,
+                Trending = gameModel.Trending,
+                Datetime = gameModel.Datetime,
+                TotalPlayers = gameModel.TotalPlayers
+            };
+
+            if (gameModel.Gamecode != null)
+            {
+                dto.Gamecode = gameModel.Gamecode.ToGamecodeDto();
+            }
+
+            return dto;
+        }
+
 
         public static Game ToGameFromDataRow(this DataRow row)
         {
@@ -52,6 +81,11 @@ namespace api.Mappers
             if (row.Table.Columns.Contains("gamecode_id"))
             {
                 game.Gamecode = row.ToGamecodeFromDataRow();
+            }
+
+            if (row.Table.Columns.Contains("game_total_players"))
+            {
+                game.TotalPlayers = Convert.ToInt32(row["game_total_players"]);
             }
             
             return game;

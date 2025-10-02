@@ -35,6 +35,13 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_code,
                     gc.gamecode_name,
                     gc.gamecode_name_multi_language,
+                    gc.gamecode_game_type,
+                    gc.gamecode_percent,
+                    gc.gamecode_datetime,
+                    gc.gamecode_status,
+                    gc.gamecode_order,
+                    gc.gamecode_game_type,
+                    
                     ag.game_code,
                     ag.game_description,
                     ag.game_description_multi_language,
@@ -44,8 +51,9 @@ namespace AGAMinigameApi.Repositories
                     ag.game_category,
                     ag.game_top,
                     ag.game_trending,
-                    ag.game_datetime
-                FROM mg_app_game ag
+                    ag.game_datetime,
+                    (select COUNT(1) from mg_play where play_game_id = gc.gamecode_id) AS game_total_players 
+                FROM mg_game ag
                 INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
                 WHERE gc.gamecode_id = @id;";
 
@@ -131,7 +139,7 @@ namespace AGAMinigameApi.Repositories
             // Count
             string countSql = $@"
                 SELECT COUNT(1) AS TotalCount
-                FROM mg_app_game ag
+                FROM mg_game ag
                 INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
                 {whereClause};";
 
@@ -145,6 +153,11 @@ namespace AGAMinigameApi.Repositories
                     gc.gamecode_code,
                     gc.gamecode_name,
                     gc.gamecode_name_multi_language,
+                    gc.gamecode_percent,
+                    gc.gamecode_datetime,
+                    gc.gamecode_status,
+                    gc.gamecode_order,
+                    gc.gamecode_game_type,
                     ag.game_code,
                     ag.game_description,
                     ag.game_description_multi_language,
@@ -155,7 +168,7 @@ namespace AGAMinigameApi.Repositories
                     ag.game_top,
                     ag.game_trending,
                     ag.game_datetime
-                FROM mg_app_game ag
+                FROM mg_game ag
                 INNER JOIN mg_gamecode gc ON gc.gamecode_code = ag.game_code
                 {whereClause}
                 ORDER BY {orderColumn} {orderDir}

@@ -132,6 +132,7 @@ builder.Services.AddScoped<IBettingRepository, BettingRepository>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<IForgotPasswordRepository, ForgotPasswordRepository>();
 builder.Services.AddScoped<IPlayRepository, PlayRepository>();
+builder.Services.AddScoped<IGamePreviewRepository, GamePreviewRepository>();
 
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 

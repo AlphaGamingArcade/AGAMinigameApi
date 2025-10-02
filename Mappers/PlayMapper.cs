@@ -11,11 +11,11 @@ namespace api.Mappers
         {
             var play = new Play
             {
-                Id = Convert.ToInt64(row["app_play_id"]),
-                MemberId = Convert.ToInt32(row["app_play_member_id"]),
-                GameId = Convert.ToInt32(row["app_play_game_id"]),
-                CreatedAt = Convert.ToDateTime(row["app_play_created_at"]),
-                UpdatedAt = Convert.ToDateTime(row["app_play_updated_at"]),
+                Id = Convert.ToInt64(row["play_id"]),
+                MemberId = Convert.ToInt32(row["play_member_id"]),
+                GameId = Convert.ToInt32(row["play_game_id"]),
+                CreatedAt = Convert.ToDateTime(row["play_created_at"]),
+                UpdatedAt = Convert.ToDateTime(row["play_updated_at"]),
             };
             return play;
         }

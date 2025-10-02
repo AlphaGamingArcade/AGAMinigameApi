@@ -10,9 +10,9 @@ namespace api.Mappers
         {
             return new Member
             {
-                Id = Convert.ToInt32(reader["app_user_member_id"]),
+                Id = Convert.ToInt32(reader["user_member_id"]),
                 AgentId = Convert.ToInt16(reader["member_agent_id"]),
-                Email = Convert.ToString(reader["app_user_email"]) ?? "",
+                Email = Convert.ToString(reader["user_email"]) ?? "",
                 Account = Convert.ToString(reader["member_account"]) ?? "",
                 Nickname = Convert.ToString(reader["member_nickname"]) ?? "",
                 Gamemoney = Convert.ToDecimal(reader["member_gamemoney"]),

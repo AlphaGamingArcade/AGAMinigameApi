@@ -12,5 +12,6 @@ namespace AGAMinigameApi.Models
         public char Trending { get; set; }
         public DateTime Datetime { get; set; }
         public Gamecode? Gamecode { get; set; }
+        public int? TotalPlayers { get; set; }
     }
 }

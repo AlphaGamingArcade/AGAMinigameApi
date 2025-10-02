@@ -1,4 +1,5 @@
 using AGAMinigameApi.Dtos.Common;
+using AGAMinigameApi.Dtos.Game;
 using AGAMinigameApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,16 @@ public class GameController : ControllerBase
     {
         _logger = logger;
         _gameService = gameService;
+    }
+
+    [HttpGet("{gameId:int}")]
+    public async Task<IActionResult> GetPaginatedGames(int gameId)
+    {
+        var result = await _gameService.GetGameDetailAsync(gameId);
+        if (result == null)
+            return NotFound(new ApiResponse<object>(false, "Game not found.", null, 404));
+                    
+        return Ok(new ApiResponse<object>(true, "Success", result, 200));
     }
 
     [HttpGet]
